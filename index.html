@@ -39,12 +39,46 @@
       50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
       100% { transform: scale(0); opacity: 0; }
     }
-    @media (max-width: 600px) {
-      #headbuttEffect {
-        width: 48px;
-        height: 48px;
-      }
-    }
+    
+  #upgradeButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 101;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  background-color: #ffebcd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes upgradeAlertAnimation {
+  0%   { opacity: 0; transform: scale(0.5) rotate(-15deg); }
+  20%  { opacity: 1; transform: scale(1.2) rotate(10deg); }
+  40%  { opacity: 1; transform: scale(1) rotate(0deg); }
+  80%  { opacity: 1; transform: translateY(-20px) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(0.8); }
+}
+
+.upgrade-alert {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 5px #000;
+  border: 3px solid #ffebcd;
+  border-radius: 10px;
+  z-index: 11000;
+  pointer-events: none;
+  animation: upgradeAlertAnimation 2s ease-out forwards;
+}
+
     /* Fullscreen overlay for the upgrade menu */
     #upgradeMenu {
       position: fixed;
@@ -68,7 +102,7 @@
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-      overflow-y: auto;
+      overflow-y: auto; z-index: 10000;
     }
     /* Headings and text scale up for readability */
     .menu-content h1 {
@@ -107,7 +141,7 @@
     /* Responsive grid for upgrade/shop buttons */
     .menu-buttons {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(144px, 1fr));
       gap: 1rem;
       width: 100%;
       padding: 1rem;
@@ -119,7 +153,9 @@
       border: 2px solid white;
       border-radius: 10px;
       width: 100%;
-      aspect-ratio: 1;
+  aspect-ratio: 1;
+  font-size: 1.5rem;
+  padding: 1.0rem;
       color: white;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -127,8 +163,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      padding: 1rem;
+   
     }
     .menu-buttons button:active {
       border: 2px solid red;
@@ -253,7 +288,33 @@
     .bomb-available {
       border-color: red;
       box-shadow: 0 0 10px 3px rgba(255,0,0,0.8);
-    }
+      
+    }/* Ensure the button keeps its width while the text scrolls */
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+/* Force the inner span to start offscreen and animate */
+.marquee span {
+  display: inline-block;
+  /* Add padding so the text always moves from right offscreen to left offscreen */
+  padding-left: 100%;
+  animation: marquee 10s linear infinite;
+}
+
+/* Define the marquee keyframes */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
 </head>
@@ -264,37 +325,71 @@
   <div id="headbuttEffect"></div>
   
   <!-- Upgrade Menu with Tabs -->
-  <div id="upgradeMenu">
-    <div class="menu-content">
-      <h1>Upgrade Menu</h1>
-      <p>You have <span id="pointsDisplay">0</span> points.</p>
-      <p>Your Rank: <span id="rankDisplay">🔰 Beginner</span></p>
-      <div class="tabs">
-        <button id="upgradesTab" class="active">Upgrades</button>
-        <button id="shopTab">Shop</button>
-      </div>
-      <div id="upgradesSection" class="section" style="display:block;">
-        <div class="menu-buttons">
-          <button id="increaseHP">❤️ Increase Max HP (+20 HP) - Cost: 50</button>
-          <button id="increaseAutoRun">⏱ Increase Auto Strike Time (+10s) - Cost: 200</button>
-          <button id="increaseDash">➡️ Increase Strike Range (+1 tile) - Cost: 300</button>
-          <button id="increaseStrikeMeter">🔋 Increase Strike Meter Capacity (+10) - Cost: 150</button>
-          <button id="increaseHealingCharmTime">🪬 Increase Healing Charm (Duration & Heal) - Cost: 250</button>
-          <button id="increaseShieldingTime">🛡️ Increase Shielding (Duration & Reduction) - Cost: 250</button>
-        </div>
-      </div>
-      <div id="shopSection" class="section">
-        <div class="menu-buttons">
-          <button id="buyBomb">
-            <div class="icon">💣</div>
-            <div class="label">Bomb</div>
-            <div class="cost" id="bombCostDisplay"></div>
-          </button>
-        </div>
-      </div>
-      <button id="resumeGame">▶️ Resume Game</button>
+<div id="upgradeMenu">
+  <div class="menu-content">
+    <h1>Player Menu</h1>
+    <p>You have <span id="pointsDisplay">0</span> points.</p>
+    <p>Your Rank: <span id="rankDisplay">🔰 Beginner</span></p>
+    <div class="tabs">
+      <button id="upgradesTab" class="active">Upgrades</button>
+      <button id="shopTab">Shop</button>
+      <button id="inventoryTab">Inventory</button>
     </div>
+    <div id="upgradesSection" class="section" style="display:block;">
+      <div class="menu-buttons">
+          <button id="increaseHP">
+  <div class="marquee"><p class="icon" style="font-size:3rem">❤️+</p> 
+<div class="label"><b><i>Cost: 50</i></b></div>  
+ 
+<span>Increase Max HP (+20 HP) - Cost: 50</span>
   </div>
+</button>
+          <button id="increaseAutoRun">
+  <div class="marquee"><p class="icon" style="font-size:3rem">⚔️+⏱</p>
+<div class="label"><b><i>Cost: 200</i></b></div>  
+
+    <span> Increase Auto Strike Time (+10s) - Cost: 200</span>
+  </div>
+</button>
+          <button id="increaseDash">
+<div class="marquee"><p class="icon" style="font-size:3rem">⚔️+➡️</p>
+<div class="label"><b><i>Cost: 300</i></b></div>  
+    <span> Increase Strike Range (+1 tile) - Cost: 300</span>
+  </div>
+</button>
+          <button id="increaseStrikeMeter"><div class="marquee"><p class="icon" style="font-size:3rem">⚔️+🔋</p>
+<div class="label"><b><i>Cost: 150</i></b></div> 
+
+    <span> Increase Strike Meter Capacity (+10) - Cost: 150</span></div></button>
+          <button id="increaseHealingCharmTime"><div class="marquee"><p class="icon" style="font-size:3rem">🪬+</p>
+<div class="label"><b><i>Cost: 250</i></b></div> 
+
+    <span>  Increase Healing Charm (Duration & Heal) - Cost: 250</span></div></button>
+          <button id="increaseShieldingTime"><div class="marquee"><p class="icon" style="font-size:3rem">🛡️+</p>
+<div class="label"><b><i>Cost: 250</i></b></div> 
+
+    <span>  Increase Shielding (Duration & Reduction) - Cost: 250</span></div></button>
+        </div>
+      </div>
+        <div id="shopSection" class="section">
+      <div class="menu-buttons">
+        <button id="buyBomb"><div class="marquee">
+          <div class="icon" style="font-size:3.8rem">💣</div>
+          <b><i><div class="cost" id="bombCostDisplay"></div></i></b>
+<span><div class="label">Buy a Bomb</div></span>
+          
+</div>
+        </button>
+      </div>
+    </div>
+    <div id="inventorySection" class="section">
+      <div class="menu-buttons" id="inventoryItems">
+        <!-- Inventory items (tiles) will be injected here -->
+      </div>
+    </div>
+    <button id="resumeGame">▶️ Resume Game</button>
+  </div>
+</div>
   
   <!-- Item Tray -->
   <div id="itemTray">
@@ -321,15 +416,20 @@
   
   <script>
     "use strict";
-    
+    let preservedAutoStrikeTime = 0;
+let preservedStrikeMeter = 0;
+
     // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
     
     let timeScale = 1.0, slowMotionTimer = 0, killCount = 0;
-    let bombCount = 0, points = 0;
-    let baseAutoStrikeTime = 10;
-    let autoStrikeTime = baseAutoStrikeTime;
+    let bombCount = 1, points = 0;
+    let hasReflexAmulet = true; 
+    
+   let baseAutoStrikeTime = 10;
+let autoStrikeTime = hasReflexAmulet ? baseAutoStrikeTime : 0;
+    
     let autoStrikeInterval = 0.3, autoStrikeTimer = 0;
     let globalTime = 0;
     let isUpgradeMenuVisible = false;
@@ -366,7 +466,50 @@
       }
     }
     
-    // -------------------------
+    // --- Sword Effect for Max Strike ---
+    // This effect draws a spinning sword emoji from the player to each struck enemy.
+    class SwordEffect {
+      constructor(startPos, targetPos, duration = 0.5) {
+        this.startPos = startPos;   // Starting position (Vector2)
+        this.targetPos = targetPos; // Target position (Vector2)
+        this.duration = duration;   // Duration in seconds for the effect
+        this.elapsed = 0;           // Time elapsed so far
+        this.complete = false;      // Flag for completion
+      }
+      
+      update(dt) {
+        this.elapsed += dt;
+        if (this.elapsed >= this.duration) {
+          this.elapsed = this.duration;
+          this.complete = true;
+        }
+      }
+      
+      render(ctx, camera) {
+        // Calculate progress (0 to 1)
+        let t = this.elapsed / this.duration;
+        // Linear interpolation between start and target positions
+        let currentX = this.startPos.x + (this.targetPos.x - this.startPos.x) * t;
+        let currentY = this.startPos.y + (this.targetPos.y - this.startPos.y) * t;
+        let currentPos = new Vector2(currentX, currentY);
+        // Spin the sword: one full rotation over the duration
+        let angle = t * 2 * Math.PI;
+        // Convert world coordinates to screen coordinates
+        let screenPos = camera.worldToScreen(currentPos);
+        
+        ctx.save();
+        ctx.translate(screenPos.x, screenPos.y);
+        ctx.rotate(angle);
+        ctx.font = "32px sans-serif"; // Adjust size as needed
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("🗡 ", 0, 0);
+        ctx.restore();
+      }
+    }
+    // Global array to hold active sword effects
+    let swordEffects = [];
+     // -------------------------
     // Shop & Upgrade Menu Logic
     // -------------------------
     function getBombCost() {
@@ -382,38 +525,46 @@
       if(points >= cost) {
         points -= cost;
         bombCount++;
-        updateBombCostDisplay();
+        updateBombCostDisplay();showUpgradeAlert("Bomb purchased!");
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
       }
     });
     
     // Tab switching for upgrade menu
-    document.getElementById("upgradesTab").addEventListener("click", function() {
-      document.getElementById("upgradesSection").style.display = "block";
-      document.getElementById("shopSection").style.display = "none";
-      this.classList.add("active");
-      document.getElementById("shopTab").classList.remove("active");
-    });
-    document.getElementById("shopTab").addEventListener("click", function() {
-      document.getElementById("shopSection").style.display = "block";
-      document.getElementById("upgradesSection").style.display = "none";
-      this.classList.add("active");
-      document.getElementById("upgradesTab").classList.remove("active");
-      updateBombCostDisplay();
-    });
+document.getElementById("upgradesTab").addEventListener("click", function() {
+  document.getElementById("upgradesSection").style.display = "block";
+  document.getElementById("shopSection").style.display = "none";
+  document.getElementById("inventorySection").style.display = "none";
+  this.classList.add("active");
+  document.getElementById("shopTab").classList.remove("active");
+  document.getElementById("inventoryTab").classList.remove("active");
+});
+
+document.getElementById("shopTab").addEventListener("click", function() {
+  document.getElementById("shopSection").style.display = "block";
+  document.getElementById("upgradesSection").style.display = "none";
+  document.getElementById("inventorySection").style.display = "none";
+  this.classList.add("active");
+  document.getElementById("upgradesTab").classList.remove("active");
+  document.getElementById("inventoryTab").classList.remove("active");
+  updateBombCostDisplay();
+});
+
+document.getElementById("inventoryTab").addEventListener("click", function() {
+  document.getElementById("inventorySection").style.display = "block";
+  document.getElementById("upgradesSection").style.display = "none";
+  document.getElementById("shopSection").style.display = "none";
+  this.classList.add("active");
+  document.getElementById("upgradesTab").classList.remove("active");
+  document.getElementById("shopTab").classList.remove("active");
+  updateInventoryDisplay(); // Refresh the inventory view
+});
+
     
-    document.getElementById("resumeGame").addEventListener("click", function() {
-      isUpgradeMenuVisible = false;
-      document.getElementById("upgradeMenu").style.display = "none";
-      enemies.length = 0;
-      bullets.length = 0;
-      pickups.length = 0;
-      baitBombs.length = 0;
-      player.respawn();
-      autoStrikeTime = baseAutoStrikeTime;
-      timeScale = 1.0;
-    });
-    
+    document.getElementById("resumeGame").addEventListener("click", () => { 
+  resumeGame(); 
+});
+
     // --- Ranking System Variables & Functions ---
     const rankEmojis = ["🔰", "🥉", "🥈", "🥇", "🏆", "👑", "💎", "🔥", "🚀"];
     const rankNames  = ["Beginner", "Novice", "Warrior", "Veteran", "Elite", "Master", "Champion", "Legend", "Mythic"];
@@ -428,6 +579,36 @@
       }
       return rank;
     }
+    function updateInventoryDisplay() {
+  const inventoryContainer = document.getElementById("inventoryItems");
+  let html = "";
+  
+  // Example: display bomb count as an inventory item if there are any bombs.
+  if (bombCount > 0) {
+    html += `
+      <button class="inventory-item"><div class="marquee">
+        <div class="icon" style="font-size:3rem">💣</div>
+ <div class="label"><b><i>Bombs</i></b></div>
+        <div class="count">${bombCount}</div>
+      </button>
+    `;
+  }
+   // Show Reflex Amulet if the player has it
+  if (hasReflexAmulet) {
+    html += `
+      <button class="inventory-item"><div class="marquee">
+        <div class="icon" style="font-size:3rem">🧿</div>
+        <div class="label"><b><i>ReflexAmulet</i></b><br>
+<span> Player starts with Auto-Strike for 10s</span></div>
+      </button>
+    `;
+  }
+   
+  // Add similar blocks for other items if needed.
+  
+  inventoryContainer.innerHTML = html;
+}
+
     function updateRankDisplay() {
       const rankDisplay = document.getElementById("rankDisplay");
       const currentRank = calculateRank(killCount);
@@ -443,6 +624,20 @@
       }
     }
     
+    function updateSwordEffects(dt) {
+      for (let i = swordEffects.length - 1; i >= 0; i--) {
+        swordEffects[i].update(dt);
+        if (swordEffects[i].complete) swordEffects.splice(i, 1);
+      }
+    }
+    
+    function renderSwordEffects(ctx, camera) {
+      for (let effect of swordEffects) {
+        effect.render(ctx, camera);
+      }
+    }
+
+ 
     function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
     
     class Vector2 {
@@ -549,10 +744,11 @@
     }
     
     // Helper: Only allow tiles with type 0 (grass) or 2 (sand) to be passed
-    function isTilePassable(tile) {
-      return tile.tileType === 0 || tile.tileType === 2;
-    }
-    
+ function isTilePassable(tile) {
+  // Allow grass (0), sand (2), and mountains (3)
+  return tile.tileType === 0 || tile.tileType === 2 || tile.tileType === 3;
+}
+
     class Particle {
       constructor(position, velocity, life, color, size, acceleration) {
         this.position = position;
@@ -785,6 +981,7 @@
     // --- Player Class ---
     class Player {
       constructor(tileX, tileY, tileMap) {
+        this.animTime = 0;
         this.tileMap = tileMap;
         this.gridX = tileX;
         this.gridY = tileY;
@@ -848,6 +1045,31 @@
       }
       
       update(deltaTime) {
+          if (this.moving) {
+    // Update movement interpolation as before.
+    this.moveTime += deltaTime;
+    let t = Math.min(this.moveTime / this.moveDuration, 1);
+    this.position = new Vector2(
+      this.startPos.x + (this.targetPos.x - this.startPos.x) * t,
+      this.startPos.y + (this.targetPos.y - this.startPos.y) * t
+    );
+    // Independently update the walk animation timer
+    this.animTime += deltaTime;
+    this.currentFrame = Math.floor(this.animTime / this.frameDelay) % this.frameCount;
+    
+    if (t >= 1) {
+      this.moving = false;
+      this.gridX = this.targetGridX;
+      this.gridY = this.targetGridY;
+      // (Optionally, if you want to reset the animation when stopping:)
+      // this.animTime = 0;
+      // this.currentFrame = 0;
+    }
+  } else {
+    // When not moving, reset animation so the idle frame is shown.
+    this.animTime = 0;
+    this.currentFrame = 0;
+  }
         if (this.isDashing) {
           this.dashElapsed += deltaTime;
           let t = Math.min(this.dashElapsed / this.dashDuration, 1);
@@ -860,9 +1082,14 @@
           enemies.forEach(enemy => {
             let enemyCenter = new Vector2(enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2);
             if (playerCenter.subtract(enemyCenter).length() < 50 && enemy.alive) {
-              enemy.alive = false;
-              killCount++;
-              spawnEnemyExplosionEffect(enemy.position);
+           if (enemy.deathTimer === undefined) {
+  enemy.deathTimer = 0.5; // Delay
+  enemy.damageFlashTimer = 0.3;
+  enemy.damageVibrateTimer = 0.3;
+  swordEffects.push(new SwordEffect(playerCenter, enemyCenter, 0.5));
+}
+addSpriteFlash(enemy.position);
+
             }
           });
           createDashTrail(this.position, this.dashEnd);
@@ -902,70 +1129,149 @@
         this.knockback = this.knockback.scale(0.9);
       }
       
-      render(ctx, camera) {
-        let offsetX = 0, offsetY = 0;
-        if(this.damageVibrateTimer > 0) {
-          offsetX = (Math.random()*2 - 1) * this.vibrationMagnitude;
-          offsetY = (Math.random()*2 - 1) * this.vibrationMagnitude;
-        }
-        let pos = this.position.add(this.knockback);
-        let screenPos = camera.worldToScreen(new Vector2(pos.x + offsetX, pos.y + offsetY));
-        ctx.save();
-        if (this.isDashing) { ctx.globalAlpha = 0.7; }
-        let srcX = 0, srcY = 0;
-        if (this.spriteLoaded) {
-          let row = 0;
-          switch (this.direction) {
-            case "down": row = 0; break;
-            case "right": row = 1; break;
-            case "up": row = 2; break;
-            case "left": row = 3; break;
-            default: row = 0;
-          }
-          srcX = this.currentFrame * 32;
-          srcY = row * 32;
-          ctx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, screenPos.x, screenPos.y, this.width, this.height);
-          if(this.damageFlashTimer > 0) {
-            let offCanvas = document.createElement("canvas");
-            offCanvas.width = this.width;
-            offCanvas.height = this.height;
-            let offCtx = offCanvas.getContext("2d");
-            offCtx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, 0, 0, this.width, this.height);
-            offCtx.globalCompositeOperation = "source-atop";
-            offCtx.fillStyle = "red";
-            offCtx.fillRect(0, 0, this.width, this.height);
-            ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
-          }
-        } else {
-          ctx.fillStyle = "red";
-          ctx.fillRect(screenPos.x, screenPos.y, this.width, this.height);
-        }
-        ctx.restore();
-      }
+render(ctx, camera) {
+  // Calculate any shake offset
+  let offsetX = 0, offsetY = 0;
+  if (this.damageVibrateTimer > 0) {
+    offsetX = (Math.random() * 2 - 1) * this.vibrationMagnitude;
+    offsetY = (Math.random() * 2 - 1) * this.vibrationMagnitude;
+  }
+  let pos = this.position.add(this.knockback);
+  let screenPos = camera.worldToScreen(new Vector2(pos.x + offsetX, pos.y + offsetY));
+
+  // Save the context so we can restore later
+  ctx.save();
+
+  // If dashing, reduce opacity
+  if (this.isDashing) {
+    ctx.globalAlpha = 0.7;
+  }
+
+  // Determine source frame
+  let row = this._getRowForDirection();
+  let srcX = this.currentFrame * 32;
+  let srcY = row * 32;
+
+  // --- Draw glow effects underneath the sprite ---
+  
+  // Shield glow (blue)
+  if (defenseBoostActive) {
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(0,0,255,0.8)";
+    ctx.drawImage(
+      this.spriteSheet,
+      srcX, srcY, 32, 32,
+      screenPos.x, screenPos.y, this.width, this.height
+    );
+    ctx.restore();
+  }
+
+  // Healing charm glow (purple)
+  if (healingCharmActive) {
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(128,0,128,0.8)";
+    ctx.drawImage(
+      this.spriteSheet,
+      srcX, srcY, 32, 32,
+      screenPos.x, screenPos.y, this.width, this.height
+    );
+    ctx.restore();
+  }
+
+  // Auto‑strike glow (orange)
+  if (autoStrikeTime > 0) {
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(255,165,0,0.8)";
+    ctx.drawImage(
+      this.spriteSheet,
+      srcX, srcY, 32, 32,
+      screenPos.x, screenPos.y, this.width, this.height
+    );
+    ctx.restore();
+  }
+
+  // --- Draw the base player sprite on top of the glows ---
+  ctx.drawImage(
+    this.spriteSheet,
+    srcX, srcY, 32, 32,
+    screenPos.x, screenPos.y, this.width, this.height
+  );
+
+  // --- If damage flash is active, draw a red-tinted overlay on top ---
+  if (this.damageFlashTimer > 0) {
+    let offCanvas = document.createElement("canvas");
+    offCanvas.width = this.width;
+    offCanvas.height = this.height;
+    let offCtx = offCanvas.getContext("2d");
+
+    // Draw the sprite onto the offscreen canvas
+    offCtx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, 0, 0, this.width, this.height);
+
+    // Mask with red fill (using source-atop so it only covers the sprite shape)
+    offCtx.globalCompositeOperation = "source-atop";
+    offCtx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    offCtx.fillRect(0, 0, this.width, this.height);
+
+    // Draw the tinted sprite on top of the base sprite
+    ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
+  }
+
+  ctx.restore();
+}
+
+// Helper method to get the row for the current direction:
+_getRowForDirection() {
+  switch (this.direction) {
+    case "down":  return 0;
+    case "right": return 1;
+    case "up":    return 2;
+    case "left":  return 3;
+    default:      return 0;
+  }
+}
+
+
+
       
-      move(direction) {
-        if (this.moving || this.isDashing) return;
-        let distance = 1;
-        let newGridX = this.gridX, newGridY = this.gridY;
-        if (direction === "up") newGridY -= distance;
-        else if (direction === "down") newGridY += distance;
-        else if (direction === "left") newGridX -= distance;
-        else if (direction === "right") newGridX += distance;
-        newGridX = Math.max(0, Math.min(newGridX, this.tileMap.width - 1));
-        newGridY = Math.max(0, Math.min(newGridY, this.tileMap.height - 1));
-        // Allow movement if the destination tile is passable (grass or sand)
-        if (!isTilePassable(this.tileMap.tiles[newGridY][newGridX])) return;
-    
-        this.moving = true;
-        this.moveTime = 0;
-        this.startPos = this.position;
-        this.targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
-        this.targetGridX = newGridX;
-        this.targetGridY = newGridY;
-        this.direction = direction;
-        this.frameTime = 0;
-        this.currentFrame = 0;
-      }
+   move(direction) {
+  if (this.moving || this.isDashing) return;
+  
+  // Determine the new grid position
+  let newGridX = this.gridX, newGridY = this.gridY;
+  if (direction === "up") newGridY -= 1;
+  else if (direction === "down") newGridY += 1;
+  else if (direction === "left") newGridX -= 1;
+  else if (direction === "right") newGridX += 1;
+  
+  // Check bounds
+  if (newGridX < 0 || newGridX >= this.tileMap.width ||
+      newGridY < 0 || newGridY >= this.tileMap.height) return;
+  
+  // Get the target tile and check passability
+  let targetTile = this.tileMap.tiles[newGridY][newGridX];
+  if (!isTilePassable(targetTile)) return;
+  
+  // Set the movement duration.
+  // If the tile is a mountain (tileType 3), slow down movement further.
+  const baseMoveDuration = 0.24;  // increased from 0.1 so the animation is visible
+  let speedMultiplier = (targetTile.tileType === 3) ? 2 : 1;
+  this.moveDuration = baseMoveDuration * speedMultiplier;
+  
+  // Set up the movement as usual
+  this.moving = true;
+  this.moveTime = 0;
+  this.startPos = this.position;
+  this.targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
+  this.targetGridX = newGridX;
+  this.targetGridY = newGridY;
+  this.direction = direction;
+  this.frameTime = 0;
+  this.currentFrame = 0;
+}
+
       
       shoot() {
         let startPos = new Vector2(this.position.x + this.width/2, this.position.y + this.height/2);
@@ -1021,22 +1327,33 @@
         triggerHeadbutt();
         enemies.forEach(enemy => {
           let enemyCenter = new Vector2(enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2);
-          if (enemyCenter.subtract(strikeCenter).length() <= strikeRange) {
-            addSpriteFlash(enemy.position);
-            enemy.alive = false;
-            spawnEnemyExplosionEffect(enemy.position);
-            killCount++;
-            let angle = Math.atan2(enemyCenter.y - strikeCenter.y, enemyCenter.x - strikeCenter.x);
-            let effectX = strikeCenter.x + Math.cos(angle) * 20;
-            let effectY = strikeCenter.y + Math.sin(angle) * 20;
-            spawnMeleeEffect(effectX, effectY, angle);
-          }
+       if (enemyCenter.subtract(strikeCenter).length() <= strikeRange) {
+  // Set a death timer if not already set
+  if (enemy.deathTimer === undefined) {
+    enemy.deathTimer = 0.5; // Delay in seconds (adjust as needed)
+      enemy.damageFlashTimer = 0.3;
+  enemy.damageVibrateTimer = 0.3;
+    swordEffects.push(new SwordEffect(playerCenter, enemyCenter, 0.5));
+  }
+  addSpriteFlash(enemy.position);
+  
+  // Remove immediate explosion and kill actions.
+  // The enemy.update() method will handle the explosion and marking as dead.
+  
+  let angle = Math.atan2(enemyCenter.y - strikeCenter.y, enemyCenter.x - strikeCenter.x);
+  let effectX = strikeCenter.x + Math.cos(angle) * 20;
+  let effectY = strikeCenter.y + Math.sin(angle) * 20;
+  spawnMeleeEffect(effectX, effectY, angle);
+}
+
         });
       }
     }
     
     class Enemy {
       constructor(tileX, tileY, tileMap) {
+        this.damageFlashTimer = 0;
+    this.damageVibrateTimer = 0;
         this.tileMap = tileMap;
         this.gridX = tileX;
         this.gridY = tileY;
@@ -1065,8 +1382,28 @@
         this.frameDelay = 0.15;
         this.attackCooldown = 0;
         this.knockback = new Vector2(0, 0);
+        this.deathTimer = undefined;
       }
       update(deltaTime) {
+       // If the enemy has been struck, decrement the death timer.
+    if (this.deathTimer !== undefined) {
+      this.deathTimer -= deltaTime;
+      if (this.deathTimer <= 0) {
+        spawnEnemyExplosionEffect(this.position);
+triggerScreenFlash(); 
+        killCount++;
+        this.alive = false;
+        return; // Skip the rest of the update once dead.
+      }  // Decrement flash and vibrate timers
+  if (this.damageFlashTimer > 0) {
+    this.damageFlashTimer -= deltaTime;
+    if (this.damageFlashTimer < 0) this.damageFlashTimer = 0;
+  }
+  if (this.damageVibrateTimer > 0) {
+    this.damageVibrateTimer -= deltaTime;
+    if (this.damageVibrateTimer < 0) this.damageVibrateTimer = 0;
+  }
+    }
         if (this.moving) {
           this.moveTime += deltaTime;
           let t = Math.min(this.moveTime / this.moveDuration, 1);
@@ -1111,46 +1448,82 @@
         }
         this.knockback = this.knockback.scale(0.9);
       }
-      render(ctx, camera) {
-        let pos = this.position.add(this.knockback);
-        let screenPos = camera.worldToScreen(pos);
-        if (this.spriteLoaded) {
-          let row = 0;
-          switch (this.direction) {
-            case "down": row = 0; break;
-            case "right": row = 1; break;
-            case "up": row = 2; break;
-            case "left": row = 3; break;
-            default: row = 0;
-          }
-          let srcX = this.currentFrame * 32, srcY = row * 32;
-          ctx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, screenPos.x, screenPos.y, this.width, this.height);
-        } else {
-          ctx.fillStyle = "green";
-          ctx.fillRect(screenPos.x, screenPos.y, this.width, this.height);
-        }
-      }
-      move(direction) {
-        if (this.moving) return;
-        let newGridX = this.gridX, newGridY = this.gridY;
-        if (direction === "up") newGridY -= 1;
-        else if (direction === "down") newGridY += 1;
-        else if (direction === "left") newGridX -= 1;
-        else if (direction === "right") newGridX += 1;
-        if (newGridX < 0 || newGridX >= this.tileMap.width ||
-            newGridY < 0 || newGridY >= this.tileMap.height) return;
-        // Only move if the target tile is passable
-        if (!isTilePassable(this.tileMap.tiles[newGridY][newGridX])) return;
-        this.moving = true;
-        this.moveTime = 0;
-        this.startPos = this.position;
-        this.targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
-        this.targetGridX = newGridX;
-        this.targetGridY = newGridY;
-        this.direction = direction;
-        this.frameTime = 0;
-        this.currentFrame = 0;
-      }
+    render(ctx, camera) {
+  let pos = this.position.add(this.knockback);
+  let screenPos = camera.worldToScreen(pos);
+
+  // Apply vibration if damageVibrateTimer is active:
+  let offsetX = 0, offsetY = 0;
+  if(this.damageVibrateTimer > 0) {
+    offsetX = (Math.random()*2 - 1) * 5; // adjust magnitude as needed
+    offsetY = (Math.random()*2 - 1) * 5;
+  }
+  screenPos.x += offsetX;
+  screenPos.y += offsetY;
+
+  if (this.spriteLoaded) {
+    let row = 0;
+    switch (this.direction) {
+      case "down": row = 0; break;
+      case "right": row = 1; break;
+      case "up": row = 2; break;
+      case "left": row = 3; break;
+      default: row = 0;
+    }
+    let srcX = this.currentFrame * 32;
+    let srcY = row * 32;
+
+    // Draw the enemy normally
+    ctx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, screenPos.x, screenPos.y, this.width, this.height);
+
+    // If damage flash is active, overlay a red tint.
+    if (this.damageFlashTimer > 0) {
+      // Create an offscreen canvas if not already done (or reuse one)
+      let offCanvas = document.createElement("canvas");
+      offCanvas.width = this.width;
+      offCanvas.height = this.height;
+      let offCtx = offCanvas.getContext("2d");
+      offCtx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, 0, 0, this.width, this.height);
+      offCtx.globalCompositeOperation = "source-atop";
+      offCtx.fillStyle = "rgba(255, 0, 0, 0.5)"; // 50% red tint; adjust alpha as needed
+      offCtx.fillRect(0, 0, this.width, this.height);
+      ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
+    }
+  } else {
+    // Fallback if sprite not loaded
+    ctx.fillStyle = "green";
+    ctx.fillRect(screenPos.x, screenPos.y, this.width, this.height);
+  }
+}
+
+  move(direction) {
+  if (this.moving) return;
+  let newGridX = this.gridX, newGridY = this.gridY;
+  if (direction === "up") newGridY -= 1;
+  else if (direction === "down") newGridY += 1;
+  else if (direction === "left") newGridX -= 1;
+  else if (direction === "right") newGridX += 1;
+  if (newGridX < 0 || newGridX >= this.tileMap.width ||
+      newGridY < 0 || newGridY >= this.tileMap.height) return;
+  
+  // Only move if the target tile is passable
+  if (!isTilePassable(this.tileMap.tiles[newGridY][newGridX])) return;
+  
+  this.moving = true;
+  this.moveTime = 0;
+  this.startPos = this.position;
+  this.targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
+  this.targetGridX = newGridX;
+  this.targetGridY = newGridY;
+  this.direction = direction;
+  this.frameTime = 0;
+  this.currentFrame = 0;
+  
+  // Set base movement duration and adjust for mountain tiles
+  const baseMoveDuration = 0.2; // or your preferred base duration
+  let speedMultiplier = (this.tileMap.tiles[newGridY][newGridX].tileType === 3) ? 2 : 1;
+  this.moveDuration = baseMoveDuration * speedMultiplier;
+}
       shoot() {
         let startPos = new Vector2(this.position.x + this.width/2, this.position.y + this.height/2);
         let playerCenter = new Vector2(player.position.x + player.width/2, player.position.y + player.height/2);
@@ -1224,16 +1597,22 @@
       enemies.forEach(enemy=>{
         let enemyCenter = new Vector2(enemy.position.x+enemy.width/2, enemy.position.y+enemy.height/2);
         if(playerCenter.subtract(enemyCenter).length() < effectiveRange) {
-          triggerScreenFlash();
-          addSpriteFlash(enemy.position);
-          enemy.alive = false;
-          spawnEnemyExplosionEffect(enemy.position);
-          killCount++;
-          let angle = Math.atan2(enemyCenter.y-playerCenter.y, enemyCenter.x-playerCenter.x);
-          let effectX = playerCenter.x + Math.cos(angle)*offsetDistance;
-          let effectY = playerCenter.y + Math.sin(angle)*offsetDistance;
-          spawnMeleeEffect(effectX, effectY, angle);
-        }
+  // Set a delay if not already set:
+  if (enemy.deathTimer === undefined) {
+    enemy.deathTimer = 0.5; // Delay in seconds (adjust as needed)
+  enemy.damageFlashTimer = 0.3;
+  enemy.damageVibrateTimer = 0.3;
+    swordEffects.push(new SwordEffect(playerCenter, enemyCenter, 0.5));
+  }
+  addSpriteFlash(enemy.position);
+  // Optionally, you can also spawn melee effects:
+  let angle = Math.atan2(enemyCenter.y - playerCenter.y, enemyCenter.x - playerCenter.x);
+  let effectX = playerCenter.x + Math.cos(angle)*offsetDistance;
+  let effectY = playerCenter.y + Math.sin(angle)*offsetDistance;   
+  spawnMeleeEffect(effectX, effectY, angle);
+  // Do not immediately kill the enemy here.
+}
+
       });
     }
     
@@ -1306,16 +1685,26 @@
           let playerCenter = new Vector2(player.position.x+player.width/2, player.position.y+player.height/2);
           let enemyCenter = new Vector2(enemy.position.x+enemy.width/2, enemy.position.y+enemy.height/2);
           if(playerCenter.subtract(enemyCenter).length()<=currentMeleeRange){
-            triggerScreenFlash();
-            addSpriteFlash(enemy.position);
-            enemy.alive = false;
-            spawnEnemyExplosionEffect(enemy.position);
-            killCount++;
-            let angle = Math.atan2(enemyCenter.y-playerCenter.y, enemyCenter.x-playerCenter.x);
-            let effectX = playerCenter.x+Math.cos(angle)*20;
-            let effectY = playerCenter.y+Math.sin(angle)*20;
-            spawnMeleeEffect(effectX, effectY, angle);
-            return true;
+           
+         swordEffects.push(new SwordEffect(playerCenter, enemyCenter));
+let angle = Math.atan2(enemyCenter.y - playerCenter.y, enemyCenter.x - playerCenter.x);
+let effectX = playerCenter.x + Math.cos(angle) * 20;
+let effectY = playerCenter.y + Math.sin(angle) * 20;
+
+addSpriteFlash(enemy.position);
+spawnMeleeEffect(effectX, effectY, angle);
+
+// Instead of killing immediately, set a death timer (if not already set)
+if (enemy.deathTimer === undefined) {
+  enemy.deathTimer = 0.5; // delay in seconds before enemy dies
+}
+
+// Optionally, store additional info if needed (e.g., for a "dying" state)
+// The enemy's update() function should then check if deathTimer <= 0,
+// and if so, call spawnEnemyExplosionEffect(enemy.position), mark enemy.alive = false,
+// and increment killCount.
+return true;
+
           }
         }
       }
@@ -1380,8 +1769,7 @@
       void headbuttDiv.offsetWidth;
       headbuttDiv.classList.add("active");
       let playerBox = { x: playerScreenPos.x, y: playerScreenPos.y, width: player.width, height: player.height };
-      enemies.forEach(enemy=>{
-        let enemyScreenPos = camera.worldToScreen(enemy.position);
+      enemies.forEach(enemy=>{    let enemyScreenPos = camera.worldToScreen(enemy.position);
         let enemyBox = { x: enemyScreenPos.x, y: enemyScreenPos.y, width: enemy.width, height: enemy.height };
         if(rectIntersect(playerBox, enemyBox)){
           addSpriteFlash(enemy.position);
@@ -1396,8 +1784,9 @@
     function deployBomb() {
       if(bombCount>0){
         bombCount--;
-        baitBombs.push(new BaitBomb(player.gridX, player.gridY, tileMap));
-      }
+        baitBombs.push(new BaitBomb(player.gridX, player.gridY, tileMap));showUpgradeAlert("Bomb deployed!");
+        
+      }updateInventoryDisplay();
     }
     class BaitBomb {
       constructor(tileX, tileY, tileMap) {
@@ -1452,26 +1841,35 @@
     function updatePowerupTraySlots() {
       const defenseSlot = document.getElementById("defenseSlot");
       const charmsSlot = document.getElementById("charmsSlot");
-      if(defenseBoostActive){
-        defenseSlot.classList.remove("dimmed");
-        const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
-        defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio*100}%, transparent ${defRatio*100}%)`;
-        defenseSlot.innerHTML = "🛡️<div class='timer'>"+Math.ceil(defenseBoostTimer)+"s</div>";
-      } else {
-        defenseSlot.classList.add("dimmed");
-        defenseSlot.style.background = "";
-        defenseSlot.innerHTML = "🛡️";
-      }
-      if(healingCharmActive){
-        charmsSlot.classList.remove("dimmed");
-        const charmRatio = healingCharmTimer / baseHealingCharmDuration;
-        charmsSlot.style.background = `linear-gradient(to top, purple ${charmRatio*100}%, transparent ${charmRatio*100}%)`;
-        charmsSlot.innerHTML = "🪬<div class='timer'>"+Math.ceil(healingCharmTimer)+"s</div>";
-      } else {
-        charmsSlot.classList.add("dimmed");
-        charmsSlot.style.background = "";
-        charmsSlot.innerHTML = "🪬";
-      }
+   if(defenseBoostActive){
+  defenseSlot.classList.remove("dimmed");
+  const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
+  defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio*100}%, transparent ${defRatio*100}%)`;
+  // Add a subtle blue glow:
+  defenseSlot.style.boxShadow = `0 0 8px 2px rgba(0, 0, 255, 0.6)`;
+  defenseSlot.innerHTML = "🛡️<div class='timer'>"+Math.ceil(defenseBoostTimer)+"s</div>";
+} else {
+  defenseSlot.classList.add("dimmed");
+  defenseSlot.style.background = "";
+  defenseSlot.style.boxShadow = "";
+  defenseSlot.innerHTML = "🛡️";
+}
+
+if(healingCharmActive){
+  charmsSlot.classList.remove("dimmed");
+  const charmRatio = healingCharmTimer / baseHealingCharmDuration;
+  charmsSlot.style.background = `linear-gradient(to top, purple ${charmRatio*100}%, transparent ${charmRatio*100}%)`;
+  // Add a subtle purple glow:
+  charmsSlot.style.boxShadow = `0 0 8px 2px rgba(128, 0, 128, 0.6)`;
+  charmsSlot.innerHTML = "🪬<div class='timer'>"+Math.ceil(healingCharmTimer)+"s</div>";
+} else {
+  charmsSlot.classList.add("dimmed");
+  charmsSlot.style.background = "";
+  charmsSlot.style.boxShadow = "";
+  charmsSlot.innerHTML = "🪬";
+}
+
+      updateRankDisplay();
     }
     
     function updatePickups() {
@@ -1481,27 +1879,29 @@
            player.position.x+player.width > pickup.position.x &&
            player.position.y < pickup.position.y+pickup.size &&
            player.position.y+player.height > pickup.position.y){
-          if(pickup instanceof BombPickup){
+          if(pickup instanceof BombPickup){showUpgradeAlert("Bomb collected!");
             bombCount++; spawnPickupEffect(pickup.position);
-          } else if(pickup instanceof SwordPickup){
+          } else if(pickup instanceof SwordPickup){showUpgradeAlert("Max-Strike collected!");
             autoStrikeTime += autoStrikeBonus;
             if(strikeRangeTiles>1){ player.strikeMeter = strikeMeterCapacity; }
             spawnPickupEffect(pickup.position);
-          } else if(pickup instanceof HealthPickup){
-            player.hp = Math.min(player.hp+20, player.maxHP);
+          } else if(pickup instanceof HealthPickup){showUpgradeAlert("Health collected!");
+            // Scale healing with player's max HP (e.g., heal 20% of max HP)
+            const healAmount = Math.floor(player.maxHP * 0.2);
+            player.hp = Math.min(player.hp + healAmount, player.maxHP);
             spawnPickupEffect(pickup.position);
-          } else if(pickup instanceof DefenseBoostPickup){
+          } else if(pickup instanceof DefenseBoostPickup){showUpgradeAlert("Shield collected!");
             defenseBoostActive = true;
             defenseBoostTimer = baseDefenseBoostDuration;
             spawnPickupEffect(pickup.position);
-          } else if(pickup instanceof HealingCharmPickup){
+          } else if(pickup instanceof HealingCharmPickup){showUpgradeAlert("Healing Charm collected!");
             healingCharmActive = true;
             healingCharmTimer = baseHealingCharmDuration;
             spawnPickupEffect(pickup.position);
           }
           pickups.splice(i,1);
         }
-      }
+      }updateInventoryDisplay();
     }
     
     function updateBaitBombs(deltaTime) {
@@ -1528,10 +1928,30 @@
         }
       }
     }
-    
+    function showUpgradeAlert(message) {
+  const alertDiv = document.createElement('div');
+  alertDiv.className = 'upgrade-alert';
+  alertDiv.textContent = message;
+  
+  // Check if the upgrade menu is visible
+  const upgradeMenu = document.getElementById("upgradeMenu");
+  const isMenuVisible = window.getComputedStyle(upgradeMenu).display !== 'none';
+  
+  // Position the alert depending on upgrade menu visibility.
+  // For example, if the menu covers the top half, show alert in the bottom half.
+  alertDiv.style.top = isMenuVisible ? "60%" : "10%";
+  
+  document.body.appendChild(alertDiv);
+  
+  // Remove the alert after 2 seconds (match the animation duration)
+  setTimeout(() => {
+    alertDiv.remove();
+  }, 2000);
+}
+
     function updateMaxStrikeTally() {
       const tallyContainer = document.querySelector('#maxStrikeSlot .tally-container');
-      const numTiles = strikeRangeTiles;
+  const numTiles = Math.min(strikeRangeTiles, 20);  // cap at 20 tiles
       let tallyHTML = "";
       let threshold = strikeMeterCapacity/strikeRangeTiles;
       for(let i=0;i<numTiles;i++){
@@ -1565,12 +1985,22 @@
       autoStrikeIndicator.textContent = autoStrikeTime > 0 ? "✅" : "❌";
       const ratio = autoStrikeTime / baseAutoStrikeTime;
       autoStrikeSlot.style.background = `linear-gradient(to top, orange ${ratio*100}%, transparent ${ratio*100}%)`;
-      
+      // Add a glow effect when auto‑strike is active
+if (autoStrikeTime > 0) {
+  autoStrikeSlot.style.boxShadow = "0 0 10px 3px rgba(255,165,0,0.8)";
+} else {
+  autoStrikeSlot.style.boxShadow = "";
+}
       const maxStrikeSlot = document.getElementById("maxStrikeSlot");
       let strikeFraction = player.strikeMeter / strikeMeterCapacity;
       maxStrikeSlot.style.background = `linear-gradient(to top, rgba(255,215,0,0.8) ${strikeFraction*100}%, transparent ${strikeFraction*100}%)`;
       updateMaxStrikeTally();
-      
+      // Add a glow effect when the strike meter is active
+if (player.strikeMeter > 0) {
+  maxStrikeSlot.style.boxShadow = "0 0 10px 3px rgba(255,215,0,0.8)";
+} else {
+  maxStrikeSlot.style.boxShadow = "";
+}
       const defenseSlot = document.getElementById("defenseSlot");
       const charmsSlot = document.getElementById("charmsSlot");
       if(defenseBoostActive){
@@ -1596,24 +2026,40 @@
       updateRankDisplay();
     }
     
-    function showUpgradeMenu() {
-      isUpgradeMenuVisible = true;
-      document.getElementById("upgradeMenu").style.display = "flex";
-      document.getElementById("pointsDisplay").textContent = Math.floor(points);
-      timeScale = 0;
-    }
-    function resumeGame() {
-      isUpgradeMenuVisible = false;
-      document.getElementById("upgradeMenu").style.display = "none";
-      enemies.length = 0;
-      bullets.length = 0;
-      pickups.length = 0;
-      baitBombs.length = 0;
-      player.respawn();
-      autoStrikeTime = baseAutoStrikeTime;
-      timeScale = 1.0;
-    }
-    
+  // Add a flag to indicate if the upgrade menu was triggered by death.
+let deathTriggeredMenu = false;
+
+// Modify showUpgradeMenu to accept a flag.
+function showUpgradeMenu(triggeredByDeath = false) {
+  deathTriggeredMenu = triggeredByDeath;
+  // Preserve the current meter values.
+  preservedAutoStrikeTime = autoStrikeTime;
+  preservedStrikeMeter = player.strikeMeter;
+  isUpgradeMenuVisible = true;
+  document.getElementById("upgradeMenu").style.display = "flex";
+  document.getElementById("pointsDisplay").textContent = Math.floor(points);
+  timeScale = 0;
+  document.getElementById("upgradeButton").style.display = "none";
+}
+
+// Update resumeGame so that resets occur only if triggered by death.
+function resumeGame() {
+  isUpgradeMenuVisible = false;
+  document.getElementById("upgradeMenu").style.display = "none";
+  
+  // Only reset game elements if the menu was triggered by death.
+  if (deathTriggeredMenu) {
+    enemies.length = 0;
+    bullets.length = 0;
+    pickups.length = 0;
+    baitBombs.length = 0;
+    player.respawn();
+    autoStrikeTime = baseAutoStrikeTime;
+  }
+  
+  timeScale = 1.0;
+  document.getElementById("upgradeButton").style.display = "block";
+}
     document.getElementById("increaseHP").addEventListener("click", ()=>{
       const cost = 50;
       if(points>=cost){
@@ -1621,6 +2067,8 @@
         player.maxHP += 20;
         player.hp += 20;
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
+ // Show the HP upgrade alert.
+    showUpgradeAlert("HP UP!");
       }
     });
     document.getElementById("increaseAutoRun").addEventListener("click", ()=>{
@@ -1631,6 +2079,8 @@
         autoStrikeTime += 10;
         autoStrikeBonus += 5;
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
+ // Show the upgrade alert.
+   showUpgradeAlert("Autostrike time increased!");
       }
     });
     document.getElementById("increaseDash").addEventListener("click", ()=>{
@@ -1639,6 +2089,7 @@
         points -= cost;
         strikeRangeTiles++;
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
+showUpgradeAlert("Strike range increased!");
       }
     });
     document.getElementById("increaseStrikeMeter").addEventListener("click", ()=>{
@@ -1647,6 +2098,7 @@
         points -= cost;
         strikeMeterCapacity += 10;
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
+showUpgradeAlert("Strike Endurance increased!");
       }
     });
     document.getElementById("increaseHealingCharmTime").addEventListener("click", ()=>{
@@ -1656,6 +2108,7 @@
         baseHealingCharmDuration += 2;
         baseHealingCharmHeal += 0.5;
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
+showUpgradeAlert("Auto-Heal increased!");
       }
     });
     document.getElementById("increaseShieldingTime").addEventListener("click", ()=>{
@@ -1665,6 +2118,7 @@
         baseDefenseBoostDuration += 2;
         baseShieldDamageReduction = Math.min(baseShieldDamageReduction+0.1,0.9);
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
+showUpgradeAlert("Shielding increased!");
       }
     });
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
@@ -1737,6 +2191,7 @@
         bullets.forEach(bullet=> bullet.update(effectiveDelta));
         updateEffects(effectiveDelta);
         updateMeleeEffects(effectiveDelta);
+        updateSwordEffects(effectiveDelta);
         updatePickups();
         updateBaitBombs(effectiveDelta);
         
@@ -1766,7 +2221,7 @@
               player.flashDamage();
               screenShakeTime = 0.2;
               screenShakeMagnitude = 5;
-              if(player.hp<=0 && !player.isDead){
+              if(player.hp<=0 && !player.isDead){updateInventoryDisplay();
                 player.isDead = true;
                 spawnBloodEffect(player.position);
                 slowMotionTimer = 1.0;
@@ -1835,10 +2290,12 @@
           if(autoStrikeTime<0) autoStrikeTime = 0;
         }
         
-        if(player.isDead && !isUpgradeMenuVisible){
-          slowMotionTimer -= deltaTime;
-          if(slowMotionTimer<=0){ showUpgradeMenu(); }
-        }
+      if(player.isDead && !isUpgradeMenuVisible){
+  slowMotionTimer -= deltaTime;
+  if(slowMotionTimer <= 0){showUpgradeAlert("YOU DIED!");
+    showUpgradeMenu(true); // Menu triggered by death.
+  }
+}
         
         updateCamera();
       }
@@ -1846,6 +2303,7 @@
       ctx.fillStyle = "#505050";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       tileMap.render(ctx, camera);
+renderSwordEffects(ctx, camera);
       enemies.forEach(enemy=> enemy.render(ctx, camera));
       pickups.forEach(pickup=> pickup.render(ctx, camera, globalTime));
       baitBombs.forEach(bomb=> bomb.render(ctx, camera, globalTime));
@@ -1879,7 +2337,30 @@
         flash.timer -= deltaTime;
         if(flash.timer<=0) spriteFlashes.splice(i,1);
       }
-      
+     
+const upgradeButton = document.getElementById("upgradeButton");
+
+// Open upgrade menu on mouse click.
+upgradeButton.addEventListener("click", function() {
+  if (!isUpgradeMenuVisible) {
+    showUpgradeMenu(false);
+    upgradeButton.style.display = "none";
+  }
+});
+
+// Also open upgrade menu when Enter or Return is pressed.
+document.addEventListener("keydown", function(e) {
+  // Check for Enter key (or keyCode 13 for compatibility)
+  if ((e.key === "Enter" || e.keyCode === 13) && !isUpgradeMenuVisible) {
+    showUpgradeMenu(false);
+    upgradeButton.style.display = "none";
+  }
+});
+
+
+
+
+
       updateExplosivesSlot();
       updateAttackSlot();
       updatePowerupTraySlots();
@@ -1889,5 +2370,13 @@
     setInterval(updateAttackSlot, 100);
     requestAnimationFrame(gameLoop);
   </script>
+  <button id="upgradeButton"><i><u><b>Player Menu</b></u></i>
+  <div class="button-content">
+    <div class="rank-info">
+      <span id="buttonRankIcon">🔰</span>
+      <span id="buttonRankText">Beginner</span>
+    </div>
+  </div>
+</button>
 </body>
 </html>
