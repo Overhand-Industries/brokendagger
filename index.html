@@ -139,14 +139,14 @@
     /* --- Section Containers --- */
     .section { display: none; }
     /* Responsive grid for upgrade/shop buttons */
-    .menu-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(144px, 1fr));
-      gap: 1rem;
-      width: 100%;
-      padding: 1rem;
-      box-sizing: border-box;
-    }
+.menu-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
     /* Enlarged buttons for easier touch interaction */
     .menu-buttons button {
       background: rgba(0,0,0,0.5);
@@ -314,6 +314,9 @@
     transform: translateX(-100%);
   }
 }
+#shopSection .menu-buttons {
+  justify-items: center;
+}
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
@@ -329,7 +332,7 @@
   <div class="menu-content">
     <h1>Player Menu</h1>
     <p>You have <span id="pointsDisplay">0</span> points.</p>
-    <p>Your Rank: <span id="rankDisplay">🔰 Beginner</span></p>
+    <p>Your Rank: <span id="menuRankDisplay">🔰 Beginner</span></p>
     <div class="tabs">
       <button id="upgradesTab" class="active">Upgrades</button>
       <button id="shopTab">Shop</button>
@@ -371,17 +374,20 @@
     <span>  Increase Shielding (Duration & Reduction) - Cost: 250</span></div></button>
         </div>
       </div>
-        <div id="shopSection" class="section">
-      <div class="menu-buttons">
-        <button id="buyBomb"><div class="marquee">
-          <div class="icon" style="font-size:3.8rem">💣</div>
-          <b><i><div class="cost" id="bombCostDisplay"></div></i></b>
-<span><div class="label">Buy a Bomb</div></span>
-          
+
+<div id="shopSection" class="section">
+  <div class="menu-buttons">
+    <button id="buyBomb">
+      <div class="marquee"><p class="icon" style="font-size:3rem">💣</p>
+       <div class="label">
+<b><i>Bomb <div class="cost" id="bombCostDisplay"></div></i></b>   </div>
+        <span>Buy a Bomb</span> </div></button>
+
+ 
+    <!-- Add additional shop buttons here as needed -->
+  </div>
 </div>
-        </button>
-      </div>
-    </div>
+
     <div id="inventorySection" class="section">
       <div class="menu-buttons" id="inventoryItems">
         <!-- Inventory items (tiles) will be injected here -->
@@ -413,8 +419,25 @@
       <div class="tray-slot" id="attackSlot">👊</div>
     </div>
   </div>
-  
-  <script>
+   <button id="upgradeButton">
+  <i><u><b>Player Menu</b></u></i>
+  <div class="button-content">
+    <div class="rank-info">
+      <span id="buttonRankDisplay">🔰 Beginner</span>
+    </div>
+  </div>
+</button>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const buyBombBtn = document.getElementById("buyBomb");
+  if (buyBombBtn) {
+    buyBombBtn.addEventListener("click", function () {
+      // Your click handler code here
+      console.log("Bomb button clicked!");
+    });
+  }
+  // All your other code...
+});
     "use strict";
     let preservedAutoStrikeTime = 0;
 let preservedStrikeMeter = 0;
@@ -436,7 +459,14 @@ let autoStrikeTime = hasReflexAmulet ? baseAutoStrikeTime : 0;
     let autoStrikeBonus = 10;
     let strikeRangeTiles = 1;
     let strikeMeterCapacity = 100;
-    
+
+  // This block uses the Page Visibility API and focus/blur events.
+let isPageActive = true;
+document.addEventListener("visibilitychange", () => {
+  isPageActive = !document.hidden;
+});
+window.addEventListener("focus", () => { isPageActive = true; });
+window.addEventListener("blur", () => { isPageActive = false; });
     // Power-up state
     let defenseBoostActive = false, defenseBoostTimer = 0;
     let healingCharmActive = false, healingCharmTimer = 0;
@@ -476,7 +506,12 @@ let autoStrikeTime = hasReflexAmulet ? baseAutoStrikeTime : 0;
         this.elapsed = 0;           // Time elapsed so far
         this.complete = false;      // Flag for completion
       }
-      
+      getCurrentPosition() {
+    const t = this.elapsed / this.duration;
+    const currentX = this.startPos.x + (this.targetPos.x - this.startPos.x) * t;
+    const currentY = this.startPos.y + (this.targetPos.y - this.startPos.y) * t;
+    return new Vector2(currentX, currentY);
+  }
       update(dt) {
         this.elapsed += dt;
         if (this.elapsed >= this.duration) {
@@ -634,11 +669,31 @@ function updateRankDisplay() {
     }
     
     function updateSwordEffects(dt) {
-      for (let i = swordEffects.length - 1; i >= 0; i--) {
-        swordEffects[i].update(dt);
-        if (swordEffects[i].complete) swordEffects.splice(i, 1);
+  for (let i = swordEffects.length - 1; i >= 0; i--) {
+    const effect = swordEffects[i];
+    effect.update(dt);
+    const effectPos = effect.getCurrentPosition();
+    // Check collision with each enemy
+    enemies.forEach(enemy => {
+      // Compute enemy center position
+      const enemyCenter = new Vector2(
+        enemy.position.x + enemy.width / 2,
+        enemy.position.y + enemy.height / 2
+      );
+      // If within collision radius (e.g., 20 pixels), damage enemy
+      if (effectPos.subtract(enemyCenter).length() < 20) {
+        // Ensure the enemy hasn't already been damaged by this effect
+        if (enemy.deathTimer === undefined) {
+          enemy.deathTimer = 0.5; // Set delay before death/damage effect
+          enemy.damageFlashTimer = 0.3;
+          enemy.damageVibrateTimer = 0.3;
+          // Optionally, add knockback or other effects here
+        }
       }
-    }
+    });
+    if (effect.complete) swordEffects.splice(i, 1);
+  }
+}
     
     function renderSwordEffects(ctx, camera) {
       for (let effect of swordEffects) {
@@ -1546,9 +1601,11 @@ triggerScreenFlash();
   if (newGridX < 0 || newGridX >= this.tileMap.width ||
       newGridY < 0 || newGridY >= this.tileMap.height) return;
   
-  // Only move if the target tile is passable
-  if (!isTilePassable(this.tileMap.tiles[newGridY][newGridX])) return;
+  // Get the target tile
+  let targetTile = this.tileMap.tiles[newGridY][newGridX];
+  if (!isTilePassable(targetTile)) return;
   
+  // Set up movement properties
   this.moving = true;
   this.moveTime = 0;
   this.startPos = this.position;
@@ -1559,9 +1616,20 @@ triggerScreenFlash();
   this.frameTime = 0;
   this.currentFrame = 0;
   
-  // Set base movement duration and adjust for mountain tiles
-  const baseMoveDuration = 0.2; // or your preferred base duration
-  let speedMultiplier = (this.tileMap.tiles[newGridY][newGridX].tileType === 3) ? 2 : 1;
+  // Define a base move duration (for example, 0.2 seconds) and apply multipliers
+  // Adjust multipliers as needed:
+  const baseMoveDuration = 0.2;
+  let speedMultiplier;
+  if (targetTile.tileType === 3) {       // mountain: very slow
+    speedMultiplier = 2;
+  } else if (targetTile.tileType === 1) {  // water: even slower
+    speedMultiplier = 3;
+  } else if (targetTile.tileType === 2) {  // sand: slower for enemy than player
+    speedMultiplier = 1.5;
+  } else {                               // normal (grass)
+    speedMultiplier = 1;
+  }
+  
   this.moveDuration = baseMoveDuration * speedMultiplier;
 }
       shoot() {
@@ -1968,27 +2036,43 @@ if(healingCharmActive){
         }
       }
     }
-    function showUpgradeAlert(message) {
+let alertToggle = false;
+
+function showUpgradeAlert(message) {
+  // Create the alert element.
   const alertDiv = document.createElement('div');
   alertDiv.className = 'upgrade-alert';
   alertDiv.textContent = message;
-  
-  // Check if the upgrade menu is visible
-  const upgradeMenu = document.getElementById("upgradeMenu");
-  const isMenuVisible = window.getComputedStyle(upgradeMenu).display !== 'none';
-  
-  // Position the alert depending on upgrade menu visibility.
-  // For example, if the menu covers the top half, show alert in the bottom half.
-  alertDiv.style.top = isMenuVisible ? "60%" : "10%";
-  
+
+  // Temporarily position the alert off-screen so we can measure it.
+  alertDiv.style.position = "fixed";
+  alertDiv.style.top = "-9999px";
+  alertDiv.style.left = "-9999px";
   document.body.appendChild(alertDiv);
+
+  // Get the dimensions of the alert.
+  const alertWidth = alertDiv.offsetWidth;
+  const alertHeight = alertDiv.offsetHeight;
   
-  // Remove the alert after 2 seconds (match the animation duration)
+  // Calculate random positions that keep the alert fully within the viewport.
+  const maxLeft = window.innerWidth - alertWidth;
+  const maxTop = window.innerHeight - alertHeight;
+  const randomLeft = Math.floor(Math.random() * maxLeft);
+  const randomTop = Math.floor(Math.random() * maxTop);
+
+  // Position the alert.
+  alertDiv.style.left = `${randomLeft}px`;
+  alertDiv.style.top = `${randomTop}px`;
+
+  // Optionally, reset any other style properties if needed.
+  // For example, if you were previously using calc() in CSS,
+  // you can now set the fixed pixel values.
+
+  // Remove the alert after 2 seconds.
   setTimeout(() => {
     alertDiv.remove();
   }, 2000);
 }
-
     function updateMaxStrikeTally() {
       const tallyContainer = document.querySelector('#maxStrikeSlot .tally-container');
   const numTiles = Math.min(strikeRangeTiles, 20);  // cap at 20 tiles
@@ -2204,7 +2288,7 @@ showUpgradeAlert("Shielding increased!");
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
-      
+      if (isPageActive) {
       if(!player.isDead && !isUpgradeMenuVisible){
         player.strikeMeter = Math.max(0, player.strikeMeter - goldDecayRate * deltaTime);
       }
@@ -2339,7 +2423,7 @@ showUpgradeAlert("Shielding increased!");
         
         updateCamera();
       }
-      
+      }
       ctx.fillStyle = "#505050";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       tileMap.render(ctx, camera);
@@ -2409,14 +2493,45 @@ document.addEventListener("keydown", function(e) {
     }
     setInterval(updateAttackSlot, 100);
     requestAnimationFrame(gameLoop);
+
+    
+ // Define your playlist
+  const playlist = [
+    "Baggy.mp3",
+    "citiphex_untitled.mp3",
+    "frontiers.mp3"
+  ];
+
+  let currentTrackIndex = 0;
+  const backgroundAudio = new Audio();
+  backgroundAudio.src = playlist[currentTrackIndex];
+  backgroundAudio.volume = 0.5;
+  backgroundAudio.loop = false; // We'll handle looping manually
+
+  backgroundAudio.addEventListener("ended", () => {
+    currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+    backgroundAudio.src = playlist[currentTrackIndex];
+    backgroundAudio.play().catch(err => console.log("Play error:", err));
+  });
+
+  // Attempt to start playing on window load (may be blocked by autoplay policies)
+  window.addEventListener("load", () => {
+    backgroundAudio.play().catch(err => {
+      console.log("Auto-play was prevented. Awaiting user interaction...", err);
+    });
+  });
+
+  // Ensure music starts when the user clicks anywhere
+  window.addEventListener("click", () => {
+    if (backgroundAudio.paused) {
+      backgroundAudio.play().then(() => {
+        console.log("Music started on user click.");
+      }).catch(err => {
+        console.log("Error starting music on click:", err);
+      });
+    }
+  });
   </script>
- <button id="upgradeButton">
-  <i><u><b>Player Menu</b></u></i>
-  <div class="button-content">
-    <div class="rank-info">
-      <span id="buttonRankDisplay">🔰 Beginner</span>
-    </div>
-  </div>
-</button>
+
 </body>
 </html>
