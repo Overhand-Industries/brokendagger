@@ -495,7 +495,29 @@ window.addEventListener("blur", () => { isPageActive = false; });
         ctx.restore();
       }
     }
-    
+  // Sound effects
+const sfx = {
+  attack: new Audio("evade2.wav"),
+  dash: new Audio("sfx/dash.mp3"),
+  bombDeploy: new Audio("sfx/bomb.mp3"),
+  pickup: new Audio("sfx/pickup.mp3"),
+  enemyDie: new Audio("bloodsuck.wav"),
+  playerDie: new Audio("sfx/player_die.mp3"),
+ explosion: new Audio("explode7.wav"),
+
+  ripple: new Audio("sfx/ripple.mp3"),
+enemyAttack: new Audio("")
+
+};
+
+// Play sound function
+function playSFX(sound) {
+  if (sfx[sound]) {
+    sfx[sound].currentTime = 0; // Reset sound to start if it's already playing
+    sfx[sound].play().catch(err => console.log("SFX Play Error:", err));
+  }
+}
+ 
     // --- Sword Effect for Max Strike ---
     // This effect draws a spinning sword emoji from the player to each struck enemy.
     class SwordEffect {
@@ -1402,6 +1424,7 @@ this.moveDuration = baseMoveDuration * speedMultiplier;
         }
         let playerCenter = new Vector2(this.position.x + this.width/2, this.position.y + this.height/2);
         let strikeCenter = playerCenter.add(offset);
+        playSFX("attack");
         triggerHeadbutt();
         enemies.forEach(enemy => {
           let enemyCenter = new Vector2(enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2);
@@ -1412,7 +1435,9 @@ this.moveDuration = baseMoveDuration * speedMultiplier;
       enemy.damageFlashTimer = 0.3;
   enemy.damageVibrateTimer = 0.3;
     swordEffects.push(new SwordEffect(playerCenter, enemyCenter, 0.5));
-  }
+    playSFX("enemyDie");
+
+}
   addSpriteFlash(enemy.position);
   
   // Remove immediate explosion and kill actions.
@@ -1467,7 +1492,7 @@ this.moveDuration = baseMoveDuration * speedMultiplier;
     if (this.deathTimer !== undefined) {
       this.deathTimer -= deltaTime;
       if (this.deathTimer <= 0) {
-        spawnEnemyExplosionEffect(this.position);
+        spawnEnemyExplosionEffect(this.position);playSFX("explosion");
 triggerScreenFlash(); 
         killCount++;
         this.alive = false;
@@ -1778,8 +1803,7 @@ triggerScreenFlash();
       let knockbackDistance = Math.max(tileMap.width,tileMap.height)*50;
       let finalPos = enemy.position.add(direction.scale(knockbackDistance));
       enemy.position = finalPos;
-      spawnEnemyExplosionEffect(enemy.position);
-      killCount++;
+      spawnEnemyExplosionEffect(enemy.position);playSFX("explosion");      killCount++;
     }
     
     function performManualStrikeAt(tapX, tapY) {
@@ -2026,7 +2050,7 @@ if(healingCharmActive){
               let blastForce = blastDir.scale(200);
               enemy.knockback = enemy.knockback.add(blastForce);
               enemy.alive = false;
-              spawnEnemyExplosionEffect(enemy.position);
+              spawnEnemyExplosionEffect(enemy.position);playSFX("explosion");
               killCount++;
               triggerScreenFlash();
               addSpriteFlash(enemy.position);
