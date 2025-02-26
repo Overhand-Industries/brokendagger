@@ -2570,9 +2570,6 @@ renderSwordEffects(ctx, camera);
       enemies.forEach(enemy => {
   if (enemy.damageFlashTimer > 0) {
     let screenPos = camera.worldToScreen(enemy.position);
-    ctx.save();
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = "rgba(255, 0, 0, 1)";
     // Determine source frame based on enemy direction.
     let srcX = enemy.currentFrame * 32;
     let srcY;
@@ -2583,13 +2580,29 @@ renderSwordEffects(ctx, camera);
       case "left":  srcY = 96; break;
       default:      srcY = 0;
     }
-    // Draw the enemy sprite slightly larger to simulate an edge glow.
+    
+    // 1. Draw the red glow underneath (edge glow)
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(255, 0, 0, 1)";
+    // Draw enemy sprite slightly larger for the glow effect.
     ctx.drawImage(
       enemy.spriteSheet,
       srcX, srcY, 32, 32,
-      screenPos.x - 2, screenPos.y - 2, enemy.width + 4, enemy.height + 4
+      screenPos.x - 4, screenPos.y - 4, enemy.width + 8, enemy.height + 8
     );
     ctx.restore();
+    
+    // 2. Draw the enemy with a red tint on top.
+    let offCanvas = document.createElement("canvas");
+    offCanvas.width = enemy.width;
+    offCanvas.height = enemy.height;
+    let offCtx = offCanvas.getContext("2d");
+    offCtx.drawImage(enemy.spriteSheet, srcX, srcY, 32, 32, 0, 0, enemy.width, enemy.height);
+    offCtx.globalCompositeOperation = "source-atop";
+    offCtx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    offCtx.fillRect(0, 0, enemy.width, enemy.height);
+    ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
   }
 });
       
