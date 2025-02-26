@@ -639,7 +639,7 @@ document.getElementById("toggleBGM").addEventListener("click", function() {
       if(points >= cost) {
         points -= cost;
         bombCount++;
-        updateBombCostDisplay();showUpgradeAlert("Bomb purchased!");
+        updateBombCostDisplay(); playSFX("increase"); showUpgradeAlert("Bomb purchased!");
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
       }
     });
