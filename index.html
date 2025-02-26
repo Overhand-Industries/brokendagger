@@ -2567,12 +2567,31 @@ renderSwordEffects(ctx, camera);
       renderMeleeEffects(ctx, camera);
       player.render(ctx, camera);
       
-      if(screenFlashAlpha > 0) {
-  ctx.fillStyle = "rgba(255,0,0," + screenFlashAlpha + ")";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  screenFlashAlpha -= deltaTime * 2;
-  if (screenFlashAlpha < 0) screenFlashAlpha = 0;
-}
+      enemies.forEach(enemy => {
+  if (enemy.damageFlashTimer > 0) {
+    let screenPos = camera.worldToScreen(enemy.position);
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(255, 0, 0, 1)";
+    // Determine source frame based on enemy direction.
+    let srcX = enemy.currentFrame * 32;
+    let srcY;
+    switch(enemy.direction) {
+      case "down":  srcY = 0; break;
+      case "right": srcY = 32; break;
+      case "up":    srcY = 64; break;
+      case "left":  srcY = 96; break;
+      default:      srcY = 0;
+    }
+    // Draw the enemy sprite slightly larger to simulate an edge glow.
+    ctx.drawImage(
+      enemy.spriteSheet,
+      srcX, srcY, 32, 32,
+      screenPos.x - 2, screenPos.y - 2, enemy.width + 4, enemy.height + 4
+    );
+    ctx.restore();
+  }
+});
       
       for(let i = spriteFlashes.length - 1; i>=0; i--){
         let flash = spriteFlashes[i];
