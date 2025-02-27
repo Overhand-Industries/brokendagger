@@ -1,4 +1,4 @@
-      <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -467,13 +467,11 @@ document.addEventListener("DOMContentLoaded", () => {
     "use strict";
     let preservedAutoStrikeTime = 0;
 let preservedStrikeMeter = 0;
-let joystickActive = false;
-let joystickAngle = 225 * Math.PI / 180; // default starting angle (southwest)
-let joystickRadius = 0; // will be computed relative to player dimensions in the render function    // Constants and global state
+
+    // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
-    let keysDown = {};         // Already tracking keyboard input
-let touchDirection = null; // Will be "up", "down", "left", or "right"
+    
     let timeScale = 1.0, slowMotionTimer = 0, killCount = 0;
     let bombCount = 1, points = 0;
     let hasReflexAmulet = true; 
@@ -2269,46 +2267,10 @@ if (player.strikeMeter > 0) {
       }  
       updateRankDisplay();
     }
-function renderJoystickIndicator(ctx, player, angle) {
-  // Compute the player's center.
-  const centerX = player.position.x + player.width / 2;
-  const centerY = player.position.y + player.height / 2;
-  // Set the joystick radius (40% of player's width)
-  const radius = player.width * 0.4;
-  // Save the radius in the global variable if needed.
-  joystickRadius = radius;
-  
-  // Compute the indicator's position along the perimeter.
-  const indicatorX = centerX + radius * Math.cos(angle);
-  const indicatorY = centerY + radius * Math.sin(angle);
-  
-  ctx.save();
-  // Optionally draw the perimeter circle for debugging:
-  // ctx.beginPath();
-  // ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-  // ctx.strokeStyle = "rgba(255,255,255,0.3)";
-  // ctx.stroke();
-  
-  // Draw the dagger indicator.
-  // We'll center the emoji on the computed position.
-  ctx.font = `${player.width * 0.5}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("🗡️", indicatorX, indicatorY);
-  ctx.restore();
-}
+    
   // Add a flag to indicate if the upgrade menu was triggered by death.
 let deathTriggeredMenu = false;
-function getCardinalDirection(angle) {
-  // Convert angle to degrees between 0 and 360
-  let deg = angle * 180 / Math.PI;
-  if (deg < 0) { deg += 360; }
-  
-  if (deg >= 315 || deg < 45) return "right";
-  if (deg >= 45 && deg < 135) return "down";
-  if (deg >= 135 && deg < 225) return "left";
-  return "up";
-}
+
 // Modify showUpgradeMenu to accept a flag.
 function showUpgradeMenu(triggeredByDeath = false) {
   deathTriggeredMenu = triggeredByDeath;
@@ -2455,31 +2417,9 @@ showUpgradeAlert("Strike Endurance increased!");
       if(!player.isDead && !isUpgradeMenuVisible){
         player.strikeMeter = Math.max(0, player.strikeMeter - goldDecayRate * deltaTime);
       }
-      // ... after drawing the player sprite
-if (joystickActive) {
-  renderJoystickIndicator(ctx, player, joystickAngle);
-}      let effectiveDelta = deltaTime * timeScale;
-       // Check for continuous movement input (keyboard or touch)
-            if (!isUpgradeMenuVisible && !player.moving && !player.isDashing && joystickActive) {
-  let direction = getCardinalDirection(joystickAngle);
-  player.move(direction);
-}
-  if (!isUpgradeMenuVisible && !player.moving && !player.isDashing) {
-    // Priority: keyboard keys, then touch if no key is pressed.
-    if (keysDown["KeyW"] || keysDown["ArrowUp"]) {
-      player.move("up");
-    } else if (keysDown["KeyS"] || keysDown["ArrowDown"]) {
-      player.move("down");
-    } else if (keysDown["KeyA"] || keysDown["ArrowLeft"]) {
-      player.move("left");
-    } else if (keysDown["KeyD"] || keysDown["ArrowRight"]) {
-      player.move("right");
-    } else if (touchDirection) {
-      player.move(touchDirection);
-    }
-  }
-  
-  
+      
+      let effectiveDelta = deltaTime * timeScale;
+      
       if(!player.isDead && !isUpgradeMenuVisible) { points += effectiveDelta * 10; }
       
       if(defenseBoostActive){
@@ -2703,61 +2643,7 @@ document.addEventListener("keydown", function(e) {
     upgradeButton.style.display = "none";
   }
 });
-// Helper function to compute cardinal direction from player's center to a given touch point.
-function computeTouchDirection(touchX, touchY) {
-  // Get player center coordinates (assuming player.position is top-left)
-  const playerCenterX = player.position.x + player.width / 2;
-  const playerCenterY = player.position.y + player.height / 2;
-  
-  // Calculate the difference vector
-  const dx = touchX - playerCenterX;
-  const dy = touchY - playerCenterY;
-  
-  // Set a deadzone threshold so that very small differences won't trigger movement
-  const threshold = 10;
-  if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) {
-    return null;
-  }
-  
-  // Decide cardinal direction: choose the axis with the larger absolute difference.
-  if (Math.abs(dx) > Math.abs(dy)) {
-    return dx > 0 ? "right" : "left";
-  } else {
-    return dy > 0 ? "down" : "up";
-  }
-}
 
-// On touchstart and touchmove, update the touchDirection variable.
-canvas.addEventListener("touchstart", function(e) {
-  if (e.touches.length > 0) {
-    joystickActive = true;
-    const rect = canvas.getBoundingClientRect();
-    const touchX = e.touches[0].clientX - rect.left;
-    const touchY = e.touches[0].clientY - rect.top;
-    const centerX = player.position.x + player.width / 2;
-    const centerY = player.position.y + player.height / 2;
-    const dx = touchX - centerX;
-    const dy = touchY - centerY;
-    joystickAngle = Math.atan2(dy, dx);
-  }
-});
-
-canvas.addEventListener("touchmove", function(e) {
-  if (e.touches.length > 0) {
-    const rect = canvas.getBoundingClientRect();
-    const touchX = e.touches[0].clientX - rect.left;
-    const touchY = e.touches[0].clientY - rect.top;
-    const centerX = player.position.x + player.width / 2;
-    const centerY = player.position.y + player.height / 2;
-    const dx = touchX - centerX;
-    const dy = touchY - centerY;
-    joystickAngle = Math.atan2(dy, dx);
-  }
-});
-
-canvas.addEventListener("touchend", function(e) {
-  joystickActive = false;
-});
 
 
 
