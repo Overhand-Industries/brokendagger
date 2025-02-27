@@ -21,24 +21,45 @@
       background: #505050;
     }
     /* --- Headbutt Effect Styling --- */
-    #headbuttEffect {
-      position: absolute;
-      pointer-events: none;
-      width: 64px;
-      height: 64px;
-      background: rgba(255,255,255,0.8);
-      border-radius: 50%;
-      transform: scale(0);
-      opacity: 0;
-    }
-    #headbuttEffect.active {
-      animation: headbuttAnim 0.3s forwards;
-    }
-    @keyframes headbuttAnim {
-      0% { transform: scale(0); opacity: 1; }
-      50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
-      100% { transform: scale(0); opacity: 0; }
-    }
+     
+/* Container that will always be positioned at the player's center */
+#daggerContainer {
+  position: absolute;
+  pointer-events: none;
+   transform: translate(-50%, -50%) scaleX(-1) scaleY(-1);
+}
+
+/* Dagger element */
+#headbuttEffect {
+  font-size: 34px; /* dagger size */
+  line-height: 34px;
+  text-align: center;
+  /* Fix the hilt (top-right corner) as the pivot */
+  transform-origin: 79% 0%;
+  /* Initially hidden/scaled to zero */
+  transform: scale(0) rotate(var(--rotation, 0deg));
+  opacity: 0;
+}
+
+#headbuttEffect.active {
+  animation: headbuttAnim 0.3s forwards;
+}
+
+@keyframes headbuttAnim {
+  0% {
+    transform: scale(0) rotate(var(--rotation, 0deg));
+    opacity: 1;
+  }
+  50% {
+    /* Optionally, you can add a slight extra rotation (e.g. +30deg) for a swing effect */
+    transform: scale(1.2) rotate(calc(var(--rotation, 0deg) + 30deg));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) rotate(calc(var(--rotation, 0deg) + 60deg));
+    opacity: 0;
+  }
+}
     
   #upgradeButton {
   position: fixed;
@@ -348,7 +369,9 @@
   <canvas id="gameCanvas"></canvas>
   
   <!-- Headbutt Effect Overlay -->
-  <div id="headbuttEffect"></div>
+<div id="daggerContainer">
+  <div id="headbuttEffect">🗡️</div>
+</div>
   
   <!-- Upgrade Menu with Tabs -->
 <div id="upgradeMenu">
@@ -1514,6 +1537,7 @@ this.moveDuration = baseMoveDuration * speedMultiplier;
   let effectX = strikeCenter.x + Math.cos(angle) * 20;
   let effectY = strikeCenter.y + Math.sin(angle) * 20;
   spawnMeleeEffect(effectX, effectY, angle);
+updateDaggerContainerAt(effectX, effectY);
 }
 
         });
@@ -1974,13 +1998,57 @@ return true;
     }
     
     function triggerHeadbutt() {
-      let playerScreenPos = camera.worldToScreen(player.position);
-      let headbuttDiv = document.getElementById("headbuttEffect");
-      headbuttDiv.style.left = (playerScreenPos.x+player.width/2-32)+"px";
-      headbuttDiv.style.top = (playerScreenPos.y+player.height/2-32)+"px";
-      headbuttDiv.classList.remove("active");
-      void headbuttDiv.offsetWidth;
-      headbuttDiv.classList.add("active");
+      const headbuttDiv = document.getElementById("headbuttEffect");
+  const playerScreenPos = camera.worldToScreen(player.position);
+  // Position the effect roughly at the player's center (adjust offsets as needed)
+  headbuttDiv.style.left = (playerScreenPos.x + player.width / 2 - 32) + "px";
+  headbuttDiv.style.top = (playerScreenPos.y + player.height / 2 - 32) + "px";
+
+  // Default variables
+  let rotationAngle = "0deg";
+  let flip = "none";
+  let translateX = "0px";
+  let translateY = "0px";
+
+  // Adjust values based on player direction
+  // (These values are examples; tweak them to get the swing effect you desire.)
+  switch (player.direction) {
+    case "up":
+      rotationAngle = "-90deg";
+      flip = "scaleY(-1)";  // flip vertically for a swipe upward
+      translateX = "0px";
+      translateY = "-50px"; // move upward
+      break;
+    case "down":
+      rotationAngle = "90deg";
+      flip = "none";
+      translateX = "0px";
+      translateY = "50px"; // move downward
+      break;
+    case "left":
+      rotationAngle = "180deg";
+      flip = "none";
+      translateX = "-50px"; // move left
+      translateY = "0px";
+      break;
+    case "right":
+      rotationAngle = "0deg";
+      flip = "none";
+      translateX = "50px";  // move right
+      translateY = "0px";
+      break;
+  }
+
+  // Set the CSS variables for the animation
+  headbuttDiv.style.setProperty("--rotation", rotationAngle);
+  headbuttDiv.style.setProperty("--flip", flip);
+  headbuttDiv.style.setProperty("--translateX", translateX);
+  headbuttDiv.style.setProperty("--translateY", translateY);
+
+  // Restart the animation
+  headbuttDiv.classList.remove("active");
+  void headbuttDiv.offsetWidth; // force reflow to restart the animation
+  headbuttDiv.classList.add("active");
       let playerBox = { x: playerScreenPos.x, y: playerScreenPos.y, width: player.width, height: player.height };
       enemies.forEach(enemy=>{    let enemyScreenPos = camera.worldToScreen(enemy.position);
         let enemyBox = { x: enemyScreenPos.x, y: enemyScreenPos.y, width: enemy.width, height: enemy.height };
@@ -1993,6 +2061,48 @@ return true;
         }
       });
     }
+function updateDaggerOrientationFromPlayer() {
+  const container = document.getElementById('daggerContainer');
+  const dagger = document.getElementById('headbuttEffect');
+  
+  // Convert player's world position (assumed to be the center) to screen coordinates
+  const playerScreenPos = camera.worldToScreen(player.position);
+  
+  // Set container position to that value (no extra offset)
+  container.style.left = playerScreenPos.x + 'px';
+  container.style.top  = playerScreenPos.y + 'px';
+  
+  // Set rotation based on player's direction
+  let rotationDeg = 0;
+switch (player.direction) {
+  case "up":    rotationDeg = 0; break;
+  case "right": rotationDeg = 90; break;
+  case "down":  rotationDeg = 180; break;
+  case "left":  rotationDeg = 270; break;
+  default:      rotationDeg = 0;
+}
+  dagger.style.setProperty("--rotation", rotationDeg + "deg");
+  
+  // Restart the animation
+  dagger.classList.remove("active");
+  void dagger.offsetWidth; // force reflow to restart animation
+  dagger.classList.add("active");
+}
+function updateDaggerContainerAt(x, y) {
+  const container = document.getElementById('daggerContainer');
+  // Convert the world coordinates (x, y) to screen coordinates.
+  const screenPos = camera.worldToScreen(new Vector2(x, y));
+  // Position the container so that its center is at the screen position.
+  container.style.left = screenPos.x + 'px';
+  container.style.top = screenPos.y + 'px';
+}
+function updateDaggerContainerPosition() {
+  const container = document.getElementById('daggerContainer');
+  const playerScreenPos = camera.worldToScreen(new Vector2(player.position.x, player.position.y));
+  // With transform: translate(-50%, -50%) in CSS, these coordinates will become the center of the container.
+  container.style.left = (playerScreenPos.x + player.width / 2) + "px";
+  container.style.top  = (playerScreenPos.y + player.height / 2) + "px";
+}
     function triggerWhiteFlash() {
   const flashDiv = document.createElement("div");
   flashDiv.style.position = "fixed";
@@ -2408,7 +2518,7 @@ document.addEventListener("keydown", function(e) {
     let lastTime = performance.now();
 
    //GAME LOOP
-    function gameLoop() {
+    function gameLoop() {updateDaggerContainerPosition();
       let currentTime = performance.now();
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
