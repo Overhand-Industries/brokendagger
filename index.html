@@ -2559,7 +2559,7 @@ if ("ontouchstart" in window) {
     // Define grid offsets for each control (5 tiles away).
     const offsets = {
       "move-up":    { dx: 0,  dy: -tileOffset },
-      "move-right": { dx: tileOffset, dy: 1 },
+      "move-right": { dx: tileOffset + 1, dy: 0 },
       "move-down":  { dx: 0,  dy: tileOffset },
       "move-left":  { dx: -tileOffset, dy: 0 }
     };
