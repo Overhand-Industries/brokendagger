@@ -20,6 +20,46 @@
       display: block;
       background: #505050;
     }
+
+
+     /*mobilecontrol styling*/
+/* Only show mobile controls on touch-enabled devices */
+@media (pointer: coarse) {
+  #mobileControls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none; /* Allow touches to pass through to children */
+  }
+  .control-button {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: auto; /* Enable touch on buttons */
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  /* Base triangle shape: a triangle pointing up */
+  .control-button::before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px 15px 0 15px;
+    border-color: rgba(255,255,255,0.7) transparent transparent transparent;
+  }
+  /* Change opacity on touch */
+  .control-button:active {
+    opacity: 0.9;
+  }
+  /* Rotate buttons based on direction */
+  #move-up::before { transform: rotate(0deg); }
+  #move-right::before { transform: rotate(90deg); }
+  #move-down::before { transform: rotate(180deg); }
+  #move-left::before { transform: rotate(-90deg); }
+}
+
     /* --- Headbutt Effect Styling --- */
      
 /* Container that will always be positioned at the player's center */
@@ -367,8 +407,13 @@
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
-  
-  <!-- Headbutt Effect Overlay -->
+  <!-- Mobile directional controls overlay (only displayed on touch devices) -->
+<div id="mobileControls">
+  <div class="control-button" id="move-up"></div>
+  <div class="control-button" id="move-right"></div>
+  <div class="control-button" id="move-down"></div>
+  <div class="control-button" id="move-left"></div>
+</div>  <!-- Headbutt Effect Overlay -->
 <div id="daggerContainer">
   <div id="headbuttEffect">🗡️</div>
 </div>
@@ -2489,7 +2534,69 @@ showUpgradeAlert("Strike Endurance increased!");
       }
     });
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
-    
+    // Only initialize mobile controls if touch events are supported.
+if ("ontouchstart" in window) {
+  const mobileControls = document.getElementById("mobileControls");
+  const btnUp = document.getElementById("move-up");
+  const btnRight = document.getElementById("move-right");
+  const btnDown = document.getElementById("move-down");
+  const btnLeft = document.getElementById("move-left");
+
+  // Touch event handlers: call the same move function used by keyboard.
+  btnUp.addEventListener("touchstart", (evt) => {
+    evt.preventDefault();
+    if (!player.moving && !player.isDashing) player.move("up");
+  });
+  btnRight.addEventListener("touchstart", (evt) => {
+    evt.preventDefault();
+    if (!player.moving && !player.isDashing) player.move("right");
+  });
+  btnDown.addEventListener("touchstart", (evt) => {
+    evt.preventDefault();
+    if (!player.moving && !player.isDashing) player.move("down");
+  });
+  btnLeft.addEventListener("touchstart", (evt) => {
+    evt.preventDefault();
+    if (!player.moving && !player.isDashing) player.move("left");
+  });
+
+  // Update the positions of the mobile control buttons so they appear at the grid-adjacent tiles.
+  function updateMobileControls() {
+    // Get player's current grid coordinates.
+    const baseX = player.gridX;
+    const baseY = player.gridY;
+    // Calculate screen position of player's tile center.
+    const playerWorldPos = tileMap.gridToWorld(baseX, baseY);
+    const playerScreenPos = camera.worldToScreen(playerWorldPos);
+
+    // Offsets: For each direction, compute the grid neighbor position.
+    const offsets = {
+      "move-up": { x: 0, y: -1 },
+      "move-right": { x: 1, y: 0 },
+      "move-down": { x: 0, y: 1 },
+      "move-left": { x: -1, y: 0 }
+    };
+
+    for (let btnId in offsets) {
+      let gridX = baseX + offsets[btnId].x;
+      let gridY = baseY + offsets[btnId].y;
+      // Convert the grid position to world coordinates.
+      let worldPos = tileMap.gridToWorld(gridX, gridY);
+      // Convert to screen coordinates.
+      let screenPos = camera.worldToScreen(worldPos);
+      // Position the button centered on the target tile.
+      const btn = document.getElementById(btnId);
+      btn.style.left = (screenPos.x - 15) + "px"; // 15px to center (half triangle base)
+      btn.style.top = (screenPos.y - 20) + "px";  // 20px to center vertically (triangle height)
+    }
+  }
+
+  // Call updateMobileControls on each frame.
+  (function mobileControlsLoop() {
+    updateMobileControls();
+    requestAnimationFrame(mobileControlsLoop);
+  })();
+}
     // --- Added Keyboard Controls ---
 document.addEventListener("keydown", function(e) {
   if (isUpgradeMenuVisible) return;
