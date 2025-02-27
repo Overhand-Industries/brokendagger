@@ -471,7 +471,8 @@ let preservedStrikeMeter = 0;
     // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
-    
+    let keysDown = {};         // Already tracking keyboard input
+let touchDirection = null; // Will be "up", "down", "left", or "right"
     let timeScale = 1.0, slowMotionTimer = 0, killCount = 0;
     let bombCount = 1, points = 0;
     let hasReflexAmulet = true; 
@@ -2419,7 +2420,23 @@ showUpgradeAlert("Strike Endurance increased!");
       }
       
       let effectiveDelta = deltaTime * timeScale;
-      
+       // Check for continuous movement input (keyboard or touch)
+  if (!isUpgradeMenuVisible && !player.moving && !player.isDashing) {
+    // Priority: keyboard keys, then touch if no key is pressed.
+    if (keysDown["KeyW"] || keysDown["ArrowUp"]) {
+      player.move("up");
+    } else if (keysDown["KeyS"] || keysDown["ArrowDown"]) {
+      player.move("down");
+    } else if (keysDown["KeyA"] || keysDown["ArrowLeft"]) {
+      player.move("left");
+    } else if (keysDown["KeyD"] || keysDown["ArrowRight"]) {
+      player.move("right");
+    } else if (touchDirection) {
+      player.move(touchDirection);
+    }
+  }
+  
+  
       if(!player.isDead && !isUpgradeMenuVisible) { points += effectiveDelta * 10; }
       
       if(defenseBoostActive){
@@ -2643,7 +2660,55 @@ document.addEventListener("keydown", function(e) {
     upgradeButton.style.display = "none";
   }
 });
+// Helper function to compute cardinal direction from player's center to a given touch point.
+function computeTouchDirection(touchX, touchY) {
+  // Get player center coordinates (assuming player.position is top-left)
+  const playerCenterX = player.position.x + player.width / 2;
+  const playerCenterY = player.position.y + player.height / 2;
+  
+  // Calculate the difference vector
+  const dx = touchX - playerCenterX;
+  const dy = touchY - playerCenterY;
+  
+  // Set a deadzone threshold so that very small differences won't trigger movement
+  const threshold = 10;
+  if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) {
+    return null;
+  }
+  
+  // Decide cardinal direction: choose the axis with the larger absolute difference.
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return dx > 0 ? "right" : "left";
+  } else {
+    return dy > 0 ? "down" : "up";
+  }
+}
 
+// On touchstart and touchmove, update the touchDirection variable.
+canvas.addEventListener("touchstart", function(e) {
+  if (e.touches.length > 0) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+    touchDirection = computeTouchDirection(touchX, touchY);
+  }
+});
+
+canvas.addEventListener("touchmove", function(e) {
+  if (e.touches.length > 0) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+    touchDirection = computeTouchDirection(touchX, touchY);
+  }
+});
+
+// Clear the touchDirection when the touch ends.
+canvas.addEventListener("touchend", function(e) {
+  touchDirection = null;
+});
 
 
 
