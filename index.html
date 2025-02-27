@@ -2558,10 +2558,10 @@ if ("ontouchstart" in window) {
   function updateMobileControls() {
     // Define grid offsets for each control (5 tiles away).
     const offsets = {
-      "move-up":    { dx: 0,  dy: -tileOffset },
-      "move-right": { dx: tileOffset + 1, dy: 0 },
-      "move-down":  { dx: 0,  dy: tileOffset },
-      "move-left":  { dx: -tileOffset, dy: 0 }
+      "move-up":    { dx: -1,  dy: -tileOffset },
+      "move-right": { dx: tileOffset + 1, dy: 1 },
+      "move-down":  { dx: -1,  dy: tileOffset },
+      "move-left":  { dx: -tileOffset, dy: 1 }
     };
     controlIDs.forEach(id => {
       const btn = document.getElementById(id);
