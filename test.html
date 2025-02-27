@@ -26,14 +26,13 @@
 #daggerContainer {
   position: absolute;
   pointer-events: none;
-  /* Center the container at its (left, top) position */
   transform: translate(-50%, -50%);
 }
 
 /* Dagger element */
 #headbuttEffect {
-  font-size: 64px; /* dagger size */
-  line-height: 64px;
+  font-size: 32px; /* dagger size */
+  line-height: 32px;
   text-align: center;
   /* Fix the hilt (top-right corner) as the pivot */
   transform-origin: 100% 0%;
@@ -1538,6 +1537,7 @@ this.moveDuration = baseMoveDuration * speedMultiplier;
   let effectX = strikeCenter.x + Math.cos(angle) * 20;
   let effectY = strikeCenter.y + Math.sin(angle) * 20;
   spawnMeleeEffect(effectX, effectY, angle);
+updateDaggerContainerAt(effectX, effectY);
 }
 
         });
@@ -2088,13 +2088,21 @@ function updateDaggerOrientationFromPlayer() {
   void dagger.offsetWidth; // force reflow to restart animation
   dagger.classList.add("active");
 }
+function updateDaggerContainerAt(x, y) {
+  const container = document.getElementById('daggerContainer');
+  // Convert the world coordinates (x, y) to screen coordinates.
+  const screenPos = camera.worldToScreen(new Vector2(x, y));
+  // Position the container so that its center is at the screen position.
+  container.style.left = screenPos.x + 'px';
+  container.style.top = screenPos.y + 'px';
+}
 function updateDaggerContainerPosition() {
   const container = document.getElementById('daggerContainer');
   const playerScreenPos = camera.worldToScreen(new Vector2(player.position.x, player.position.y));
+  // With transform: translate(-50%, -50%) in CSS, these coordinates will become the center of the container.
   container.style.left = (playerScreenPos.x + player.width / 2) + "px";
   container.style.top  = (playerScreenPos.y + player.height / 2) + "px";
 }
-
     function triggerWhiteFlash() {
   const flashDiv = document.createElement("div");
   flashDiv.style.position = "fixed";
@@ -2510,7 +2518,7 @@ document.addEventListener("keydown", function(e) {
     let lastTime = performance.now();
 
    //GAME LOOP
-    function gameLoop() {
+    function gameLoop() {updateDaggerContainerPosition();
       let currentTime = performance.now();
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
