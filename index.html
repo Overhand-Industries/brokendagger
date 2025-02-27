@@ -29,33 +29,26 @@
     position: absolute;
     top: 0;
     left: 0;
-    pointer-events: none; /* Allow the children to receive touch events */
-    z-index: 50; /* Behind your HUD/buttons if needed */
+    pointer-events: none; /* allow children to receive touches */
+    z-index: 50;
   }
   .control-button {
     position: absolute;
     pointer-events: auto;
+    width: 64px;    /* same as tileMap.tileWidth */
+    height: 32px;   /* same as tileMap.tileHeight */
+    background: rgba(255,255,255,0.7);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    /* Default no rotation (for "up") */
+    transform: rotate(0deg);
     opacity: 0.5;
     transition: opacity 0.2s;
-    /* No intrinsic width/height since we’re using border–based triangles */
-    width: 0;
-    height: 0;
   }
-  .control-button::before {
-    content: "";
-    display: block;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    /* Adjust these values as needed; here the triangle will roughly fit within a tile (tileMap.tileWidth ~64px) */
-    border-width: 20px 15px 0 15px;
-    border-color: rgba(255,255,255,0.7) transparent transparent transparent;
-  }
-  /* Rotate each triangle so that its “point” indicates the direction */
-  #move-up::before    { transform: rotate(0deg); }
-  #move-right::before { transform: rotate(90deg); }
-  #move-down::before  { transform: rotate(180deg); }
-  #move-left::before  { transform: rotate(-90deg); }
+  /* Rotate for each direction */
+  #move-right { transform: rotate(90deg); }
+  #move-down  { transform: rotate(180deg); }
+  #move-left  { transform: rotate(-90deg); }
+  
   .control-button:active {
     opacity: 0.9;
   }
@@ -2537,39 +2530,33 @@ showUpgradeAlert("Strike Endurance increased!");
     // Only initialize mobile controls if touch events are supported.
 // Only initialize mobile controls if touch events are supported.
 if ("ontouchstart" in window) {
-  const tileOffset = 5; // Offset by 5 tiles from player's grid position.
+  const tileOffset = 5; // 5 tiles away from player's grid position
   const mobileControls = document.getElementById("mobileControls");
   const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
   const movementIntervals = {};
 
-  // Set up hold-to-move for each control.
+  // Set up hold-to-move behavior for each control button.
   controlIDs.forEach(id => {
     const btn = document.getElementById(id);
-    // On touchstart, trigger movement immediately and then at a regular interval.
     btn.addEventListener("touchstart", (evt) => {
       evt.preventDefault();
       const direction = id.split("-")[1]; // e.g. "up", "right", etc.
-      // Trigger one move immediately.
+      // Immediately trigger a move if not already moving/dashing.
       if (!player.moving && !player.isDashing) player.move(direction);
-      // Then start repeating every 200ms.
+      // Then set an interval (200ms) to repeatedly call move.
       movementIntervals[id] = setInterval(() => {
         if (!player.moving && !player.isDashing) {
           player.move(direction);
         }
       }, 200);
     });
-    // Clear the interval on touchend or touchcancel.
-    btn.addEventListener("touchend", () => {
-      clearInterval(movementIntervals[id]);
-    });
-    btn.addEventListener("touchcancel", () => {
-      clearInterval(movementIntervals[id]);
-    });
+    btn.addEventListener("touchend", () => clearInterval(movementIntervals[id]));
+    btn.addEventListener("touchcancel", () => clearInterval(movementIntervals[id]));
   });
 
-  // Update the on-screen position of the mobile controls every frame.
+  // Update positions of the mobile control buttons each frame.
   function updateMobileControls() {
-    // Define grid offsets for each control (5 tiles away in grid–space).
+    // Define grid offsets for each control (5 tiles away).
     const offsets = {
       "move-up":    { dx: 0,  dy: -tileOffset },
       "move-right": { dx: tileOffset, dy: 0 },
@@ -2578,21 +2565,20 @@ if ("ontouchstart" in window) {
     };
     controlIDs.forEach(id => {
       const btn = document.getElementById(id);
-      // Calculate target grid coordinates based on player's current grid position.
+      // Calculate target grid coordinate from player's current grid position.
       let targetGridX = player.gridX + offsets[id].dx;
       let targetGridY = player.gridY + offsets[id].dy;
-      // Convert grid coordinate to world position.
+      // Convert grid coordinate to world space.
       let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
-      // Convert to screen coordinates.
+      // Convert world position to screen coordinates.
       let screenPos = camera.worldToScreen(worldPos);
-      // Position the button centered within the target tile.
-      // Adjust offsets based on your tile dimensions.
-      btn.style.left = (screenPos.x - tileMap.tileWidth / 4) + "px";
-      btn.style.top  = (screenPos.y - tileMap.tileHeight / 2) + "px";
+      // Center the button within the tile.
+      btn.style.left = (screenPos.x - btn.offsetWidth / 2) + "px";
+      btn.style.top  = (screenPos.y - btn.offsetHeight / 2) + "px";
     });
   }
 
-  // Continuously update the mobile control positions.
+  // Continuously update mobile control positions.
   (function mobileControlsLoop() {
     updateMobileControls();
     requestAnimationFrame(mobileControlsLoop);
