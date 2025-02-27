@@ -2555,28 +2555,30 @@ if ("ontouchstart" in window) {
   });
 
   // Update positions of the mobile control buttons each frame.
-  function updateMobileControls() {
-    // Define grid offsets for each control (5 tiles away).
-    const offsets = {
-      "move-up":    { dx: 0,  dy: -tileOffset },
-      "move-right": { dx: tileOffset, dy: 0 },
-      "move-down":  { dx: 0,  dy: tileOffset },
-      "move-left":  { dx: -tileOffset, dy: 0 }
-    };
-    controlIDs.forEach(id => {
-      const btn = document.getElementById(id);
-      // Calculate target grid coordinate from player's current grid position.
-      let targetGridX = player.gridX + offsets[id].dx;
-      let targetGridY = player.gridY + offsets[id].dy;
-      // Convert grid coordinate to world space.
-      let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
-      // Convert world position to screen coordinates.
-      let screenPos = camera.worldToScreen(worldPos);
-      // Center the button within the tile.
-      btn.style.left = (screenPos.x - btn.offsetWidth / 2) + "px";
-      btn.style.top  = (screenPos.y - btn.offsetHeight / 2) + "px";
-    });
-  }
+ function updateMobileControls() {
+  // Use the center of the player's tile.
+  const baseGridX = player.gridX + 0.5;
+  const baseGridY = player.gridY + 0.5;
+  // Offsets (in grid units) remain as before.
+  const offsets = {
+    "move-up":    { dx: 0,  dy: -tileOffset },
+    "move-right": { dx: tileOffset, dy: 0 },
+    "move-down":  { dx: 0,  dy: tileOffset },
+    "move-left":  { dx: -tileOffset, dy: 0 }
+  };
+  controlIDs.forEach(id => {
+    const btn = document.getElementById(id);
+    // Compute target grid coordinates from the center of the player's tile.
+    let targetGridX = baseGridX + offsets[id].dx;
+    let targetGridY = baseGridY + offsets[id].dy;
+    // Convert grid coordinate to world space and then to screen coordinates.
+    let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
+    let screenPos = camera.worldToScreen(worldPos);
+    // Center the button within the tile.
+    btn.style.left = (screenPos.x - btn.offsetWidth / 2) + "px";
+    btn.style.top  = (screenPos.y - btn.offsetHeight / 2) + "px";
+  });
+}
 
   // Continuously update mobile control positions.
   (function mobileControlsLoop() {
