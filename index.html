@@ -2561,7 +2561,7 @@ if ("ontouchstart" in window) {
       "move-up":    { dx: 2,  dy: 2-tileOffset },
       "move-right": { dx: tileOffset + 1, dy: 1 },
       "move-down":  { dx: 2,  dy: tileOffset },
-      "move-left":  { dx: 1 - tileOffset, dy: 1 }
+      "move-left":  { dx: 2 - tileOffset, dy: 1 }
     };
     controlIDs.forEach(id => {
       const btn = document.getElementById(id);
