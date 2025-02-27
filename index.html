@@ -2516,127 +2516,13 @@ document.addEventListener("keydown", function(e) {
 });
     
     let lastTime = performance.now();
-// Touch variables
-let touchStartTime = 0;
-let touchStartPos = null;
-const HOLD_THRESHOLD = 250; // milliseconds
 
-// When the touch starts, record the time and position
-canvas.addEventListener("touchstart", (evt) => {
-  evt.preventDefault();
-  const touch = evt.touches[0];
-  touchStartTime = performance.now();
-  touchStartPos = { x: touch.clientX, y: touch.clientY };
-}, { passive: false });
-
-// If the touch is held and moved, treat it as movement
-canvas.addEventListener("touchmove", (evt) => {
-  evt.preventDefault();
-  const touch = evt.touches[0];
-  const currentTime = performance.now();
-  if (currentTime - touchStartTime >= HOLD_THRESHOLD) {
-    // Calculate the player's center on screen
-    const playerScreenPos = camera.worldToScreen(player.position);
-    const playerCenter = {
-      x: playerScreenPos.x + player.width / 2,
-      y: playerScreenPos.y + player.height / 2
-    };
-    // Get current touch position
-    const currentX = touch.clientX;
-    const currentY = touch.clientY;
-    // Determine the vector from the player's center to the touch
-    const dx = currentX - playerCenter.x;
-    const dy = currentY - playerCenter.y;
-    // Pick a direction based on the dominant axis
-    let direction;
-    if (Math.abs(dx) > Math.abs(dy)) {
-      direction = dx > 0 ? "right" : "left";
-    } else {
-      direction = dy > 0 ? "down" : "up";
-    }
-    // Trigger movement if not already moving or dashing
-    if (!player.moving && !player.isDashing) {
-      player.move(direction);
-    }
-  }
-}, { passive: false });
-
-// On touchend, if the duration is short, treat as an attack tap.
-canvas.addEventListener("touchend", (evt) => {
-  evt.preventDefault();
-  const touchEndTime = performance.now();
-  // If the touch duration is less than the hold threshold, treat it as a tap
-  if (touchEndTime - touchStartTime < HOLD_THRESHOLD) {
-    // Use the initial touch coordinates (or you could use changedTouches)
-    const tapX = touchStartPos.x;
-    const tapY = touchStartPos.y;
-    // Call your existing tap handler (which in your code calls performManualStrikeAt)
-    handleTap({ clientX: tapX, clientY: tapY });
-  }
-  // Reset touch state
-  touchStartTime = 0;
-  touchStartPos = null;
-}, { passive: false });  
-
-   // Add these at the top (after canvas is defined)
-let mouseDown = false;
-let mousePos = { x: 0, y: 0 };
-
-canvas.addEventListener("mousedown", (evt) => {
-  // Start tracking mouse hold
-  mouseDown = true;
-  mousePos = { x: evt.clientX, y: evt.clientY };
-});
-
-canvas.addEventListener("mousemove", (evt) => {
-  if (mouseDown) {
-    mousePos = { x: evt.clientX, y: evt.clientY };
-  }
-});
-
-canvas.addEventListener("mouseup", (evt) => {
-  // If it was a quick tap (little movement), handle attack as before:
-  let dx = evt.clientX - mousePos.x;
-  let dy = evt.clientY - mousePos.y;
-  if (Math.sqrt(dx * dx + dy * dy) < 10) {
-    handleTap(evt);
-  }
-  mouseDown = false;
-});
    //GAME LOOP
     function gameLoop() {updateDaggerContainerPosition();
       let currentTime = performance.now();
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
-
-                         // In your gameLoop, after checking keyboard input:
-if (mouseDown && !player.moving && !player.isDashing) {
-  // Get player's center on screen
-  const playerScreenPos = camera.worldToScreen(player.position);
-  const playerCenter = {
-    x: playerScreenPos.x + player.width / 2,
-    y: playerScreenPos.y + player.height / 2
-  };
-
-  // Calculate vector from player's center to mouse position
-  const dx = mousePos.x - playerCenter.x;
-  const dy = mousePos.y - playerCenter.y;
-  const dist = Math.sqrt(dx * dx + dy * dy);
-  
-  const moveThreshold = 20; // Only move if the mouse is at least 20px away from center
-  
-  if (dist > moveThreshold) {
-    // Determine direction based on which axis is larger
-    let direction;
-    if (Math.abs(dx) > Math.abs(dy)) {
-      direction = dx > 0 ? "right" : "left";
-    } else {
-      direction = dy > 0 ? "down" : "up";
-    }
-    player.move(direction);
-  }
-}
 if (!player.moving && !player.isDashing) {
   if (keysPressed['ArrowUp'] || keysPressed['KeyW']) {
     player.move("up");
