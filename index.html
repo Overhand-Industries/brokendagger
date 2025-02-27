@@ -1965,6 +1965,31 @@ return true;
       return a.x < b.x+b.width && a.x+a.width > b.x &&
              a.y < b.y+b.height && a.y+a.height > b.y;
     }
+   let touchDirection = null;
+
+canvas.addEventListener("touchstart", function(e) {
+  if (e.touches.length > 0) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+    touchDirection = computeJoystickDirection(touchX, touchY);
+  }
+});
+
+canvas.addEventListener("touchmove", function(e) {
+  if (e.touches.length > 0) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+    touchDirection = computeJoystickDirection(touchX, touchY);
+  }
+});
+
+canvas.addEventListener("touchend", function(e) {
+  touchDirection = null;
+});
     
     function triggerHeadbutt() {
       let playerScreenPos = camera.worldToScreen(player.position);
@@ -2420,9 +2445,10 @@ showUpgradeAlert("Strike Endurance increased!");
       }
       
       let effectiveDelta = deltaTime * timeScale;
-       // Check for continuous movement input (keyboard or touch)
+         // (Other update functions: XP, points, enemy updates, etc.)
+  
+  // Check for continuous movement input if the player is idle.
   if (!isUpgradeMenuVisible && !player.moving && !player.isDashing) {
-    // Priority: keyboard keys, then touch if no key is pressed.
     if (keysDown["KeyW"] || keysDown["ArrowUp"]) {
       player.move("up");
     } else if (keysDown["KeyS"] || keysDown["ArrowDown"]) {
@@ -2435,6 +2461,8 @@ showUpgradeAlert("Strike Endurance increased!");
       player.move(touchDirection);
     }
   }
+  
+  
   
   
       if(!player.isDead && !isUpgradeMenuVisible) { points += effectiveDelta * 10; }
