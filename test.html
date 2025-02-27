@@ -451,6 +451,7 @@
     <div class="rank-info">
       <span id="buttonRankDisplay">🔰 Beginner</span>
     </div>
+    <div id="xpMeter" style="font-size:1.2rem; color:#ff0; margin-top:5px;">XP: 0</div>
   </div>
 </button>
 <script>
@@ -471,7 +472,7 @@ let preservedStrikeMeter = 0;
     // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
-    
+    let xp = 0;
     let timeScale = 1.0, slowMotionTimer = 0, killCount = 0;
     let bombCount = 1, points = 0;
     let hasReflexAmulet = true; 
@@ -562,6 +563,17 @@ function playSFX(sound, cooldown = 100) {
     const audio = sfx[sound].cloneNode();
     audio.volume = 1.0;
     audio.play().catch(err => console.warn(`SFX Error: ${err}`));
+  }
+}
+   function updateXPMeter(deltaTime) {
+  // Increase XP by (deltaTime × killCount).
+  // This means if no kills have been made, XP remains 0.
+  xp += deltaTime * killCount;
+  
+  // Update the XP meter element on the player menu button
+  const xpMeter = document.getElementById("xpMeter");
+  if (xpMeter) {
+    xpMeter.textContent = "XP: " + Math.floor(xp);
   }
 }
     // --- Sword Effect for Max Strike ---
@@ -2418,6 +2430,13 @@ function resumeGame() {
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
+       
+  let effectiveDelta = deltaTime * timeScale;
+  
+  // Update XP each frame
+  updateXPMeter(effectiveDelta);
+  
+  
       if (isPageActive) {
       if(!player.isDead && !isUpgradeMenuVisible){
         player.strikeMeter = Math.max(0, player.strikeMeter - goldDecayRate * deltaTime);
