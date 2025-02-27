@@ -485,8 +485,16 @@ let autoStrikeTime = hasReflexAmulet ? baseAutoStrikeTime : 0;
     let autoStrikeBonus = 10;
     let strikeRangeTiles = 1;
     let strikeMeterCapacity = 100;
-
-  // This block uses the Page Visibility API and focus/blur events.
+const keysPressed = {
+  ArrowUp: false,
+  ArrowDown: false,
+  ArrowLeft: false,
+  ArrowRight: false,
+  KeyW: false,
+  KeyA: false,
+  KeyS: false,
+  KeyD: false
+};  // This block uses the Page Visibility API and focus/blur events.
 let isPageActive = true;
 document.addEventListener("visibilitychange", () => {
   isPageActive = !document.hidden;
@@ -2373,46 +2381,49 @@ showUpgradeAlert("Strike Endurance increased!");
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
     
     // --- Added Keyboard Controls ---
-    document.addEventListener("keydown", function(e) {
-      if (isUpgradeMenuVisible || e.repeat) return;
-      switch(e.code) {
-        case "KeyW":
-        case "ArrowUp":
-          if(!player.moving && !player.isDashing) player.move("up");
-          break;
-        case "KeyA":
-        case "ArrowLeft":
-          if(!player.moving && !player.isDashing) player.move("left");
-          break;
-        case "KeyS":
-        case "ArrowDown":
-          if(!player.moving && !player.isDashing) player.move("down");
-          break;
-        case "KeyD":
-        case "ArrowRight":
-          if(!player.moving && !player.isDashing) player.move("right");
-          break;
-        case "Space":
-          e.preventDefault();
-          if(!player.moving && !player.isDashing) player.strike(player.direction);
-          break;
-        case "KeyB":
-          e.preventDefault();
-          if(!player.moving && !player.isDashing) deployBomb();
-          break;
-        case "KeyM":
-          e.preventDefault();
-          if(!player.moving && !player.isDashing) executeDashAttack();
-          break;
-      }
-    });
+document.addEventListener("keydown", function(e) {
+  if (isUpgradeMenuVisible) return;
+  // For movement keys, update state
+  if (keysPressed.hasOwnProperty(e.code)) {
+    keysPressed[e.code] = true;
+  }
+  // For other keys, you can still trigger immediate actions
+  if (e.code === "Space") {
+    e.preventDefault();
+    if(!player.moving && !player.isDashing) player.strike(player.direction);
+  } else if (e.code === "KeyB") {
+    e.preventDefault();
+    if(!player.moving && !player.isDashing) deployBomb();
+  } else if (e.code === "KeyM") {
+    e.preventDefault();
+    if(!player.moving && !player.isDashing) executeDashAttack();
+  }
+});
+   document.addEventListener("keyup", function(e) {
+  if (keysPressed.hasOwnProperty(e.code)) {
+    keysPressed[e.code] = false;
+  }
+});
     
     let lastTime = performance.now();
+
+   //GAME LOOP
     function gameLoop() {
       let currentTime = performance.now();
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
+if (!player.moving && !player.isDashing) {
+  if (keysPressed['ArrowUp'] || keysPressed['KeyW']) {
+    player.move("up");
+  } else if (keysPressed['ArrowDown'] || keysPressed['KeyS']) {
+    player.move("down");
+  } else if (keysPressed['ArrowLeft'] || keysPressed['KeyA']) {
+    player.move("left");
+  } else if (keysPressed['ArrowRight'] || keysPressed['KeyD']) {
+    player.move("right");
+  }
+}       
       if (isPageActive) {
       if(!player.isDead && !isUpgradeMenuVisible){
         player.strikeMeter = Math.max(0, player.strikeMeter - goldDecayRate * deltaTime);
