@@ -467,8 +467,9 @@ document.addEventListener("DOMContentLoaded", () => {
     "use strict";
     let preservedAutoStrikeTime = 0;
 let preservedStrikeMeter = 0;
-
-    // Constants and global state
+let joystickActive = false;
+let joystickAngle = 225 * Math.PI / 180; // default starting angle (southwest)
+let joystickRadius = 0; // will be computed relative to player dimensions in the render function    // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
     let keysDown = {};         // Already tracking keyboard input
@@ -2268,10 +2269,46 @@ if (player.strikeMeter > 0) {
       }  
       updateRankDisplay();
     }
-    
+function renderJoystickIndicator(ctx, player, angle) {
+  // Compute the player's center.
+  const centerX = player.position.x + player.width / 2;
+  const centerY = player.position.y + player.height / 2;
+  // Set the joystick radius (40% of player's width)
+  const radius = player.width * 0.4;
+  // Save the radius in the global variable if needed.
+  joystickRadius = radius;
+  
+  // Compute the indicator's position along the perimeter.
+  const indicatorX = centerX + radius * Math.cos(angle);
+  const indicatorY = centerY + radius * Math.sin(angle);
+  
+  ctx.save();
+  // Optionally draw the perimeter circle for debugging:
+  // ctx.beginPath();
+  // ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  // ctx.strokeStyle = "rgba(255,255,255,0.3)";
+  // ctx.stroke();
+  
+  // Draw the dagger indicator.
+  // We'll center the emoji on the computed position.
+  ctx.font = `${player.width * 0.5}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("🗡️", indicatorX, indicatorY);
+  ctx.restore();
+}
   // Add a flag to indicate if the upgrade menu was triggered by death.
 let deathTriggeredMenu = false;
-
+function getCardinalDirection(angle) {
+  // Convert angle to degrees between 0 and 360
+  let deg = angle * 180 / Math.PI;
+  if (deg < 0) { deg += 360; }
+  
+  if (deg >= 315 || deg < 45) return "right";
+  if (deg >= 45 && deg < 135) return "down";
+  if (deg >= 135 && deg < 225) return "left";
+  return "up";
+}
 // Modify showUpgradeMenu to accept a flag.
 function showUpgradeMenu(triggeredByDeath = false) {
   deathTriggeredMenu = triggeredByDeath;
@@ -2418,9 +2455,15 @@ showUpgradeAlert("Strike Endurance increased!");
       if(!player.isDead && !isUpgradeMenuVisible){
         player.strikeMeter = Math.max(0, player.strikeMeter - goldDecayRate * deltaTime);
       }
-      
-      let effectiveDelta = deltaTime * timeScale;
+      // ... after drawing the player sprite
+if (joystickActive) {
+  renderJoystickIndicator(ctx, player, joystickAngle);
+}      let effectiveDelta = deltaTime * timeScale;
        // Check for continuous movement input (keyboard or touch)
+            if (!isUpgradeMenuVisible && !player.moving && !player.isDashing && joystickActive) {
+  let direction = getCardinalDirection(joystickAngle);
+  player.move(direction);
+}
   if (!isUpgradeMenuVisible && !player.moving && !player.isDashing) {
     // Priority: keyboard keys, then touch if no key is pressed.
     if (keysDown["KeyW"] || keysDown["ArrowUp"]) {
@@ -2687,27 +2730,33 @@ function computeTouchDirection(touchX, touchY) {
 // On touchstart and touchmove, update the touchDirection variable.
 canvas.addEventListener("touchstart", function(e) {
   if (e.touches.length > 0) {
+    joystickActive = true;
     const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    const touchX = touch.clientX - rect.left;
-    const touchY = touch.clientY - rect.top;
-    touchDirection = computeTouchDirection(touchX, touchY);
+    const touchX = e.touches[0].clientX - rect.left;
+    const touchY = e.touches[0].clientY - rect.top;
+    const centerX = player.position.x + player.width / 2;
+    const centerY = player.position.y + player.height / 2;
+    const dx = touchX - centerX;
+    const dy = touchY - centerY;
+    joystickAngle = Math.atan2(dy, dx);
   }
 });
 
 canvas.addEventListener("touchmove", function(e) {
   if (e.touches.length > 0) {
     const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    const touchX = touch.clientX - rect.left;
-    const touchY = touch.clientY - rect.top;
-    touchDirection = computeTouchDirection(touchX, touchY);
+    const touchX = e.touches[0].clientX - rect.left;
+    const touchY = e.touches[0].clientY - rect.top;
+    const centerX = player.position.x + player.width / 2;
+    const centerY = player.position.y + player.height / 2;
+    const dx = touchX - centerX;
+    const dy = touchY - centerY;
+    joystickAngle = Math.atan2(dy, dx);
   }
 });
 
-// Clear the touchDirection when the touch ends.
 canvas.addEventListener("touchend", function(e) {
-  touchDirection = null;
+  joystickActive = false;
 });
 
 
