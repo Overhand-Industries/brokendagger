@@ -73,7 +73,7 @@
   transform: scale(0) rotate(var(--rotation, 0deg));
   opacity: 0;
 }
-
+ 
 #headbuttEffect.active {
   animation: headbuttAnim 0.3s forwards;
 }
@@ -2561,7 +2561,7 @@ if ("ontouchstart" in window) {
       "move-up":    { dx: 2,  dy: 2-tileOffset },
       "move-right": { dx: tileOffset + 1, dy: 1 },
       "move-down":  { dx: 2,  dy: tileOffset },
-      "move-left":  { dx: 2 - tileOffset, dy: 1 }
+      "move-left":  { dx: 3 - tileOffset, dy: 1 }
     };
     controlIDs.forEach(id => {
       const btn = document.getElementById(id);
