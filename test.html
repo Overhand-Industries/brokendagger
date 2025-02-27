@@ -2283,7 +2283,9 @@ function showUpgradeMenu(triggeredByDeath = false) {
   timeScale = 0;
   document.getElementById("upgradeButton").style.display = "none";
 }
-
+function getUpgradeCost(baseCost) {
+  return Math.floor(baseCost * (calculateRank(killCount) + 1));
+}
 // Update resumeGame so that resets occur only if triggered by death.
 function resumeGame() {
   isUpgradeMenuVisible = false;
@@ -2302,74 +2304,77 @@ function resumeGame() {
   timeScale = 1.0;
   document.getElementById("upgradeButton").style.display = "block";
 }
-    document.getElementById("increaseHP").addEventListener("click", ()=>{
-      const cost = 50;
-      if(points>=cost){
-        points -= cost;
-        player.maxHP += 20;
-        player.hp += 20;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- // Show the HP upgrade alert.
-       playSFX("increase"); 
+    document.getElementById("increaseHP").addEventListener("click", () => {
+  const baseCost = 50;
+  const cost = getUpgradeCost(baseCost);
+  if (points >= cost) {
+    points -= cost;
+    player.maxHP += 20;
+    player.hp += 20;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
     showUpgradeAlert("HP UP!");
-      }
-    });
-    document.getElementById("increaseAutoRun").addEventListener("click", ()=>{
-      const cost = 200;
-      if(points>=cost){
-        points -= cost;
-        baseAutoStrikeTime += 10;
-        autoStrikeTime += 10;
-        autoStrikeBonus += 5;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- // Show the upgrade alert.
-        playSFX("increase"); 
-   showUpgradeAlert("Autostrike time increased!");
-      }
-    });
-    document.getElementById("increaseDash").addEventListener("click", ()=>{
-      const cost = 300;
-      if(points>=cost && strikeRangeTiles < tileMap.width){
-        points -= cost;
-        strikeRangeTiles++;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
-
-       showUpgradeAlert("Strike range increased!");
-      } playSFX("increase"); 
-    });
-    document.getElementById("increaseStrikeMeter").addEventListener("click", ()=>{
-      const cost = 150;
-      if(points>=cost){
-        points -= cost;
-        strikeMeterCapacity += 10;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- playSFX("increase"); 
-showUpgradeAlert("Strike Endurance increased!");
-      }
-    });
-    document.getElementById("increaseHealingCharmTime").addEventListener("click", ()=>{
-      const cost = 250;
-      if(points>=cost){
-        points -= cost;
-        baseHealingCharmDuration += 2;
-        baseHealingCharmHeal += 0.5;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
-
- playSFX("increase"); showUpgradeAlert("Auto-Heal increased!");
-      }
-    });
-    document.getElementById("increaseShieldingTime").addEventListener("click", ()=>{
-      const cost = 250;
-      if(points>=cost){
-        points -= cost;
-        baseDefenseBoostDuration += 2;
-        baseShieldDamageReduction = Math.min(baseShieldDamageReduction+0.1,0.9);
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
-
- playSFX("increase"); 
-       showUpgradeAlert("Shielding increased!");
-      }
-    });
+  }
+});
+    document.getElementById("increaseAutoRun").addEventListener("click", () => {
+  const baseCost = 200;
+  const cost = getUpgradeCost(baseCost);
+  if (points >= cost) {
+    points -= cost;
+    baseAutoStrikeTime += 10;
+    autoStrikeTime += 10;
+    autoStrikeBonus += 5;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Autostrike time increased!");
+  }
+});
+    document.getElementById("increaseDash").addEventListener("click", () => {
+  const baseCost = 300;
+  const cost = getUpgradeCost(baseCost);
+  if (points >= cost && strikeRangeTiles < tileMap.width) {
+    points -= cost;
+    strikeRangeTiles++;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Strike range increased!");
+  }
+});
+    document.getElementById("increaseStrikeMeter").addEventListener("click", () => {
+  const baseCost = 150;
+  const cost = getUpgradeCost(baseCost);
+  if (points >= cost) {
+    points -= cost;
+    strikeMeterCapacity += 10;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Strike Endurance increased!");
+  }
+});
+    document.getElementById("increaseHealingCharmTime").addEventListener("click", () => {
+  const baseCost = 250;
+  const cost = getUpgradeCost(baseCost);
+  if (points >= cost) {
+    points -= cost;
+    baseHealingCharmDuration += 2;
+    baseHealingCharmHeal += 0.5;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Auto-Heal increased!");
+  }
+});
+    document.getElementById("increaseShieldingTime").addEventListener("click", () => {
+  const baseCost = 250;
+  const cost = getUpgradeCost(baseCost);
+  if (points >= cost) {
+    points -= cost;
+    baseDefenseBoostDuration += 2;
+    baseShieldDamageReduction = Math.min(baseShieldDamageReduction + 0.1, 0.9);
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Shielding increased!");
+  }
+});
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
     
     // --- Added Keyboard Controls ---
