@@ -2556,32 +2556,27 @@ if ("ontouchstart" in window) {
 
   // Update positions of the mobile control buttons each frame.
   function updateMobileControls() {
-  // Define directional vectors for each control (in screen space)
-  const directions = {
-    "move-up":    { x: 0, y: -1 },
-    "move-right": { x: 1, y: 0 },
-    "move-down":  { x: 0, y: 1 },
-    "move-left":  { x: -1, y: 0 }
-  };
-  // Calculate desired distance in pixels.
-  // Adjust the multiplier as needed (e.g., tileMap.tileWidth/2 * tileOffset)
-  const distance = (tileMap.tileWidth / 2) * 5;
-
-  // Get the player's current screen position
-  let playerScreenPos = camera.worldToScreen(player.position);
-
-  controlIDs.forEach(id => {
-    const btn = document.getElementById(id);
-    // Compute the new position by adding the offset in screen space
-    let offset = directions[id];
-    let newX = playerScreenPos.x + offset.x * distance;
-    let newY = playerScreenPos.y + offset.y * distance;
-
-    // Center the button
-    btn.style.left = (newX - btn.offsetWidth / 2) + "px";
-    btn.style.top  = (newY - btn.offsetHeight / 2) + "px";
-  });
-}
+    // Define grid offsets for each control (5 tiles away).
+    const offsets = {
+      "move-up":    { dx: 0,  dy: -tileOffset },
+      "move-right": { dx: tileOffset, dy: 0 },
+      "move-down":  { dx: 0,  dy: tileOffset },
+      "move-left":  { dx: -tileOffset, dy: 0 }
+    };
+    controlIDs.forEach(id => {
+      const btn = document.getElementById(id);
+      // Calculate target grid coordinate from player's current grid position.
+      let targetGridX = player.gridX + offsets[id].dx;
+      let targetGridY = player.gridY + offsets[id].dy;
+      // Convert grid coordinate to world space.
+      let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
+      // Convert world position to screen coordinates.
+      let screenPos = camera.worldToScreen(worldPos);
+      // Center the button within the tile.
+      btn.style.left = (screenPos.x - btn.offsetWidth / 2) + "px";
+      btn.style.top  = (screenPos.y - btn.offsetHeight / 2) + "px";
+    });
+  }
 
   // Continuously update mobile control positions.
   (function mobileControlsLoop() {
