@@ -21,24 +21,45 @@
       background: #505050;
     }
     /* --- Headbutt Effect Styling --- */
-    #headbuttEffect {
-      position: absolute;
-      pointer-events: none;
-      width: 64px;
-      height: 64px;
-      background: rgba(255,255,255,0.8);
-      border-radius: 50%;
-      transform: scale(0);
-      opacity: 0;
-    }
-    #headbuttEffect.active {
-      animation: headbuttAnim 0.3s forwards;
-    }
-    @keyframes headbuttAnim {
-      0% { transform: scale(0); opacity: 1; }
-      50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
-      100% { transform: scale(0); opacity: 0; }
-    }
+     
+/* Container that will always be positioned at the player's center */
+#daggerContainer {
+  position: absolute;
+  pointer-events: none;
+ 
+}
+
+/* Dagger element */
+#headbuttEffect {
+  font-size: 64px; /* dagger size */
+  line-height: 64px;
+  text-align: center;
+  /* Fix the hilt (top-right corner) as the pivot */
+  transform-origin: 100% 0%;
+  /* Initially hidden/scaled to zero */
+  transform: scale(0) rotate(var(--rotation, 0deg));
+  opacity: 0;
+}
+
+#headbuttEffect.active {
+  animation: headbuttAnim 0.3s forwards;
+}
+
+@keyframes headbuttAnim {
+  0% {
+    transform: scale(0) rotate(var(--rotation, 0deg));
+    opacity: 1;
+  }
+  50% {
+    /* Optionally, you can add a slight extra rotation (e.g. +30deg) for a swing effect */
+    transform: scale(1.2) rotate(calc(var(--rotation, 0deg) + 30deg));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) rotate(calc(var(--rotation, 0deg) + 60deg));
+    opacity: 0;
+  }
+}
     
   #upgradeButton {
   position: fixed;
@@ -348,7 +369,9 @@
   <canvas id="gameCanvas"></canvas>
   
   <!-- Headbutt Effect Overlay -->
-  <div id="headbuttEffect"></div>
+<div id="daggerContainer">
+  <div id="headbuttEffect">🗡️</div>
+</div>
   
   <!-- Upgrade Menu with Tabs -->
 <div id="upgradeMenu">
@@ -451,7 +474,6 @@
     <div class="rank-info">
       <span id="buttonRankDisplay">🔰 Beginner</span>
     </div>
-    <div id="xpMeter" style="font-size:1.2rem; color:#ff0; margin-top:5px;">XP: 0</div>
   </div>
 </button>
 <script>
@@ -472,7 +494,7 @@ let preservedStrikeMeter = 0;
     // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
-    let xp = 0;
+    
     let timeScale = 1.0, slowMotionTimer = 0, killCount = 0;
     let bombCount = 1, points = 0;
     let hasReflexAmulet = true; 
@@ -486,8 +508,16 @@ let autoStrikeTime = hasReflexAmulet ? baseAutoStrikeTime : 0;
     let autoStrikeBonus = 10;
     let strikeRangeTiles = 1;
     let strikeMeterCapacity = 100;
-
-  // This block uses the Page Visibility API and focus/blur events.
+const keysPressed = {
+  ArrowUp: false,
+  ArrowDown: false,
+  ArrowLeft: false,
+  ArrowRight: false,
+  KeyW: false,
+  KeyA: false,
+  KeyS: false,
+  KeyD: false
+};  // This block uses the Page Visibility API and focus/blur events.
 let isPageActive = true;
 document.addEventListener("visibilitychange", () => {
   isPageActive = !document.hidden;
@@ -563,17 +593,6 @@ function playSFX(sound, cooldown = 100) {
     const audio = sfx[sound].cloneNode();
     audio.volume = 1.0;
     audio.play().catch(err => console.warn(`SFX Error: ${err}`));
-  }
-}
-   function updateXPMeter(deltaTime) {
-  // Increase XP by (deltaTime × killCount).
-  // This means if no kills have been made, XP remains 0.
-  xp += deltaTime * killCount;
-  
-  // Update the XP meter element on the player menu button
-  const xpMeter = document.getElementById("xpMeter");
-  if (xpMeter) {
-    xpMeter.textContent = "XP: " + Math.floor(xp);
   }
 }
     // --- Sword Effect for Max Strike ---
@@ -1978,13 +1997,57 @@ return true;
     }
     
     function triggerHeadbutt() {
-      let playerScreenPos = camera.worldToScreen(player.position);
-      let headbuttDiv = document.getElementById("headbuttEffect");
-      headbuttDiv.style.left = (playerScreenPos.x+player.width/2-32)+"px";
-      headbuttDiv.style.top = (playerScreenPos.y+player.height/2-32)+"px";
-      headbuttDiv.classList.remove("active");
-      void headbuttDiv.offsetWidth;
-      headbuttDiv.classList.add("active");
+      const headbuttDiv = document.getElementById("headbuttEffect");
+  const playerScreenPos = camera.worldToScreen(player.position);
+  // Position the effect roughly at the player's center (adjust offsets as needed)
+  headbuttDiv.style.left = (playerScreenPos.x + player.width / 2 - 32) + "px";
+  headbuttDiv.style.top = (playerScreenPos.y + player.height / 2 - 32) + "px";
+
+  // Default variables
+  let rotationAngle = "0deg";
+  let flip = "none";
+  let translateX = "0px";
+  let translateY = "0px";
+
+  // Adjust values based on player direction
+  // (These values are examples; tweak them to get the swing effect you desire.)
+  switch (player.direction) {
+    case "up":
+      rotationAngle = "-90deg";
+      flip = "scaleY(-1)";  // flip vertically for a swipe upward
+      translateX = "0px";
+      translateY = "-50px"; // move upward
+      break;
+    case "down":
+      rotationAngle = "90deg";
+      flip = "none";
+      translateX = "0px";
+      translateY = "50px"; // move downward
+      break;
+    case "left":
+      rotationAngle = "180deg";
+      flip = "none";
+      translateX = "-50px"; // move left
+      translateY = "0px";
+      break;
+    case "right":
+      rotationAngle = "0deg";
+      flip = "none";
+      translateX = "50px";  // move right
+      translateY = "0px";
+      break;
+  }
+
+  // Set the CSS variables for the animation
+  headbuttDiv.style.setProperty("--rotation", rotationAngle);
+  headbuttDiv.style.setProperty("--flip", flip);
+  headbuttDiv.style.setProperty("--translateX", translateX);
+  headbuttDiv.style.setProperty("--translateY", translateY);
+
+  // Restart the animation
+  headbuttDiv.classList.remove("active");
+  void headbuttDiv.offsetWidth; // force reflow to restart the animation
+  headbuttDiv.classList.add("active");
       let playerBox = { x: playerScreenPos.x, y: playerScreenPos.y, width: player.width, height: player.height };
       enemies.forEach(enemy=>{    let enemyScreenPos = camera.worldToScreen(enemy.position);
         let enemyBox = { x: enemyScreenPos.x, y: enemyScreenPos.y, width: enemy.width, height: enemy.height };
@@ -1997,6 +2060,40 @@ return true;
         }
       });
     }
+function updateDaggerOrientationFromPlayer() {
+  const container = document.getElementById('daggerContainer');
+  const dagger = document.getElementById('headbuttEffect');
+  
+  // Convert player's world position (assumed to be the center) to screen coordinates
+  const playerScreenPos = camera.worldToScreen(player.position);
+  
+  // Set container position to that value (no extra offset)
+  container.style.left = playerScreenPos.x + 'px';
+  container.style.top  = playerScreenPos.y + 'px';
+  
+  // Set rotation based on player's direction
+  let rotationDeg = 0;
+  switch (player.direction) {
+    case "up":    rotationDeg = 0; break;
+    case "right": rotationDeg = 90; break;
+    case "down":  rotationDeg = 180; break;
+    case "left":  rotationDeg = 270; break;
+    default:      rotationDeg = 0;
+  }
+  dagger.style.setProperty("--rotation", rotationDeg + "deg");
+  
+  // Restart the animation
+  dagger.classList.remove("active");
+  void dagger.offsetWidth; // force reflow to restart animation
+  dagger.classList.add("active");
+}
+function updateDaggerContainerPosition() {
+  const container = document.getElementById('daggerContainer');
+  const playerScreenPos = camera.worldToScreen(new Vector2(player.position.x, player.position.y));
+  container.style.left = (playerScreenPos.x + player.width / 2) + "px";
+  container.style.top  = (playerScreenPos.y + player.height / 2) + "px";
+}
+
     function triggerWhiteFlash() {
   const flashDiv = document.createElement("div");
   flashDiv.style.position = "fixed";
@@ -2295,9 +2392,7 @@ function showUpgradeMenu(triggeredByDeath = false) {
   timeScale = 0;
   document.getElementById("upgradeButton").style.display = "none";
 }
-function getUpgradeCost(baseCost) {
-  return Math.floor(baseCost * (calculateRank(killCount) + 1));
-}
+
 // Update resumeGame so that resets occur only if triggered by death.
 function resumeGame() {
   isUpgradeMenuVisible = false;
@@ -2316,127 +2411,120 @@ function resumeGame() {
   timeScale = 1.0;
   document.getElementById("upgradeButton").style.display = "block";
 }
-    document.getElementById("increaseHP").addEventListener("click", () => {
-  const baseCost = 50;
-  const cost = getUpgradeCost(baseCost);
-  if (points >= cost) {
-    points -= cost;
-    player.maxHP += 20;
-    player.hp += 20;
-    document.getElementById("pointsDisplay").textContent = Math.floor(points);
-    playSFX("increase");
+    document.getElementById("increaseHP").addEventListener("click", ()=>{
+      const cost = 50;
+      if(points>=cost){
+        points -= cost;
+        player.maxHP += 20;
+        player.hp += 20;
+        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+ // Show the HP upgrade alert.
+       playSFX("increase"); 
     showUpgradeAlert("HP UP!");
-  }
-});
-    document.getElementById("increaseAutoRun").addEventListener("click", () => {
-  const baseCost = 200;
-  const cost = getUpgradeCost(baseCost);
-  if (points >= cost) {
-    points -= cost;
-    baseAutoStrikeTime += 10;
-    autoStrikeTime += 10;
-    autoStrikeBonus += 5;
-    document.getElementById("pointsDisplay").textContent = Math.floor(points);
-    playSFX("increase");
-    showUpgradeAlert("Autostrike time increased!");
-  }
-});
-    document.getElementById("increaseDash").addEventListener("click", () => {
-  const baseCost = 300;
-  const cost = getUpgradeCost(baseCost);
-  if (points >= cost && strikeRangeTiles < tileMap.width) {
-    points -= cost;
-    strikeRangeTiles++;
-    document.getElementById("pointsDisplay").textContent = Math.floor(points);
-    playSFX("increase");
-    showUpgradeAlert("Strike range increased!");
-  }
-});
-    document.getElementById("increaseStrikeMeter").addEventListener("click", () => {
-  const baseCost = 150;
-  const cost = getUpgradeCost(baseCost);
-  if (points >= cost) {
-    points -= cost;
-    strikeMeterCapacity += 10;
-    document.getElementById("pointsDisplay").textContent = Math.floor(points);
-    playSFX("increase");
-    showUpgradeAlert("Strike Endurance increased!");
-  }
-});
-    document.getElementById("increaseHealingCharmTime").addEventListener("click", () => {
-  const baseCost = 250;
-  const cost = getUpgradeCost(baseCost);
-  if (points >= cost) {
-    points -= cost;
-    baseHealingCharmDuration += 2;
-    baseHealingCharmHeal += 0.5;
-    document.getElementById("pointsDisplay").textContent = Math.floor(points);
-    playSFX("increase");
-    showUpgradeAlert("Auto-Heal increased!");
-  }
-});
-    document.getElementById("increaseShieldingTime").addEventListener("click", () => {
-  const baseCost = 250;
-  const cost = getUpgradeCost(baseCost);
-  if (points >= cost) {
-    points -= cost;
-    baseDefenseBoostDuration += 2;
-    baseShieldDamageReduction = Math.min(baseShieldDamageReduction + 0.1, 0.9);
-    document.getElementById("pointsDisplay").textContent = Math.floor(points);
-    playSFX("increase");
-    showUpgradeAlert("Shielding increased!");
-  }
-});
+      }
+    });
+    document.getElementById("increaseAutoRun").addEventListener("click", ()=>{
+      const cost = 200;
+      if(points>=cost){
+        points -= cost;
+        baseAutoStrikeTime += 10;
+        autoStrikeTime += 10;
+        autoStrikeBonus += 5;
+        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+ // Show the upgrade alert.
+        playSFX("increase"); 
+   showUpgradeAlert("Autostrike time increased!");
+      }
+    });
+    document.getElementById("increaseDash").addEventListener("click", ()=>{
+      const cost = 300;
+      if(points>=cost && strikeRangeTiles < tileMap.width){
+        points -= cost;
+        strikeRangeTiles++;
+        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+
+       showUpgradeAlert("Strike range increased!");
+      } playSFX("increase"); 
+    });
+    document.getElementById("increaseStrikeMeter").addEventListener("click", ()=>{
+      const cost = 150;
+      if(points>=cost){
+        points -= cost;
+        strikeMeterCapacity += 10;
+        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+ playSFX("increase"); 
+showUpgradeAlert("Strike Endurance increased!");
+      }
+    });
+    document.getElementById("increaseHealingCharmTime").addEventListener("click", ()=>{
+      const cost = 250;
+      if(points>=cost){
+        points -= cost;
+        baseHealingCharmDuration += 2;
+        baseHealingCharmHeal += 0.5;
+        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+
+ playSFX("increase"); showUpgradeAlert("Auto-Heal increased!");
+      }
+    });
+    document.getElementById("increaseShieldingTime").addEventListener("click", ()=>{
+      const cost = 250;
+      if(points>=cost){
+        points -= cost;
+        baseDefenseBoostDuration += 2;
+        baseShieldDamageReduction = Math.min(baseShieldDamageReduction+0.1,0.9);
+        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+
+ playSFX("increase"); 
+       showUpgradeAlert("Shielding increased!");
+      }
+    });
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
     
     // --- Added Keyboard Controls ---
-    document.addEventListener("keydown", function(e) {
-      if (isUpgradeMenuVisible || e.repeat) return;
-      switch(e.code) {
-        case "KeyW":
-        case "ArrowUp":
-          if(!player.moving && !player.isDashing) player.move("up");
-          break;
-        case "KeyA":
-        case "ArrowLeft":
-          if(!player.moving && !player.isDashing) player.move("left");
-          break;
-        case "KeyS":
-        case "ArrowDown":
-          if(!player.moving && !player.isDashing) player.move("down");
-          break;
-        case "KeyD":
-        case "ArrowRight":
-          if(!player.moving && !player.isDashing) player.move("right");
-          break;
-        case "Space":
-          e.preventDefault();
-          if(!player.moving && !player.isDashing) player.strike(player.direction);
-          break;
-        case "KeyB":
-          e.preventDefault();
-          if(!player.moving && !player.isDashing) deployBomb();
-          break;
-        case "KeyM":
-          e.preventDefault();
-          if(!player.moving && !player.isDashing) executeDashAttack();
-          break;
-      }
-    });
+document.addEventListener("keydown", function(e) {
+  if (isUpgradeMenuVisible) return;
+  // For movement keys, update state
+  if (keysPressed.hasOwnProperty(e.code)) {
+    keysPressed[e.code] = true;
+  }
+  // For other keys, you can still trigger immediate actions
+  if (e.code === "Space") {
+    e.preventDefault();
+    if(!player.moving && !player.isDashing) player.strike(player.direction);
+  } else if (e.code === "KeyB") {
+    e.preventDefault();
+    if(!player.moving && !player.isDashing) deployBomb();
+  } else if (e.code === "KeyM") {
+    e.preventDefault();
+    if(!player.moving && !player.isDashing) executeDashAttack();
+  }
+});
+   document.addEventListener("keyup", function(e) {
+  if (keysPressed.hasOwnProperty(e.code)) {
+    keysPressed[e.code] = false;
+  }
+});
     
     let lastTime = performance.now();
+
+   //GAME LOOP
     function gameLoop() {
       let currentTime = performance.now();
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
-       
-  let effectiveDelta = deltaTime * timeScale;
-  
-  // Update XP each frame
-  updateXPMeter(effectiveDelta);
-  
-  
+if (!player.moving && !player.isDashing) {
+  if (keysPressed['ArrowUp'] || keysPressed['KeyW']) {
+    player.move("up");
+  } else if (keysPressed['ArrowDown'] || keysPressed['KeyS']) {
+    player.move("down");
+  } else if (keysPressed['ArrowLeft'] || keysPressed['KeyA']) {
+    player.move("left");
+  } else if (keysPressed['ArrowRight'] || keysPressed['KeyD']) {
+    player.move("right");
+  }
+}       
       if (isPageActive) {
       if(!player.isDead && !isUpgradeMenuVisible){
         player.strikeMeter = Math.max(0, player.strikeMeter - goldDecayRate * deltaTime);
