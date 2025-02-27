@@ -2490,7 +2490,7 @@ showUpgradeAlert("Strike Endurance increased!");
     });
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
     
-    // --- Added Keyboard Controls ---
+    // --- Added Keyboard Controls and mouse controls---
 document.addEventListener("keydown", function(e) {
   if (isUpgradeMenuVisible) return;
   // For movement keys, update state
@@ -2516,7 +2516,49 @@ document.addEventListener("keydown", function(e) {
 });
     
     let lastTime = performance.now();
+let touchStartX = null;
+let touchStartY = null;
 
+canvas.addEventListener("touchstart", (evt) => {
+  evt.preventDefault();
+  const touch = evt.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+});
+
+canvas.addEventListener("touchmove", (evt) => {
+  evt.preventDefault();
+  if (touchStartX === null || touchStartY === null) return;
+  
+  const touch = evt.touches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+  
+  // Determine the dominant direction:
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 20) {
+      // Move right
+      if (!player.moving && !player.isDashing) player.move("right");
+    } else if (dx < -20) {
+      // Move left
+      if (!player.moving && !player.isDashing) player.move("left");
+    }
+  } else {
+    if (dy > 20) {
+      // Move down
+      if (!player.moving && !player.isDashing) player.move("down");
+    } else if (dy < -20) {
+      // Move up
+      if (!player.moving && !player.isDashing) player.move("up");
+    }
+  }
+});
+
+canvas.addEventListener("touchend", (evt) => {
+  evt.preventDefault();
+  touchStartX = null;
+  touchStartY = null;
+});
    //GAME LOOP
     function gameLoop() {updateDaggerContainerPosition();
       let currentTime = performance.now();
