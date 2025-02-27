@@ -29,28 +29,25 @@
     position: absolute;
     top: 0;
     left: 0;
-    pointer-events: none;
+    pointer-events: none; /* allow children to receive touches */
     z-index: 50;
   }
   .control-button {
     position: absolute;
     pointer-events: auto;
-    width: 64px;    /* matches tile width */
-    height: 32px;   /* matches tile height */
+    width: 64px;    /* same as tileMap.tileWidth */
+    height: 32px;   /* same as tileMap.tileHeight */
     background: rgba(255,255,255,0.7);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    /* Default no rotation (for "up") */
+    transform: rotate(0deg);
     opacity: 0.5;
     transition: opacity 0.2s;
   }
-  /* Adjust rotations to align with the isometric grid:
-     - "move-up" points upward (–27°)
-     - "move-right" (bottom right) points at 27°
-     - "move-down" points at 153°
-     - "move-left" (top left) points at –153° */
-  #move-up    { transform: rotate(-27deg); }
-  #move-right { transform: rotate(27deg); }
-  #move-down  { transform: rotate(153deg); }
-  #move-left  { transform: rotate(-153deg); }
+  /* Rotate for each direction */
+  #move-right { transform: rotate(90deg); }
+  #move-down  { transform: rotate(0deg); }
+  #move-left  { transform: rotate(90deg); }
   
   .control-button:active {
     opacity: 0.9;
