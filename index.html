@@ -514,6 +514,12 @@
     </div>
   </div>
 </button>
+   <div id="deathOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:red; opacity:0; z-index:12000; transition: opacity 0.5s;">
+  <div id="deathOptions" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+    <button id="respawnBtn" style="font-size:2rem; margin:0.5rem; padding:0.5rem 1rem;">Respawn</button>
+    <button id="viewMenuBtn" style="font-size:2rem; margin:0.5rem; padding:0.5rem 1rem;">View Menu</button>
+  </div>
+</div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const buyBombBtn = document.getElementById("buyBomb");
@@ -633,6 +639,48 @@ function playSFX(sound, cooldown = 100) {
     audio.play().catch(err => console.warn(`SFX Error: ${err}`));
   }
 }
+
+
+   //death 
+function showDeathOverlay() {
+  const overlay = document.getElementById("deathOverlay");
+  overlay.style.display = "block";
+  // Force a reflow then fade in
+  void overlay.offsetWidth;
+  overlay.style.opacity = "0.8"; // Adjust brightness if needed
+}
+
+function hideDeathOverlay() {
+  const overlay = document.getElementById("deathOverlay");
+  overlay.style.opacity = "0";
+  setTimeout(() => { overlay.style.display = "none"; }, 500);
+}
+
+// Set up the button event listeners once (after DOMContentLoaded)
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("respawnBtn").addEventListener("click", () => {
+    // Directly respawn the player without showing the menu.
+    hideDeathOverlay();
+    // Reset necessary game state for a respawn.
+    enemies.length = 0;
+    bullets.length = 0;
+    pickups.length = 0;
+    baitBombs.length = 0;
+    player.respawn();
+    autoStrikeTime = baseAutoStrikeTime;
+    timeScale = 1.0;
+    // Optionally, hide the upgrade menu if visible.
+    document.getElementById("upgradeMenu").style.display = "none";
+    document.getElementById("upgradeButton").style.display = "block";
+  });
+  
+  document.getElementById("viewMenuBtn").addEventListener("click", () => {
+    hideDeathOverlay();
+    // Then show the upgrade menu (triggered by death).
+    showUpgradeMenu(true);
+  });
+});
+
     // --- Sword Effect for Max Strike ---
     // This effect draws a spinning sword emoji from the player to each struck enemy.
     class SwordEffect {
@@ -2762,8 +2810,8 @@ playSFX("playerDie");
 
   slowMotionTimer -= deltaTime;
   if(slowMotionTimer <= 0){
-showUpgradeAlert("YOU DIED!");
-    showUpgradeMenu(true); // Menu triggered by death.
+showUpgradeAlert("YOU DIED!"); showDeathOverlay();
+    // Menu showUpgradeMenu(true); triggered by death.
   }
 }
         
