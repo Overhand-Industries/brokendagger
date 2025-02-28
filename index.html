@@ -21,8 +21,24 @@
       background: #505050;
     }
 
+     /* Style for death overlay buttons */
+#deathOverlay button {
+  font-size: 2rem;
+  padding: 1rem 2rem;
+  margin: 0.5rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #ffffff;           /* White background for clarity */
+  color: #c0392b;               /* A bold red tone */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s, background 0.2s;
+}
 
-     /*mobilecontrol styling*/
+#deathOverlay button:hover {
+  transform: scale(1.05);
+  background: #ffe6e6;
+}
 /* Mobile controls: only show on touch devices */
 @media (pointer: coarse) {
   #mobileControls {
