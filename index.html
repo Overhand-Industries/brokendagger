@@ -596,7 +596,28 @@ window.addEventListener("blur", () => { isPageActive = false; });
         ctx.restore();
       }
     }
-   
+   // Base cooldown times (in seconds) for each upgrade
+const baseUpgradeCooldowns = {
+  increaseHP: 30,
+  increaseAutoRun: 20,
+  increaseDash: 45,            // Strike Range upgrade takes longest
+  increaseStrikeMeter: 25,
+  increaseHealingCharmTime: 25,
+  increaseShieldingTime: 25
+};
+
+// This object will hold the current cooldown timer for each upgrade button.
+let upgradeTimers = {
+  increaseHP: 0,
+  increaseAutoRun: 0,
+  increaseDash: 0,
+  increaseStrikeMeter: 0,
+  increaseHealingCharmTime: 0,
+  increaseShieldingTime: 0
+};
+
+// A factor that scales cooldown based on rank. (For example, 0.1 means a 10% increase per rank.)
+const cooldownScaleFactor = 0.1;
 // ✅ Preload and create sound instances
 const sfx = {
    collect: createAudio("item1.wav"), 
@@ -795,7 +816,35 @@ document.getElementById("inventoryTab").addEventListener("click", function() {
     document.getElementById("resumeGame").addEventListener("click", () => { 
   resumeGame(); 
 });
-
+function updateUpgradeButton(upgradeId) {
+  const btn = document.getElementById(upgradeId);
+  const remaining = upgradeTimers[upgradeId];
+  // Assume you add a child span (or create one) to show the timer.
+  let timerSpan = btn.querySelector(".cooldown-timer");
+  if (!timerSpan) {
+    timerSpan = document.createElement("span");
+    timerSpan.className = "cooldown-timer";
+    // Style the timer span (small yellow text, positioned top right)
+    timerSpan.style.position = "absolute";
+    timerSpan.style.top = "2px";
+    timerSpan.style.right = "2px";
+    timerSpan.style.fontSize = "0.8rem";
+    timerSpan.style.color = "yellow";
+    btn.style.position = "relative"; // ensure proper positioning
+    btn.appendChild(timerSpan);
+  }
+  
+  if (remaining > 0) {
+    // Dim the button and disable pointer events
+    btn.style.opacity = "0.5";
+    btn.style.pointerEvents = "none";
+    timerSpan.textContent = Math.ceil(remaining) + "s";
+  } else {
+    btn.style.opacity = "1";
+    btn.style.pointerEvents = "auto";
+    timerSpan.textContent = "";
+  }
+}
     // --- Ranking System Variables & Functions ---
     const rankEmojis = ["🔰", "🥉", "🥈", "🥇", "🏆", "👑", "💎", "🔥", "🚀"];
     const rankNames  = ["Beginner", "Novice", "Warrior", "Veteran", "Elite", "Master", "Champion", "Legend", "Mythic"];
@@ -2520,76 +2569,112 @@ function resumeGame() {
   timeScale = 1.0;
   document.getElementById("upgradeButton").style.display = "block";
 }
-    document.getElementById("increaseHP").addEventListener("click", ()=>{
-      const cost = 50;
-      if(points>=cost){
-        points -= cost;
-        player.maxHP += 20;
-        player.hp += 20;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- // Show the HP upgrade alert.
-       playSFX("increase"); 
+ // Increase HP Upgrade (Cost: 50; +20 HP)
+document.getElementById("increaseHP").addEventListener("click", () => {
+  if (upgradeTimers.increaseHP > 0) return; // Button is on cooldown
+  const cost = 50;
+  if (points >= cost) {
+    points -= cost;
+    player.maxHP += 20;
+    player.hp += 20;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
     showUpgradeAlert("HP UP!");
-      }
-    });
-    document.getElementById("increaseAutoRun").addEventListener("click", ()=>{
-      const cost = 200;
-      if(points>=cost){
-        points -= cost;
-        baseAutoStrikeTime += 10;
-        autoStrikeTime += 10;
-        autoStrikeBonus += 5;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- // Show the upgrade alert.
-        playSFX("increase"); 
-   showUpgradeAlert("Autostrike time increased!");
-      }
-    });
-    document.getElementById("increaseDash").addEventListener("click", ()=>{
-      const cost = 300;
-      if(points>=cost && strikeRangeTiles < tileMap.width){
-        points -= cost;
-        strikeRangeTiles++;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    upgradeTimers.increaseHP = getEffectiveCooldown("increaseHP");
+    updateUpgradeButton("increaseHP");
+  }
+});
 
-       showUpgradeAlert("Strike range increased!");
-      } playSFX("increase"); 
-    });
-    document.getElementById("increaseStrikeMeter").addEventListener("click", ()=>{
-      const cost = 150;
-      if(points>=cost){
-        points -= cost;
-        strikeMeterCapacity += 10;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- playSFX("increase"); 
-showUpgradeAlert("Strike Endurance increased!");
-      }
-    });
-    document.getElementById("increaseHealingCharmTime").addEventListener("click", ()=>{
-      const cost = 250;
-      if(points>=cost){
-        points -= cost;
-        baseHealingCharmDuration += 2;
-        baseHealingCharmHeal += 0.5;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+// Increase Auto Strike Time Upgrade (Cost: 200; +10s Auto‑Strike, + Bonus)
+document.getElementById("increaseAutoRun").addEventListener("click", () => {
+  if (upgradeTimers.increaseAutoRun > 0) return;
+  const cost = 200;
+  if (points >= cost) {
+    points -= cost;
+    baseAutoStrikeTime += 10;
+    autoStrikeTime += 10;
+    autoStrikeBonus += 5;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Autostrike time increased!");
+    upgradeTimers.increaseAutoRun = getEffectiveCooldown("increaseAutoRun");
+    updateUpgradeButton("increaseAutoRun");
+  }
+});
 
- playSFX("increase"); showUpgradeAlert("Auto-Heal increased!");
-      }
-    });
-    document.getElementById("increaseShieldingTime").addEventListener("click", ()=>{
-      const cost = 250;
-      if(points>=cost){
-        points -= cost;
-        baseDefenseBoostDuration += 2;
-        baseShieldDamageReduction = Math.min(baseShieldDamageReduction+0.1,0.9);
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+// Increase Strike Range Upgrade (Cost: 300; +1 tile to strike range)
+document.getElementById("increaseDash").addEventListener("click", () => {
+  if (upgradeTimers.increaseDash > 0) return;
+  const cost = 300;
+  // Optionally, cap the strike range to the tileMap width
+  if (points >= cost && strikeRangeTiles < tileMap.width) {
+    points -= cost;
+    strikeRangeTiles++;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Strike range increased!");
+    upgradeTimers.increaseDash = getEffectiveCooldown("increaseDash");
+    updateUpgradeButton("increaseDash");
+  }
+});
 
- playSFX("increase"); 
-       showUpgradeAlert("Shielding increased!");
-      }
-    });
+// Increase Strike Meter Capacity Upgrade (Cost: 150; +10 capacity)
+document.getElementById("increaseStrikeMeter").addEventListener("click", () => {
+  if (upgradeTimers.increaseStrikeMeter > 0) return;
+  const cost = 150;
+  if (points >= cost) {
+    points -= cost;
+    strikeMeterCapacity += 10;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Strike Endurance increased!");
+    upgradeTimers.increaseStrikeMeter = getEffectiveCooldown("increaseStrikeMeter");
+    updateUpgradeButton("increaseStrikeMeter");
+  }
+});
+
+// Increase Healing Charm Duration/Heal Upgrade (Cost: 250; +2s and +0.5 heal)
+document.getElementById("increaseHealingCharmTime").addEventListener("click", () => {
+  if (upgradeTimers.increaseHealingCharmTime > 0) return;
+  const cost = 250;
+  if (points >= cost) {
+    points -= cost;
+    baseHealingCharmDuration += 2;
+    baseHealingCharmHeal += 0.5;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Auto-Heal increased!");
+    upgradeTimers.increaseHealingCharmTime = getEffectiveCooldown("increaseHealingCharmTime");
+    updateUpgradeButton("increaseHealingCharmTime");
+  }
+});
+
+// Increase Shielding Duration/Reduction Upgrade (Cost: 250; +2s and +0.1 reduction up to 0.9)
+document.getElementById("increaseShieldingTime").addEventListener("click", () => {
+  if (upgradeTimers.increaseShieldingTime > 0) return;
+  const cost = 250;
+  if (points >= cost) {
+    points -= cost;
+    baseDefenseBoostDuration += 2;
+    baseShieldDamageReduction = Math.min(baseShieldDamageReduction + 0.1, 0.9);
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Shielding increased!");
+    upgradeTimers.increaseShieldingTime = getEffectiveCooldown("increaseShieldingTime");
+    updateUpgradeButton("increaseShieldingTime");
+  }
+});
+
+
+   
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
     // Only initialize mobile controls if touch events are supported.
+   function getEffectiveCooldown(upgradeId) {
+  // Get the player's rank from kills
+  const playerRank = calculateRank(killCount);
+  // Use the base cooldown from your baseUpgradeCooldowns object and apply the scaling factor
+  return baseUpgradeCooldowns[upgradeId] * (1 + playerRank * cooldownScaleFactor);
+}
 // Only initialize mobile controls if touch events are supported.
 if ("ontouchstart" in window) {
   const tileOffset = 5; // 5 tiles away from player's grid position
@@ -2646,6 +2731,15 @@ if ("ontouchstart" in window) {
     requestAnimationFrame(mobileControlsLoop);
   })();
 }
+   function updateUpgradeTimers(deltaTime) {
+  for (let key in upgradeTimers) {
+    if (upgradeTimers[key] > 0) {
+      upgradeTimers[key] -= deltaTime;
+      if (upgradeTimers[key] < 0) upgradeTimers[key] = 0;
+      updateUpgradeButton(key);
+    }
+  }
+}
     // --- Added Keyboard Controls ---
 document.addEventListener("keydown", function(e) {
   if (isUpgradeMenuVisible) return;
@@ -2679,6 +2773,9 @@ document.addEventListener("keydown", function(e) {
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
+updateUpgradeTimers(deltaTime);
+
+                         
 if (!player.moving && !player.isDashing) {
   if (keysPressed['ArrowUp'] || keysPressed['KeyW']) {
     player.move("up");
