@@ -2812,7 +2812,10 @@ if ("ontouchstart" in window) {
 document.addEventListener("DOMContentLoaded", () => {
   if ("ontouchstart" in window) {
   // A threshold (in pixels) for triggering the strike.
-  const strikeThreshold = 10;
+  const maxDx = tileMap.tileWidth;  // or another value that represents maximum drag distance horizontally
+const maxDy = tileMap.tileHeight; // similarly for vertical
+const fullExtent = Math.sqrt(maxDx * maxDx + maxDy * maxDy);
+const strikeThreshold = 0.7 * fullExtent; // trigger if 70% of full drag is reached
   // Define the control IDs and their associated directions.
   const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
   const controlDirections = {
