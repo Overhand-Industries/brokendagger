@@ -1631,7 +1631,7 @@ _getRowForDirection() {
   // Set the movement duration.
      
   // If the tile is a mountain (tileType 3), slow down movement further.
-const baseMoveDuration = 0.24;  // Base duration for normal tiles
+const baseMoveDuration = 0.20;  // Base duration for normal tiles
 let speedMultiplier;
 if (targetTile.tileType === 3) {       // mountain: slower
   speedMultiplier = 2;
@@ -2812,9 +2812,7 @@ if ("ontouchstart" in window) {
 document.addEventListener("DOMContentLoaded", () => {
   if ("ontouchstart" in window) {
   // A threshold (in pixels) for triggering the strike.
-  const maxDx = tileMap.tileWidth;  // or another value that represents maximum drag distance horizontally
-const maxDy = tileMap.tileHeight; // similarly for vertical
-const fullExtent = Math.sqrt(maxDx * maxDx + maxDy * maxDy);
+
 const strikeThreshold = 0.7 * fullExtent; // trigger if 70% of full drag is reached
   // Define the control IDs and their associated directions.
   const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
