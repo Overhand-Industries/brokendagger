@@ -2811,68 +2811,67 @@ if ("ontouchstart" in window) {
    // --- DRAG SLIDE CONTROLS OVER THE 3x3 D-PAD ---
 document.addEventListener("DOMContentLoaded", () => {
   if ("ontouchstart" in window) {
-    const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
-    // This threshold defines the central (neutral) area in pixels.
-    const centerThreshold = 10; // adjust as needed
+  // A threshold (in pixels) for triggering the strike.
+  const strikeThreshold = 10;
+  // Define the control IDs and their associated directions.
+  const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
+  const controlDirections = {
+    "move-up": "up",
+    "move-right": "right",
+    "move-down": "down",
+    "move-left": "left"
+  };
 
-    controlIDs.forEach(id => {
-      const btn = document.getElementById(id);
-      let startX, startY;
-      let strikeTriggered = false; // to track if strike has been triggered for this touch
+  // For each control button…
+  controlIDs.forEach(id => {
+    const btn = document.getElementById(id);
+    let startX, startY;
+    let strikeTriggered = false;
 
-      btn.addEventListener("touchstart", (evt) => {
-        const touch = evt.touches[0];
-        startX = touch.clientX;
-        startY = touch.clientY;
-        strikeTriggered = false;
-        // Immediately follow the touch
-        btn.style.transition = "none";
-      });
-
-      btn.addEventListener("touchmove", (evt) => {
-        evt.preventDefault(); // Prevent scrolling
-        const touch = evt.touches[0];
-        let dx = touch.clientX - startX;
-        let dy = touch.clientY - startY;
-
-        // Cap movement to a maximum of 2 tiles.
-        const maxDx = 2 * tileMap.tileWidth;
-        const maxDy = 2 * tileMap.tileHeight;
-        dx = Math.max(-maxDx, Math.min(dx, maxDx));
-        dy = Math.max(-maxDy, Math.min(dy, maxDy));
-
-        // Apply the translation so the control visibly follows the finger.
-        btn.style.transform = `translate(${dx}px, ${dy}px)`;
-
-        // If the control leaves the center zone (i.e. translation exceeds our threshold)...
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (!strikeTriggered && distance > centerThreshold) {
-          // Determine the dominant cardinal direction.
-          let direction;
-          if (Math.abs(dx) > Math.abs(dy)) {
-            direction = dx > 0 ? "right" : "left";
-          } else {
-            direction = dy > 0 ? "down" : "up";
-          }
-          // Trigger the strike if the player isn’t already moving/dashing.
-     if (!player.moving && !player.isDashing) {
-  // Directly trigger the headbutt animation/effect.
-  triggerHeadbutt();
-  // Optionally, play a headbutt sound:
-  playSFX("swingSword");
-}
-          strikeTriggered = true;
-        }
-      });
-
-      // On touchend/touchcancel, animate the control back to its original position.
-      const resetBtn = () => {
-        btn.style.transition = "transform 0.3s ease-out";
-        btn.style.transform = "translate(0, 0)";
-      };
-      btn.addEventListener("touchend", resetBtn);
-      btn.addEventListener("touchcancel", resetBtn);
+    btn.addEventListener("touchstart", evt => {
+      // Record initial touch position.
+      const touch = evt.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      strikeTriggered = false;
+      // Remove any transition so the button follows immediately.
+      btn.style.transition = "none";
     });
+
+    btn.addEventListener("touchmove", evt => {
+      evt.preventDefault();
+      const touch = evt.touches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      // Clamp movement to a maximum if desired:
+      const maxDx = 2 * tileMap.tileWidth;
+      const maxDy = 2 * tileMap.tileHeight;
+      const clampedDx = Math.max(-maxDx, Math.min(dx, maxDx));
+      const clampedDy = Math.max(-maxDy, Math.min(dy, maxDy));
+      
+      // Visually move the control.
+      btn.style.transform = `translate(${clampedDx}px, ${clampedDy}px)`;
+
+      // When the drag distance exceeds the threshold, trigger a strike.
+      const dragDistance = Math.sqrt(clampedDx * clampedDx + clampedDy * clampedDy);
+      if (!strikeTriggered && dragDistance > strikeThreshold) {
+        const direction = controlDirections[id];
+        if (!player.moving && !player.isDashing) {
+          player.strike(direction);
+        }
+        strikeTriggered = true;
+      }
+    });
+
+    // On touchend or cancel, animate the control back to its default position.
+    const resetControl = () => {
+      btn.style.transition = "transform 0.3s ease-out";
+      btn.style.transform = "translate(0, 0)";
+    };
+    btn.addEventListener("touchend", resetControl);
+    btn.addEventListener("touchcancel", resetControl);
+  });
 
     // Update the on-screen positions of the control grids relative to the player's center.
     function updateMobileControls() {
