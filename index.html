@@ -21,23 +21,35 @@
       background: #505050;
     }
 
-     /* Style for death overlay buttons */
-#deathOverlay button {
+/* Style for the respawn and view menu buttons */
+#deathOptions button {
+  font-family: 'Roboto', sans-serif;
   font-size: 2rem;
   padding: 1rem 2rem;
-  margin: 0.5rem;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  background: #ffffff;           /* White background for clarity */
-  color: #c0392b;               /* A bold red tone */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s, background 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-#deathOverlay button:hover {
+/* Respawn button with a vibrant gradient */
+#respawnBtn {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* View Menu button with a contrasting cool-toned gradient */
+#viewMenuBtn {
+  background: linear-gradient(135deg, #1d976c, #93f9b9);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effects for both buttons */
+#deathOptions button:hover {
   transform: scale(1.05);
-  background: #ffe6e6;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
 }
 /* Mobile controls: only show on touch devices */
 @media (pointer: coarse) {
