@@ -2855,9 +2855,12 @@ document.addEventListener("DOMContentLoaded", () => {
             direction = dy > 0 ? "down" : "up";
           }
           // Trigger the strike if the player isn’t already moving/dashing.
-          if (!player.moving && !player.isDashing) {
-            player.strike(direction);
-          }
+     if (!player.moving && !player.isDashing) {
+  // Directly trigger the headbutt animation/effect.
+  triggerHeadbutt();
+  // Optionally, play a headbutt sound:
+  playSFX("swingSword");
+}
           strikeTriggered = true;
         }
       });
