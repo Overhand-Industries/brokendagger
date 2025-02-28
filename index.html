@@ -2801,82 +2801,96 @@ if ("ontouchstart" in window) {
     btn.style.top  = (screenPos.y - (tileMap.tileHeight * 3) / 2) + "px";
   });
 }
-// DRAGGABLE D-PAD CONTROLS FOR MOBILE
+
+
+
+   // --- DRAG SLIDE CONTROLS OVER THE 3x3 D-PAD ---
 if ("ontouchstart" in window) {
-  // For each dpad control, add touchmove/drag support.
-  const dragThreshold = 10; // Minimum pixels to consider as a drag.
-  // We'll store active drag info by button ID.
-  const activeDrags = {};
+  // We'll attach the touch events to the container holding the d-pad.
+  const dpadContainer = document.getElementById("mobileControls");
 
-  // For each control button:
-  ["move-up", "move-right", "move-down", "move-left"].forEach(id => {
-    const btn = document.getElementById(id);
-    // Get initial center position of the button (set by updateMobileControls already)
-    btn.addEventListener("touchstart", (evt) => {
-      // Prevent the default hold behavior so drag can start.
-      evt.preventDefault();
-      const touch = evt.touches[0];
-      const rect = btn.getBoundingClientRect();
-      // Calculate the center of the button.
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      activeDrags[id] = {
-        center: { x: centerX, y: centerY },
-        lastDirection: null,
-        interval: setInterval(() => {
-          // If there is an active drag direction, continuously move the player.
-          if (activeDrags[id].lastDirection) {
-            // You can either call your player.move() repeatedly or update a
-            // global movement vector.
-            player.move(activeDrags[id].lastDirection);
-          }
-        }, 100) // Adjust interval as desired.
-      };
-    });
+  // Object to hold active drag state.
+  let dragState = null;
+  const dragIntervalTime = 100; // in ms, adjust for continuous move speed
 
-    btn.addEventListener("touchmove", (evt) => {
-      evt.preventDefault();
-      if (!activeDrags[id]) return;
-      const touch = evt.touches[0];
-      const currentX = touch.clientX;
-      const currentY = touch.clientY;
-      // Calculate displacement from center.
-      const dx = currentX - activeDrags[id].center.x;
-      const dy = currentY - activeDrags[id].center.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < dragThreshold) {
-        activeDrags[id].lastDirection = null;
-        return;
-      }
-      // Determine the drag angle.
-      const angle = Math.atan2(dy, dx);
-      // Convert angle to one of four cardinal directions:
-      // (You could also support diagonal movement if you prefer.)
-      let direction;
-      if (Math.abs(dx) > Math.abs(dy)) {
-        direction = (dx > 0) ? "right" : "left";
-      } else {
-        direction = (dy > 0) ? "down" : "up";
-      }
-      activeDrags[id].lastDirection = direction;
-      // Optionally, you could update some visual feedback here.
-    });
+  // Helper: Map an angle (in radians) to one of eight directions.
+  // Returns one of:
+  // "up", "up-right", "right", "down-right", "down", "down-left", "left", "up-left"
+  function angleTo8Dir(angle) {
+    // Normalize angle to [0, 2π)
+    if (angle < 0) angle += 2 * Math.PI;
+    // Divide circle into 8 equal slices (45° each)
+    const slice = (2 * Math.PI) / 8;
+    const index = Math.floor((angle + slice / 2) / slice) % 8;
+    const directions = ["right", "down-right", "down", "down-left", "left", "up-left", "up", "up-right"];
+    return directions[index];
+  }
 
-    btn.addEventListener("touchend", (evt) => {
-      if (activeDrags[id]) {
-        clearInterval(activeDrags[id].interval);
-        delete activeDrags[id];
-      }
-    });
-
-    btn.addEventListener("touchcancel", (evt) => {
-      if (activeDrags[id]) {
-        clearInterval(activeDrags[id].interval);
-        delete activeDrags[id];
-      }
-    });
+  // Touch start on the d-pad container.
+  dpadContainer.addEventListener("touchstart", (evt) => {
+    evt.preventDefault();
+    const touch = evt.touches[0];
+    // For sliding, record the starting point relative to the container.
+    const rect = dpadContainer.getBoundingClientRect();
+    dragState = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      // The center of the container will serve as our reference.
+      centerX: rect.left + rect.width / 2,
+      centerY: rect.top + rect.height / 2,
+      lastDir: null,
+      intervalID: setInterval(() => {
+        if (dragState && dragState.lastDir) {
+          // Call player.move continuously in that direction.
+          // (If your move method supports diagonal strings, then good.
+          // Otherwise, you might convert diagonal directions into two separate moves.)
+          player.move(dragState.lastDir);
+        }
+      }, dragIntervalTime)
+    };
   });
-}  // Continuously update mobile control positions.
+
+  // Touch move on the container.
+  dpadContainer.addEventListener("touchmove", (evt) => {
+    evt.preventDefault();
+    if (!dragState) return;
+    const touch = evt.touches[0];
+    // Compute vector from container center to current touch position.
+    const dx = touch.clientX - dragState.centerX;
+    const dy = touch.clientY - dragState.centerY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    // Set a threshold to avoid accidental moves.
+    const threshold = 10; // pixels; adjust as needed
+    if (dist < threshold) {
+      dragState.lastDir = null;
+      return;
+    }
+    // Compute angle (in radians) from center.
+    const angle = Math.atan2(dy, dx);
+    // Map angle to one of eight directions.
+    const direction = angleTo8Dir(angle);
+    dragState.lastDir = direction;
+    // Optionally, you can also update visual feedback here.
+  });
+
+  // Touch end/cancel on the container.
+  dpadContainer.addEventListener("touchend", (evt) => {
+    if (dragState) {
+      clearInterval(dragState.intervalID);
+      dragState = null;
+    }
+  });
+  dpadContainer.addEventListener("touchcancel", (evt) => {
+    if (dragState) {
+      clearInterval(dragState.intervalID);
+      dragState = null;
+    }
+  });
+}
+
+
+   
+  // Continuously update mobile control positions.
   (function mobileControlsLoop() {
     updateMobileControls();
     requestAnimationFrame(mobileControlsLoop);
