@@ -2773,7 +2773,7 @@ if ("ontouchstart" in window) {
         if (!player.moving && !player.isDashing) {
           player.move(direction);
         }
-      }, 200);
+      }, 100);
     });
     btn.addEventListener("touchend", () => clearInterval(movementIntervals[id]));
     btn.addEventListener("touchcancel", () => clearInterval(movementIntervals[id]));
