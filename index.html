@@ -24,36 +24,6 @@
 
 
 /* Container for the death options buttons */
-#deathOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: red;
-  opacity: 0.8;
-  z-index: 12000;
-}
-
-#topButtons {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 12001; /* Higher than the overlay */
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: repeat(2, auto);
-}
-
-#topButtons button {
-  font-size: 2rem;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  /* Add any additional styling you want */
-}     
 #deathOptions {
   display: grid;
   grid-gap: 1rem;
@@ -595,15 +565,11 @@
     </div>
   </div>
 </button>
-<!-- Red overlay -->
-<div id="deathOverlay">
-  <!-- Optionally, if buttons are inside, you must override stacking here too -->
-</div>
-
-<!-- Buttons placed outside the red overlay -->
-<div id="topButtons">
-  <button id="respawnBtn">Respawn</button>
-  <button id="viewMenuBtn">View Menu</button>
+   <div id="deathOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:red; opacity:0; z-index:12000; transition: opacity 0.5s;">
+  <div id="deathOptions" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+    <button id="respawnBtn" style="font-size:2rem; margin:0.5rem; padding:0.5rem 1rem;">Respawn</button>
+    <button id="viewMenuBtn" style="font-size:2rem; margin:0.5rem; padding:0.5rem 1rem;">View Menu</button>
+  </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
