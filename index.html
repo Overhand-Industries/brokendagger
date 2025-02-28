@@ -2710,20 +2710,23 @@ if ("ontouchstart" in window) {
       "move-down":  { dx: 2,  dy: tileOffset },
       "move-left":  { dx: 3 - tileOffset, dy: 1 }
     };
-    controlIDs.forEach(id => {
-      const btn = document.getElementById(id);
-      // Calculate target grid coordinate from player's current grid position.
-      let targetGridX = player.gridX + offsets[id].dx;
-      let targetGridY = player.gridY + offsets[id].dy;
-      // Convert grid coordinate to world space.
-      let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
-      // Convert world position to screen coordinates.
-      let screenPos = camera.worldToScreen(worldPos);
-      // Center the button within the tile.
-      btn.style.left = (screenPos.x - btn.offsetWidth / 2) + "px";
-      btn.style.top  = (screenPos.y - btn.offsetHeight / 2) + "px";
-    });
-  }
+  controlIDs.forEach(id => {
+    const btn = document.getElementById(id);
+    // Expand the button to cover 3x3 tiles.
+    btn.style.width = (tileMap.tileWidth * 3) + "px";
+    btn.style.height = (tileMap.tileHeight * 3) + "px";
+    
+    // Get the central (original) tile's world position.
+    let targetGridX = player.gridX + offsets[id].dx;
+    let targetGridY = player.gridY + offsets[id].dy;
+    let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
+    let screenPos = camera.worldToScreen(worldPos);
+    
+    // Position the button so its center (half its width/height) is at that screenPos.
+    btn.style.left = (screenPos.x - (tileMap.tileWidth * 3) / 2) + "px";
+    btn.style.top  = (screenPos.y - (tileMap.tileHeight * 3) / 2) + "px";
+  });
+}
 
   // Continuously update mobile control positions.
   (function mobileControlsLoop() {
