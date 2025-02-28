@@ -2805,88 +2805,49 @@ if ("ontouchstart" in window) {
 
 
    // --- DRAG SLIDE CONTROLS OVER THE 3x3 D-PAD ---
-if ("ontouchstart" in window) {
-  // We'll attach the touch events to the container holding the d-pad.
-  const dpadContainer = document.getElementById("mobileControls");
+document.addEventListener("DOMContentLoaded", () => {
+  if ("ontouchstart" in window) {
+    const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
 
-  // Object to hold active drag state.
-  let dragState = null;
-  const dragIntervalTime = 100; // in ms, adjust for continuous move speed
+    controlIDs.forEach(id => {
+      const btn = document.getElementById(id);
+      let startX, startY;
 
-  // Helper: Map an angle (in radians) to one of eight directions.
-  // Returns one of:
-  // "up", "up-right", "right", "down-right", "down", "down-left", "left", "up-left"
-  function angleTo8Dir(angle) {
-    // Normalize angle to [0, 2π)
-    if (angle < 0) angle += 2 * Math.PI;
-    // Divide circle into 8 equal slices (45° each)
-    const slice = (2 * Math.PI) / 8;
-    const index = Math.floor((angle + slice / 2) / slice) % 8;
-    const directions = ["right", "down-right", "down", "down-left", "left", "up-left", "up", "up-right"];
-    return directions[index];
+      btn.addEventListener("touchstart", (evt) => {
+        // Capture the starting touch coordinates.
+        const touch = evt.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        // Immediately follow the touch; remove any transition.
+        btn.style.transition = "none";
+      });
+
+      btn.addEventListener("touchmove", (evt) => {
+        evt.preventDefault();
+        const touch = evt.touches[0];
+        let dx = touch.clientX - startX;
+        let dy = touch.clientY - startY;
+
+        // Limit the translation to a maximum of 2 tiles.
+        const maxDx = 2 * tileMap.tileWidth;
+        const maxDy = 2 * tileMap.tileHeight;
+        dx = Math.max(-maxDx, Math.min(dx, maxDx));
+        dy = Math.max(-maxDy, Math.min(dy, maxDy));
+
+        btn.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+
+      const resetButton = () => {
+        // Animate back to original position.
+        btn.style.transition = "transform 0.3s ease-out";
+        btn.style.transform = "translate(0, 0)";
+      };
+
+      btn.addEventListener("touchend", resetButton);
+      btn.addEventListener("touchcancel", resetButton);
+    });
   }
-
-  // Touch start on the d-pad container.
-  dpadContainer.addEventListener("touchstart", (evt) => {
-    evt.preventDefault();
-    const touch = evt.touches[0];
-    // For sliding, record the starting point relative to the container.
-    const rect = dpadContainer.getBoundingClientRect();
-    dragState = {
-      startX: touch.clientX,
-      startY: touch.clientY,
-      // The center of the container will serve as our reference.
-      centerX: rect.left + rect.width / 2,
-      centerY: rect.top + rect.height / 2,
-      lastDir: null,
-      intervalID: setInterval(() => {
-        if (dragState && dragState.lastDir) {
-          // Call player.move continuously in that direction.
-          // (If your move method supports diagonal strings, then good.
-          // Otherwise, you might convert diagonal directions into two separate moves.)
-          player.move(dragState.lastDir);
-        }
-      }, dragIntervalTime)
-    };
-  });
-
-  // Touch move on the container.
-  dpadContainer.addEventListener("touchmove", (evt) => {
-    evt.preventDefault();
-    if (!dragState) return;
-    const touch = evt.touches[0];
-    // Compute vector from container center to current touch position.
-    const dx = touch.clientX - dragState.centerX;
-    const dy = touch.clientY - dragState.centerY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    // Set a threshold to avoid accidental moves.
-    const threshold = 10; // pixels; adjust as needed
-    if (dist < threshold) {
-      dragState.lastDir = null;
-      return;
-    }
-    // Compute angle (in radians) from center.
-    const angle = Math.atan2(dy, dx);
-    // Map angle to one of eight directions.
-    const direction = angleTo8Dir(angle);
-    dragState.lastDir = direction;
-    // Optionally, you can also update visual feedback here.
-  });
-
-  // Touch end/cancel on the container.
-  dpadContainer.addEventListener("touchend", (evt) => {
-    if (dragState) {
-      clearInterval(dragState.intervalID);
-      dragState = null;
-    }
-  });
-  dpadContainer.addEventListener("touchcancel", (evt) => {
-    if (dragState) {
-      clearInterval(dragState.intervalID);
-      dragState = null;
-    }
-  });
-}
+});
 
 
    
