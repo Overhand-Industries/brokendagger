@@ -2751,29 +2751,48 @@ document.getElementById("increaseShieldingTime").addEventListener("click", () =>
 }
 // Only initialize mobile controls if touch events are supported.
 if ("ontouchstart" in window) {
-  const tileOffset = 5; // 5 tiles away from player's grid position
-  const mobileControls = document.getElementById("mobileControls");
   const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
-  const movementIntervals = {};
 
-  // Set up hold-to-move behavior for each control button.
   controlIDs.forEach(id => {
     const btn = document.getElementById(id);
+    let startX, startY;
     btn.addEventListener("touchstart", (evt) => {
-      evt.preventDefault();
-      const direction = id.split("-")[1]; // e.g. "up", "right", etc.
-      // Immediately trigger a move if not already moving/dashing.
-      if (!player.moving && !player.isDashing) player.move(direction);
-      // Then set an interval (200ms) to repeatedly call move.
-      movementIntervals[id] = setInterval(() => {
-        if (!player.moving && !player.isDashing) {
-          player.move(direction);
-        }
-      }, 200);
+      // Record the starting touch position
+      const touch = evt.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      // Remove any transition so the button follows immediately
+      btn.style.transition = "transform 0s";
     });
-    btn.addEventListener("touchend", () => clearInterval(movementIntervals[id]));
-    btn.addEventListener("touchcancel", () => clearInterval(movementIntervals[id]));
+
+    btn.addEventListener("touchmove", (evt) => {
+      evt.preventDefault(); // prevent default scrolling behavior
+      const touch = evt.touches[0];
+      let dx = touch.clientX - startX;
+      let dy = touch.clientY - startY;
+
+      // Cap the maximum translation to 2 tiles (using your tileMap dimensions)
+      const maxDx = 2 * tileMap.tileWidth;
+      const maxDy = 2 * tileMap.tileHeight;
+      dx = Math.max(-maxDx, Math.min(dx, maxDx));
+      dy = Math.max(-maxDy, Math.min(dy, maxDy));
+
+      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+
+    btn.addEventListener("touchend", () => {
+      // When touch ends, animate the button back to its original position
+      btn.style.transition = "transform 0.3s ease-out";
+      btn.style.transform = "translate(0, 0)";
+    });
+
+    btn.addEventListener("touchcancel", () => {
+      // Also reset on touch cancel
+      btn.style.transition = "transform 0.3s ease-out";
+      btn.style.transform = "translate(0, 0)";
+    });
   });
+
 
   // Update positions of the mobile control buttons each frame.
   function updateMobileControls() {
