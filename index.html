@@ -21,7 +21,19 @@
       background: #505050;
     }
 
-/* Style for the respawn and view menu buttons */
+
+/* Container for the death options buttons */
+#deathOptions {
+  display: grid;
+  grid-gap: 1rem;
+  /* Default: two columns side-by-side */
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* Base styles for both buttons */
 #deathOptions button {
   font-family: 'Roboto', sans-serif;
   font-size: 2rem;
@@ -34,13 +46,12 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* Respawn button with a vibrant gradient */
+/* Specific styles */
 #respawnBtn {
   background: linear-gradient(135deg, #ff416c, #ff4b2b);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* View Menu button with a contrasting cool-toned gradient */
 #viewMenuBtn {
   background: linear-gradient(135deg, #1d976c, #93f9b9);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -50,6 +61,13 @@
 #deathOptions button:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Mobile responsiveness: stack buttons in a single column on smaller screens */
+@media (max-width: 600px) {
+  #deathOptions {
+    grid-template-columns: 1fr; /* Single column layout */
+  }
 }
 /* Mobile controls: only show on touch devices */
 @media (pointer: coarse) {
