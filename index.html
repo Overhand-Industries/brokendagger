@@ -22,11 +22,11 @@
     }
 
 
+
 /* Container for the death options buttons */
 #deathOptions {
   display: grid;
   grid-gap: 1rem;
-  /* Default: two columns side-by-side */
   grid-template-columns: repeat(2, 1fr);
   justify-items: center;
   align-items: center;
@@ -63,10 +63,15 @@
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Mobile responsiveness: stack buttons in a single column on smaller screens */
+/* Mobile responsiveness: on small screens, stack buttons in a single column and increase size */
 @media (max-width: 600px) {
   #deathOptions {
-    grid-template-columns: 1fr; /* Single column layout */
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+  #deathOptions button {
+    font-size: 2.5rem;
+    padding: 1.5rem;
   }
 }
 /* Mobile controls: only show on touch devices */
