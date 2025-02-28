@@ -2602,28 +2602,43 @@ document.getElementById("increaseAutoRun").addEventListener("click", () => {
   }
 });
 
-// Set the maximum allowed strike range tiles based on the d‑pad.
-// With a 3×3 grid, the maximum offset is 1 tile from the center.
-// (Since strikeRangeTiles starts at 1, a cap of 2 means you get one upgrade beyond the default.)
-const maxAllowedStrikeRange = 4; 
+
+
+// Increase Strike Range Upgrade (Cost: 300; +1 tile to strike range)
+// Define your maximum allowed strike range.
+const maxAllowedStrikeRange = 6; // Default is 1; this upgrade adds one extra tile.
+
+// Helper function to update the strike range upgrade button's state.
+function updateStrikeRangeButton() {
+  const dashBtn = document.getElementById("increaseDash");
+  if (strikeRangeTiles >= maxAllowedStrikeRange) {
+    dashBtn.classList.add("dimmed");
+    dashBtn.style.pointerEvents = "none"; // disable interaction
+  } else {
+    dashBtn.classList.remove("dimmed");
+    dashBtn.style.pointerEvents = "auto";
+  }
+}
 
 // Increase Strike Range Upgrade (Cost: 300; +1 tile to strike range)
 document.getElementById("increaseDash").addEventListener("click", () => {
   if (upgradeTimers.increaseDash > 0) return;
   const cost = 300;
-  // Check if points are enough and that we haven't reached the maximum allowed range.
+  // Check if we haven't reached the maximum allowed strike range.
   if (points >= cost && strikeRangeTiles < maxAllowedStrikeRange) {
     points -= cost;
-    strikeRangeTiles++; // Increase by 1 tile.
+    strikeRangeTiles++;
     document.getElementById("pointsDisplay").textContent = Math.floor(points);
     playSFX("increase");
     showUpgradeAlert("Strike range increased!");
     upgradeTimers.increaseDash = getEffectiveCooldown("increaseDash");
     updateUpgradeButton("increaseDash");
   } else if (strikeRangeTiles >= maxAllowedStrikeRange) {
-    // Optionally, you could alert the player that the maximum has been reached.
+    // If max is reached, dim the icon.
     showUpgradeAlert("Max strike range reached!");
   }
+  // Always update the button state afterward.
+  updateStrikeRangeButton();
 });
 
 // Increase Strike Meter Capacity Upgrade (Cost: 150; +10 capacity)
