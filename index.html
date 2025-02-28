@@ -1733,6 +1733,8 @@ updateDaggerContainerAt(effectX, effectY);
         this.knockback = this.knockback.scale(0.9);
       }
    render(ctx, camera) {
+
+
   // Calculate screen position (and add any shake offsets)
   let pos = this.position.add(this.knockback);
   let screenPos = camera.worldToScreen(pos);
@@ -1989,15 +1991,27 @@ updateDaggerContainerAt(effectX, effectY);
       spriteFlashes.push({position, timer: 0.5, duration: 0.5});
     }
     
-    function knockbackEnemyToEdge(enemy) {
-      let direction = new Vector2(enemy.position.x-player.position.x, enemy.position.y-player.position.y).normalize();
-      let knockbackDistance = Math.max(tileMap.width,tileMap.height)*50;
-      let finalPos = enemy.position.add(direction.scale(knockbackDistance));
-      enemy.position = finalPos; x
-      spawnEnemyExplosionEffect(enemy.position);
-      killCount++;
-    }
-    
+function knockbackEnemyToEdge(enemy) {
+  let direction = new Vector2(
+    enemy.position.x - player.position.x,
+    enemy.position.y - player.position.y
+  ).normalize();
+  let knockbackDistance = Math.max(tileMap.width, tileMap.height) * 50;
+  let finalPos = enemy.position.add(direction.scale(knockbackDistance));
+  enemy.position = finalPos;
+
+  // Initiate the red tint flash on the enemy:
+  enemy.damageFlashTimer = 0.5;  // Duration in seconds for the red tint
+  // Optionally, if you use a spriteFlashes array to handle flashes:
+  spriteFlashes.push({
+    enemy: enemy,
+    timer: 0.5,
+    duration: 0.5
+  });
+
+  spawnEnemyExplosionEffect(enemy.position);
+  killCount++;
+}
     function performManualStrikeAt(tapX, tapY) {
       const tileSize = 50;
       const currentMeleeRange = strikeRangeTiles*tileSize;
@@ -2008,13 +2022,13 @@ updateDaggerContainerAt(effectX, effectY);
            tapY>=enemyRect.y && tapY<=enemyRect.y+enemyRect.height){
           let playerCenter = new Vector2(player.position.x+player.width/2, player.position.y+player.height/2);
           let enemyCenter = new Vector2(enemy.position.x+enemy.width/2, enemy.position.y+enemy.height/2);
-          if(playerCenter.subtract(enemyCenter).length()<=currentMeleeRange){
+          if(playerCenter.subtract(enemyCenter).length()<=currentMeleeRange){ addSpriteFlash(enemy.position);
             playSFX("attack");         swordEffects.push(new SwordEffect(playerCenter, enemyCenter));
 let angle = Math.atan2(enemyCenter.y - playerCenter.y, enemyCenter.x - playerCenter.x);
 let effectX = playerCenter.x + Math.cos(angle) * 20;
 let effectY = playerCenter.y + Math.sin(angle) * 20;
 
-addSpriteFlash(enemy.position);
+
 spawnMeleeEffect(effectX, effectY, angle);
 
 // Instead of killing immediately, set a death timer (if not already set)
@@ -2878,14 +2892,19 @@ renderSwordEffects(ctx, camera);
           if(flash.timer<=0) spriteFlashes.splice(i,1);
           continue;
         }
-        let alpha = flash.timer/flash.duration;
-        ctx.fillStyle = "rgba(255,0,0,"+alpha+")";
-        let flashScreenPos = camera.worldToScreen(flash.position);
-        ctx.beginPath();
-        ctx.arc(flashScreenPos.x, flashScreenPos.y, 32, 0, Math.PI*2);
-        ctx.fill();
-        flash.timer -= deltaTime;
-        if(flash.timer<=0) spriteFlashes.splice(i,1);
+       if (flash.enemy) {
+  // Get the enemy's screen position and dimensions
+  const screenPos = camera.worldToScreen(flash.enemy.position);
+  const width = flash.enemy.width;
+  const height = flash.enemy.height;
+  
+  // Use the same alpha value to modulate the tint's opacity
+  let alpha = flash.timer / flash.duration;
+  ctx.fillStyle = "rgba(255,0,0," + alpha + ")";
+  ctx.fillRect(screenPos.x, screenPos.y, width, height);
+}
+flash.timer -= deltaTime;
+if (flash.timer <= 0) spriteFlashes.splice(i, 1);
       }
      
 const upgradeButton = document.getElementById("upgradeButton");
