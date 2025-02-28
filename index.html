@@ -2857,9 +2857,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const dragDistance = Math.sqrt(clampedDx * clampedDx + clampedDy * clampedDy);
       if (!strikeTriggered && dragDistance > strikeThreshold) {
         const direction = controlDirections[id];
-        if (!player.moving && !player.isDashing) {
-          player.strike(direction);
-        }
+       if (!player.moving && !player.isDashing && !strikeTriggered) {
+  const direction = controlDirections[id];
+  console.log("Attack triggered for direction:", direction);
+  // Call the primary strike method (which triggers headbutt/melee)
+  player.strike(direction);
+  // Also, call any additional attack functions you might have:
+  // For instance, if you have a separate melee or headbutt function:
+  if (typeof performMeleeStrike === "function") {
+    performMeleeStrike(direction);
+  }
+  if (typeof triggerHeadbutt === "function") {
+    triggerHeadbutt();
+  }
+  strikeTriggered = true;
+}
         strikeTriggered = true;
       }
     });
