@@ -2801,8 +2801,82 @@ if ("ontouchstart" in window) {
     btn.style.top  = (screenPos.y - (tileMap.tileHeight * 3) / 2) + "px";
   });
 }
+// DRAGGABLE D-PAD CONTROLS FOR MOBILE
+if ("ontouchstart" in window) {
+  // For each dpad control, add touchmove/drag support.
+  const dragThreshold = 10; // Minimum pixels to consider as a drag.
+  // We'll store active drag info by button ID.
+  const activeDrags = {};
 
-  // Continuously update mobile control positions.
+  // For each control button:
+  ["move-up", "move-right", "move-down", "move-left"].forEach(id => {
+    const btn = document.getElementById(id);
+    // Get initial center position of the button (set by updateMobileControls already)
+    btn.addEventListener("touchstart", (evt) => {
+      // Prevent the default hold behavior so drag can start.
+      evt.preventDefault();
+      const touch = evt.touches[0];
+      const rect = btn.getBoundingClientRect();
+      // Calculate the center of the button.
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      activeDrags[id] = {
+        center: { x: centerX, y: centerY },
+        lastDirection: null,
+        interval: setInterval(() => {
+          // If there is an active drag direction, continuously move the player.
+          if (activeDrags[id].lastDirection) {
+            // You can either call your player.move() repeatedly or update a
+            // global movement vector.
+            player.move(activeDrags[id].lastDirection);
+          }
+        }, 100) // Adjust interval as desired.
+      };
+    });
+
+    btn.addEventListener("touchmove", (evt) => {
+      evt.preventDefault();
+      if (!activeDrags[id]) return;
+      const touch = evt.touches[0];
+      const currentX = touch.clientX;
+      const currentY = touch.clientY;
+      // Calculate displacement from center.
+      const dx = currentX - activeDrags[id].center.x;
+      const dy = currentY - activeDrags[id].center.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < dragThreshold) {
+        activeDrags[id].lastDirection = null;
+        return;
+      }
+      // Determine the drag angle.
+      const angle = Math.atan2(dy, dx);
+      // Convert angle to one of four cardinal directions:
+      // (You could also support diagonal movement if you prefer.)
+      let direction;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        direction = (dx > 0) ? "right" : "left";
+      } else {
+        direction = (dy > 0) ? "down" : "up";
+      }
+      activeDrags[id].lastDirection = direction;
+      // Optionally, you could update some visual feedback here.
+    });
+
+    btn.addEventListener("touchend", (evt) => {
+      if (activeDrags[id]) {
+        clearInterval(activeDrags[id].interval);
+        delete activeDrags[id];
+      }
+    });
+
+    btn.addEventListener("touchcancel", (evt) => {
+      if (activeDrags[id]) {
+        clearInterval(activeDrags[id].interval);
+        delete activeDrags[id];
+      }
+    });
+  });
+}  // Continuously update mobile control positions.
   (function mobileControlsLoop() {
     updateMobileControls();
     requestAnimationFrame(mobileControlsLoop);
