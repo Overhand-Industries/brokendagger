@@ -2812,47 +2812,99 @@ if ("ontouchstart" in window) {
 document.addEventListener("DOMContentLoaded", () => {
   if ("ontouchstart" in window) {
     const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
+    // This threshold defines the central (neutral) area in pixels.
+    const centerThreshold = 10; // adjust as needed
 
     controlIDs.forEach(id => {
       const btn = document.getElementById(id);
       let startX, startY;
+      let strikeTriggered = false; // to track if strike has been triggered for this touch
 
       btn.addEventListener("touchstart", (evt) => {
-        // Capture the starting touch coordinates.
         const touch = evt.touches[0];
         startX = touch.clientX;
         startY = touch.clientY;
-        // Immediately follow the touch; remove any transition.
+        strikeTriggered = false;
+        // Immediately follow the touch
         btn.style.transition = "none";
       });
 
       btn.addEventListener("touchmove", (evt) => {
-        evt.preventDefault();
+        evt.preventDefault(); // Prevent scrolling
         const touch = evt.touches[0];
         let dx = touch.clientX - startX;
         let dy = touch.clientY - startY;
 
-        // Limit the translation to a maximum of 2 tiles.
+        // Cap movement to a maximum of 2 tiles.
         const maxDx = 2 * tileMap.tileWidth;
         const maxDy = 2 * tileMap.tileHeight;
         dx = Math.max(-maxDx, Math.min(dx, maxDx));
         dy = Math.max(-maxDy, Math.min(dy, maxDy));
 
+        // Apply the translation so the control visibly follows the finger.
         btn.style.transform = `translate(${dx}px, ${dy}px)`;
+
+        // If the control leaves the center zone (i.e. translation exceeds our threshold)...
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (!strikeTriggered && distance > centerThreshold) {
+          // Determine the dominant cardinal direction.
+          let direction;
+          if (Math.abs(dx) > Math.abs(dy)) {
+            direction = dx > 0 ? "right" : "left";
+          } else {
+            direction = dy > 0 ? "down" : "up";
+          }
+          // Trigger the strike if the player isn’t already moving/dashing.
+          if (!player.moving && !player.isDashing) {
+            player.strike(direction);
+          }
+          strikeTriggered = true;
+        }
       });
 
-      const resetButton = () => {
-        // Animate back to original position.
+      // On touchend/touchcancel, animate the control back to its original position.
+      const resetBtn = () => {
         btn.style.transition = "transform 0.3s ease-out";
         btn.style.transform = "translate(0, 0)";
       };
-
-      btn.addEventListener("touchend", resetButton);
-      btn.addEventListener("touchcancel", resetButton);
+      btn.addEventListener("touchend", resetBtn);
+      btn.addEventListener("touchcancel", resetBtn);
     });
+
+    // Update the on-screen positions of the control grids relative to the player's center.
+    function updateMobileControls() {
+      // Offsets for each button (adjust based on your grid layout)
+      const offsets = {
+        "move-up":    { dx: 2,  dy: 2 - tileOffset },
+        "move-right": { dx: tileOffset + 1, dy: 1 },
+        "move-down":  { dx: 2,  dy: tileOffset },
+        "move-left":  { dx: 3 - tileOffset, dy: 1 }
+      };
+
+      controlIDs.forEach(id => {
+        const btn = document.getElementById(id);
+        // Ensure each button is sized to cover a 3×3 area.
+        btn.style.width = (tileMap.tileWidth * 3) + "px";
+        btn.style.height = (tileMap.tileHeight * 3) + "px";
+        
+        // Compute the target position based on the player's grid coordinates.
+        let targetGridX = player.gridX + offsets[id].dx;
+        let targetGridY = player.gridY + offsets[id].dy;
+        let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
+        let screenPos = camera.worldToScreen(worldPos);
+        
+        // Center the button.
+        btn.style.left = (screenPos.x - (tileMap.tileWidth * 3) / 2) + "px";
+        btn.style.top  = (screenPos.y - (tileMap.tileHeight * 3) / 2) + "px";
+      });
+    }
+
+    (function mobileControlsLoop() {
+      updateMobileControls();
+      requestAnimationFrame(mobileControlsLoop);
+    })();
   }
 });
-
 
    
   // Continuously update mobile control positions.
