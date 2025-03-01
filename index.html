@@ -2519,6 +2519,11 @@ function updateDaggerContainerPosition() {
     function updatePowerupTraySlots() {
       const defenseSlot = document.getElementById("defenseSlot");
       const charmsSlot = document.getElementById("charmsSlot");
+       if (player.heavyArmour) {
+   defenseSlot.style.border = "2px solid white";
+   defenseSlot.style.boxShadow += " 0 0 8px white";
+   defenseSlot.innerHTML += "<div class='durability'>Dur: " + Math.floor(player.heavyArmour.durability) + "</div>";
+}
    if(defenseBoostActive){
   defenseSlot.classList.remove("dimmed");
   const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
@@ -2732,16 +2737,84 @@ if (player.strikeMeter > 0) {
 }
       const defenseSlot = document.getElementById("defenseSlot");
       const charmsSlot = document.getElementById("charmsSlot");
-      if(defenseBoostActive){
-        defenseSlot.classList.remove("dimmed");
-        const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
-        defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio*100}%, transparent ${defRatio*100}%)`;
-        defenseSlot.innerHTML = "🛡️<div class='timer'>"+Math.ceil(defenseBoostTimer)+"s</div>";
-      } else {
-        defenseSlot.classList.add("dimmed");
-        defenseSlot.style.background = "";
-        defenseSlot.innerHTML = "🛡️";
-      }
+
+    if (player.heavyArmour) {
+  // Always undim the slot when heavy armour is equipped.
+  defenseSlot.classList.remove("dimmed");
+
+  // Prepare the base shield icon.
+  let html = "🛡️";
+  
+  // If the shield meter is active (defense boost), include that timer/meter.
+  if (defenseBoostActive) {
+    const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
+    // You might use a separate element or just append text.
+    html += `<div class='timer' style="
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 0.8rem;
+      color: yellow;
+    ">${Math.ceil(defenseBoostTimer)}s</div>`;
+    // Set the blue glow for defense boost.
+    defenseSlot.style.boxShadow = "0 0 8px 2px rgba(0,0,255,0.6)";
+    // Optionally set a background gradient.
+    defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio * 100}%, transparent ${defRatio * 100}%)`;
+  } else {
+    // No defense boost active – no blue glow.
+    defenseSlot.style.boxShadow = "";
+    defenseSlot.style.background = "";
+  }
+  
+  // Now, add the heavy armour's white glow.
+  // You can append the white glow by combining box shadows.
+  defenseSlot.style.boxShadow += " 0 0 8px 2px white";
+  
+  // Add the heavy armour durability info in the lower left.
+  html += `<div class="durability" style="
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 0.8rem;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 1px 3px;
+    border-radius: 3px;
+  ">Dur: ${Math.floor(player.heavyArmour.durability)}</div>`;
+  
+  defenseSlot.innerHTML = html;
+} else {
+  // Regular behavior when no heavy armour is equipped:
+  if (defenseBoostActive) {
+    defenseSlot.classList.remove("dimmed");
+    const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
+    defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio * 100}%, transparent ${defRatio * 100}%)`;
+    defenseSlot.style.boxShadow = "0 0 8px 2px rgba(0,0,255,0.6)";
+    defenseSlot.innerHTML = "🛡️<div class='timer' style='position:absolute; top:2px; right:2px; font-size:0.8rem; color:yellow;'>" + Math.ceil(defenseBoostTimer) + "s</div>";
+  } else {
+    defenseSlot.classList.add("dimmed");
+    defenseSlot.style.background = "";
+    defenseSlot.style.boxShadow = "";
+    defenseSlot.innerHTML = "🛡️";
+  }
+}
+
+// If heavy armour is active, add an extra white glow and durability display
+if (player.heavyArmour) {
+  // Append an extra white glow (you can adjust the size/blur as needed)
+  defenseSlot.style.boxShadow += " 0 0 8px 2px white";
+  // Append a durability display in the lower left corner
+  defenseSlot.innerHTML += `<div class="durability" style="
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 0.8rem;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 1px;
+    border-radius: 3px;
+  ">Dur: ${Math.floor(player.heavyArmour.durability)}</div>`;
+}
       if(healingCharmActive){
         charmsSlot.classList.remove("dimmed");
         const charmRatio = healingCharmTimer / baseHealingCharmDuration;
