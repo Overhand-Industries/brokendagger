@@ -974,7 +974,17 @@ function updateUpgradeButton(upgradeId) {
   }
    
   // Add similar blocks for other items if needed.
-  
+     if (player.heavyArmour) {
+  html += `
+    <button class="inventory-item">
+      <div class="marquee">
+        <div class="icon" style="font-size:3rem">🛡️</div>
+        <div class="label"><b><i>Heavy Armour</i></b></div>
+        <div class="count">Dur: ${Math.floor(player.heavyArmour.durability)}</div>
+      </div>
+    </button>
+  `;
+}
   inventoryContainer.innerHTML = html;
 }
 
@@ -2499,17 +2509,7 @@ if(healingCharmActive){
   }
 });
 
-   if (player.heavyArmour) {
-  html += `
-    <button class="inventory-item">
-      <div class="marquee">
-        <div class="icon" style="font-size:3rem">🛡️</div>
-        <div class="label"><b><i>Heavy Armour</i></b></div>
-        <div class="count">Dur: ${Math.floor(player.heavyArmour.durability)}</div>
-      </div>
-    </button>
-  `;
-}
+
     function updateBaitBombs(deltaTime) {
       for(let i=baitBombs.length-1;i>=0;i--){
         baitBombs[i].update(deltaTime);
