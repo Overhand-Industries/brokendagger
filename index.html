@@ -566,7 +566,7 @@ width: 100%;
     <!-- Add additional shop buttons here as needed -->
 <button id="buyHeavyArmour">
   <div class="marquee">
-    <p class="icon" style="font-size:3rem">🛡️</p>
+    <p class="icon" style="font-size:3rem">🛡️+🔗</p>
     <div class="label">
        <b><i> <div class="count" id="heavyArmourCostDisplay"></div></i></b></div>
      <span>Buy Heavy Armour</span></div>
@@ -1019,7 +1019,7 @@ function updateUpgradeButton(upgradeId) {
     html += `
       <button class="inventory-item"><div class="marquee">
         <div class="icon" style="font-size:3rem">🧿</div>
-        <div class="label"><b><i>ReflexAmulet</i></b><br>
+        <div class="label"><b><i>6mg ZYN</i></b><br>
 <span> Player starts with Auto-Strike for 10s</span></div>
       </button>
     `;
@@ -1030,7 +1030,7 @@ function updateUpgradeButton(upgradeId) {
   html += `
     <button class="inventory-item">
       <div class="marquee">
-        <div class="icon" style="font-size:3rem">🛡️</div>
+        <div class="icon" style="font-size:3rem">🛡️+🔗</div>
         <div class="label"><b><i>Heavy Armour</i></b></div>
         <div class="count">Dur: ${Math.floor(player.heavyArmour.durability)}</div>
       </div>
@@ -2751,7 +2751,7 @@ if (player.strikeMeter > 0) {
     // You might use a separate element or just append text.
     html += `<div class='timer' style="
       position: absolute;
-      top: 2px;
+      bottom: 2px;
       right: 2px;
       font-size: 0.8rem;
       color: yellow;
@@ -2773,14 +2773,14 @@ if (player.strikeMeter > 0) {
   // Add the heavy armour durability info in the lower left.
   html += `<div class="durability" style="
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
-    font-size: 0.8rem;
+    font-size: 0.55rem;
     color: white;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.0);
     padding: 1px 3px;
     border-radius: 3px;
-  ">Dur: ${Math.floor(player.heavyArmour.durability)}</div>`;
+  ">🔗: ${Math.floor(player.heavyArmour.durability)}</div>`;
   
   defenseSlot.innerHTML = html;
 } else {
@@ -2790,7 +2790,7 @@ if (player.strikeMeter > 0) {
     const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
     defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio * 100}%, transparent ${defRatio * 100}%)`;
     defenseSlot.style.boxShadow = "0 0 8px 2px rgba(0,0,255,0.6)";
-    defenseSlot.innerHTML = "🛡️<div class='timer' style='position:absolute; top:2px; right:2px; font-size:0.8rem; color:yellow;'>" + Math.ceil(defenseBoostTimer) + "s</div>";
+    defenseSlot.innerHTML = "🛡️<div class='timer' style='position:absolute; bottom:2px; right:2px; font-size:0.8rem; color:yellow;'>" + Math.ceil(defenseBoostTimer) + "s</div>";
   } else {
     defenseSlot.classList.add("dimmed");
     defenseSlot.style.background = "";
@@ -2803,17 +2803,6 @@ if (player.strikeMeter > 0) {
 if (player.heavyArmour) {
   // Append an extra white glow (you can adjust the size/blur as needed)
   defenseSlot.style.boxShadow += " 0 0 8px 2px white";
-  // Append a durability display in the lower left corner
-  defenseSlot.innerHTML += `<div class="durability" style="
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    font-size: 0.8rem;
-    color: white;
-    background: rgba(0,0,0,0.5);
-    padding: 1px;
-    border-radius: 3px;
-  ">Dur: ${Math.floor(player.heavyArmour.durability)}</div>`;
 }
       if(healingCharmActive){
         charmsSlot.classList.remove("dimmed");
