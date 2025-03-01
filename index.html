@@ -526,6 +526,16 @@
 
  
     <!-- Add additional shop buttons here as needed -->
+<button id="buyHeavyArmour">
+  <div class="marquee">
+    <div class="icon" style="font-size:3rem">🛡️</div>
+    <div class="label"><b><i>Heavy Armour</i></b></div>
+    <div class="count">Cost: <span id="heavyArmourCostDisplay"></span></div>
+  </div>
+</button>
+    <!-- Add additional shop buttons here as needed -->
+
+
   </div>
 </div>
 
@@ -819,6 +829,20 @@ document.getElementById("toggleBGM").addEventListener("click", function() {
 });
     // Shop & Upgrade Menu Logic
     // -------------------------
+   class HeavyArmour {
+  constructor(playerHP) {
+    // Set the armour’s durability to 500% of the player's current HP at purchase.
+    this.durability = 5 * playerHP;
+  }
+}
+
+function getHeavyArmourCost() {
+  // For example, a base cost of 1500 scaled by (rank + 1)
+  return Math.floor(1500 * (calculateRank(killCount) + 1));
+}
+function updateHeavyArmourCostDisplay() {
+  document.getElementById("heavyArmourCostDisplay").innerText = getHeavyArmourCost();
+}
     function getBombCost() {
       // Cost scales with rank: cost = 50 × (rank + 1)
       return Math.floor(50 * (calculateRank(killCount) + 1));
@@ -836,7 +860,17 @@ document.getElementById("toggleBGM").addEventListener("click", function() {
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
       }
     });
-    
+    function calculateRank(kills) {
+  let rank = 0;
+  let threshold = 100;
+  let remainingKills = kills;
+  while (remainingKills >= threshold) {
+    rank++;
+    remainingKills -= threshold;
+    threshold = Math.floor(threshold * 1.5);
+  }
+  return rank;
+}
     // Tab switching for upgrade menu
 document.getElementById("upgradesTab").addEventListener("click", function() {
   document.getElementById("upgradesSection").style.display = "block";
@@ -1375,7 +1409,7 @@ playSFX("explosion");
         this.spriteSheet = new Image();
         this.spriteLoaded = false;
         this.spriteSheet.onload = () => { this.spriteLoaded = true; };
-        this.spriteSheet.src = "sprite.png";
+        this.spriteSheet.src = "https://overhand-industries.github.io/kill-da-bear/sprite.png";
         this.frameCount = 4;
         this.currentFrame = 0;
         this.frameTime = 0;
@@ -2450,7 +2484,32 @@ if(healingCharmActive){
         }
       }updateInventoryDisplay();
     }
-    
+   document.getElementById("buyHeavyArmour").addEventListener("click", function () {
+  let cost = getHeavyArmourCost();
+  if (points >= cost) {
+    points -= cost;
+    // Give the player heavy armour (store it on the player object)
+    player.heavyArmour = new HeavyArmour(player.hp);
+    updateInventoryDisplay(); // Ensure your inventory UI now shows heavy armour
+    playSFX("increase");
+    showUpgradeAlert("Heavy Armour purchased!");
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+  } else {
+    showUpgradeAlert("Not enough points!");
+  }
+});
+
+   if (player.heavyArmour) {
+  html += `
+    <button class="inventory-item">
+      <div class="marquee">
+        <div class="icon" style="font-size:3rem">🛡️</div>
+        <div class="label"><b><i>Heavy Armour</i></b></div>
+        <div class="count">Dur: ${Math.floor(player.heavyArmour.durability)}</div>
+      </div>
+    </button>
+  `;
+}
     function updateBaitBombs(deltaTime) {
       for(let i=baitBombs.length-1;i>=0;i--){
         baitBombs[i].update(deltaTime);
@@ -2624,6 +2683,7 @@ function resumeGame() {
   timeScale = 1.0;
   document.getElementById("upgradeButton").style.display = "block";
 }
+   
  // Increase HP Upgrade (Cost: 50; +20 HP)
 document.getElementById("increaseHP").addEventListener("click", () => {
   if (upgradeTimers.increaseHP > 0) return; // Button is on cooldown
@@ -2744,7 +2804,29 @@ document.getElementById("increaseShieldingTime").addEventListener("click", () =>
 });
 
 
-   
+   function applyDamage(damage) {
+  // If the player has Heavy Armour, try to absorb damage with it first.
+  if (player.heavyArmour) {
+    player.heavyArmour.durability -= damage;
+    if (player.heavyArmour.durability > 0) {
+      // Armour absorbed all the damage.
+      updateInventoryDisplay(); // Update UI to reflect new durability
+      return; // No HP damage is applied
+    } else {
+      // Armour is destroyed and there’s leftover damage.
+      damage = -player.heavyArmour.durability; // Remaining damage after armour breaks
+      player.heavyArmour = null; // Remove the armour
+      showUpgradeAlert("Heavy Armour destroyed!");
+      updateInventoryDisplay();
+    }
+  }
+  
+  // Apply any remaining damage to player's HP.
+  player.hp -= damage;
+  player.flashDamage();
+
+  // (Additional death handling logic can go here.)
+}
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
     // Only initialize mobile controls if touch events are supported.
    function getEffectiveCooldown(upgradeId) {
@@ -3225,8 +3307,8 @@ document.addEventListener("keydown", function(e) {
 
 
 
-
-      updateExplosivesSlot();
+  updateHeavyArmourCostDisplay();
+                         updateExplosivesSlot();
       updateAttackSlot();
       updatePowerupTraySlots();
       updateTrayHUD();
