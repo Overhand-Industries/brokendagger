@@ -3120,8 +3120,12 @@ if (!player.moving && !player.isDashing) {
                bullet.position.x<=player.position.x+player.width &&
                bullet.position.y>=player.position.y &&
                bullet.position.y<=player.position.y+player.height){
-              bullet.alive = false;
-              let damage = 20;
+               bullet.alive = false;
+    let damage = 20;
+    if (defenseBoostActive) {
+      damage *= (1 - baseShieldDamageReduction);
+    }
+    applyDamage(damage);
               if(defenseBoostActive){ damage *= (1 - baseShieldDamageReduction); }
               player.hp -= damage;
               player.flashDamage();
