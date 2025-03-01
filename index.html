@@ -521,17 +521,17 @@
     <button id="buyBomb">
       <div class="marquee"><p class="icon" style="font-size:3rem">💣</p>
        <div class="label">
-<b><i><div class="cost" id="bombCostDisplay"></div></i></b>   </div>
+<b><i><div class="cost" id="bombCostDisplay"></div></i></b></div>
         <span>Buy a Bomb</span> </div></button>
 
  
     <!-- Add additional shop buttons here as needed -->
 <button id="buyHeavyArmour">
   <div class="marquee">
-    <div class="icon" style="font-size:3rem">🛡️</div>
-    <div class="label"><b><i>Heavy Armour</i></b></div>
-    <div class="count">Cost: <span id="heavyArmourCostDisplay"></span></div>
-  </div>
+    <p class="icon" style="font-size:3rem">🛡️</p>
+    <div class="label">
+       <b><i> <div class="count" id="heavyArmourCostDisplay"></div></i></b></div>
+     <span>Buy Heavy Armour</span></div>
 </button>
     <!-- Add additional shop buttons here as needed -->
 
@@ -2804,28 +2804,30 @@ document.getElementById("increaseShieldingTime").addEventListener("click", () =>
 });
 
 
-   function applyDamage(damage) {
-  // If the player has Heavy Armour, try to absorb damage with it first.
+ function applyDamage(damage) {
+  // Check if player has Heavy Armour.
   if (player.heavyArmour) {
-    player.heavyArmour.durability -= damage;
-    if (player.heavyArmour.durability > 0) {
-      // Armour absorbed all the damage.
-      updateInventoryDisplay(); // Update UI to reflect new durability
-      return; // No HP damage is applied
+    // Subtract the incoming damage from the armour durability.
+    let remainingDurability = player.heavyArmour.durability - damage;
+    if (remainingDurability > 0) {
+      // Armour fully absorbs the damage.
+      player.heavyArmour.durability = remainingDurability;
+      console.log("Armour absorbed damage. New durability:", player.heavyArmour.durability);
+      updateInventoryDisplay(); // Update UI to show the new durability.
+      return; // Exit the function so no HP is lost.
     } else {
-      // Armour is destroyed and there’s leftover damage.
-      damage = -player.heavyArmour.durability; // Remaining damage after armour breaks
-      player.heavyArmour = null; // Remove the armour
+      // Armour is broken; calculate the leftover damage.
+      damage = -remainingDurability; // remainingDurability is negative here.
+      player.heavyArmour = null; // Remove the armour.
       showUpgradeAlert("Heavy Armour destroyed!");
       updateInventoryDisplay();
     }
   }
-  
-  // Apply any remaining damage to player's HP.
-  player.hp -= damage;
-  player.flashDamage();
 
-  // (Additional death handling logic can go here.)
+  // Apply any remaining damage to the player's HP.
+  player.hp -= damage;
+  console.log("Player HP:", player.hp);
+  player.flashDamage();
 }
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
     // Only initialize mobile controls if touch events are supported.
