@@ -880,7 +880,7 @@ document.getElementById("toggleBGM").addEventListener("click", function() {
 
 function getHeavyArmourCost() {
   // For example, a base cost of 1500 scaled by (rank + 1)
-  return Math.floor(1500 * (calculateRank(killCount) + 1));
+  return Math.floor(250 * (calculateRank(killCount) + 1));
 }
 function updateHeavyArmourCostDisplay() {
   document.getElementById("heavyArmourCostDisplay").innerText = getHeavyArmourCost();
@@ -1435,6 +1435,8 @@ playSFX("explosion");
     // --- Player Class ---
     class Player {
       constructor(tileX, tileY, tileMap) {
+ this.heavyArmorGlowTimer = 0;
+
         this.animTime = 0;
         this.tileMap = tileMap;
         this.gridX = tileX;
@@ -1510,8 +1512,10 @@ playSFX("explosion");
     // Independently update the walk animation timer
     this.animTime += deltaTime;
     this.currentFrame = Math.floor(this.animTime / this.frameDelay) % this.frameCount;
-    
-    if (t >= 1) {
+    if (this.heavyArmorGlowTimer > 0) {
+      this.heavyArmorGlowTimer -= deltaTime;
+      if (this.heavyArmorGlowTimer < 0) this.heavyArmorGlowTimer = 0;
+    }    if (t >= 1) {
       this.moving = false;
       this.gridX = this.targetGridX;
       this.gridY = this.targetGridY;
@@ -1652,7 +1656,37 @@ render(ctx, camera) {
     );
     ctx.restore();
   }
+  // Heavy Armour glow effect (gold)
+  if (this.heavyArmorGlowTimer > 0 && this.heavyArmour) {
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(255,255,255,0.98)"; // Gold glow
+    ctx.drawImage(
+      this.spriteSheet,
+      srcX, srcY, 32, 32,
+      screenPos.x, screenPos.y, this.width, this.height
 
+
+    );
+    ctx.restore();
+  }
+    if (this.heavyArmorGlowTimer > 0 && this.heavyArmour) {
+   let offCanvas = document.createElement("canvas");
+    offCanvas.width = this.width;
+    offCanvas.height = this.height;
+    let offCtx = offCanvas.getContext("2d");
+
+    // Draw the sprite onto the offscreen canvas
+    offCtx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, 0, 0, this.width, this.height);
+
+    // Mask with red fill (using source-atop so it only covers the sprite shape)
+    offCtx.globalCompositeOperation = "source-atop";
+    offCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    offCtx.fillRect(0, 0, this.width, this.height);
+
+    // Draw the tinted sprite on top of the base sprite
+    ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
+}
   // --- Draw the base player sprite on top of the glows ---
   ctx.drawImage(
     this.spriteSheet,
@@ -2848,26 +2882,27 @@ document.getElementById("increaseShieldingTime").addEventListener("click", () =>
 });
 
 
- function applyDamage(damage) {
+function applyDamage(damage) {
   // Check if player has Heavy Armour.
   if (player.heavyArmour) {
-    // Subtract the incoming damage from the armour durability.
     let remainingDurability = player.heavyArmour.durability - damage;
     if (remainingDurability > 0) {
       // Armour fully absorbs the damage.
       player.heavyArmour.durability = remainingDurability;
       console.log("Armour absorbed damage. New durability:", player.heavyArmour.durability);
-      updateInventoryDisplay(); // Update UI to show the new durability.
-      return; // Exit the function so no HP is lost.
+      updateInventoryDisplay();
+      // Set glow timer so the heavy armour effect is visible.
+      player.heavyArmorGlowTimer = 0.5;
+      return; // Exit so no HP is lost.
     } else {
       // Armour is broken; calculate the leftover damage.
-      damage = -remainingDurability; // remainingDurability is negative here.
-      player.heavyArmour = null; // Remove the armour.
+      damage = -remainingDurability;
+      player.heavyArmour = null;
       showUpgradeAlert("Heavy Armour destroyed!");
       updateInventoryDisplay();
     }
   }
-
+  
   // Apply any remaining damage to the player's HP.
   player.hp -= damage;
   console.log("Player HP:", player.hp);
