@@ -47,12 +47,49 @@
 }
 
 /* Specific styles */
+/* Remove default button styling */
 #respawnBtn {
-  background: linear-gradient(135deg, #ff416c, #ff4b2b);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
- z-index: 5000;
-
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
 }
+
+/* Make each letter inline-block so we can animate them individually */
+#respawnBtn span {
+  display: inline-block;
+}
+
+/* Define the wave keyframes */
+@keyframes wave {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Trigger the animation on hover, active, or touch */
+#respawnBtn:hover span,
+#respawnBtn:active span {
+  animation: wave 0.6s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+/* Cascade delays for each letter */
+#respawnBtn span:nth-child(1) { animation-delay: 0s; }
+#respawnBtn span:nth-child(2) { animation-delay: 0.05s; }
+#respawnBtn span:nth-child(3) { animation-delay: 0.1s; }
+#respawnBtn span:nth-child(4) { animation-delay: 0.15s; }
+#respawnBtn span:nth-child(5) { animation-delay: 0.2s; }
+#respawnBtn span:nth-child(6) { animation-delay: 0.25s; }
+#respawnBtn span:nth-child(7) { animation-delay: 0.3s; }
 
 #viewMenuBtn {
   background: linear-gradient(135deg, #1d976c, #93f9b9);
@@ -581,7 +618,9 @@
 </button>
    <div id="deathOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:red; opacity:0; z-index:12000; transition: opacity 0.5s;">
   <div id="deathOptions" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
-    <button id="respawnBtn" style="font-size:2rem; margin:0.5rem; padding:0.5rem 1rem;">Respawn</button>
+    <button id="respawnBtn">
+  <span>R</span><span>E</span><span>S</span><span>P</span><span>A</span><span>W</span><span>N</span>
+</button>
     
   </div>
 </div>
@@ -599,8 +638,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "use strict";
     let preservedAutoStrikeTime = 0;
 let preservedStrikeMeter = 0;
-
-    // Constants and global state
+// Define a flag at the top of your script
+let deathOverlayShown = false;    // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
     
@@ -726,7 +765,9 @@ function playSFX(sound, cooldown = 100) {
   }
 }
 
-
+document.getElementById("respawnBtn").addEventListener("touchstart", () => {
+  // This will trigger the :active state – you can also add a class if you wish to control the effect via JS.
+});
    //death 
 function showDeathOverlay() {
   const overlay = document.getElementById("deathOverlay");
@@ -2682,6 +2723,8 @@ function resumeGame() {
   
   timeScale = 1.0;
   document.getElementById("upgradeButton").style.display = "block";
+ deathOverlayShown = false;
+
 }
    
  // Increase HP Upgrade (Cost: 50; +20 HP)
@@ -3204,12 +3247,11 @@ playSFX("playerDie");
           if(autoStrikeTime<0) autoStrikeTime = 0;
         }
         
-      if(player.isDead && !isUpgradeMenuVisible){
+      if(player.isDead && !isUpgradeMenuVisible){showUpgradeAlert("YOU DIED!"); 
 
   slowMotionTimer -= deltaTime;
   if(slowMotionTimer <= 0){
-showUpgradeAlert("YOU DIED!"); showDeathOverlay();
-    // Menu showUpgradeMenu(true); triggered by death.
+deathOverlayShown = true; showDeathOverlay();    // Menu showUpgradeMenu(true); triggered by death.
   }
 }
         
