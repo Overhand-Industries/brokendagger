@@ -2693,7 +2693,7 @@ function showUpgradeAlert(message) {
     }
     function getMaxAllowedStrikeRange() {
   const baseRange = 2; // base number of tiles
-  const rankIncrement = 1; // additional tile per rank (adjust as needed)
+  const rankIncrement = 2; // additional tile per rank (adjust as needed)
   const currentRank = calculateRank(killCount); // your existing rank function
   return baseRange + currentRank * rankIncrement;
 }
@@ -2895,8 +2895,8 @@ const maxAllowedStrikeRange = 6; // Maximum allowed strike range
 
 function updateStrikeRangeButton() {
   const button = document.getElementById("increaseDash");
-  const maxAllowedStrikeRange = getMaxAllowedStrikeRange();
-  if (strikeRangeTiles >= maxAllowedStrikeRange) {
+  const maxAllowed = getMaxAllowedStrikeRange();
+  if (strikeRangeTiles >= maxAllowed) {
     button.style.opacity = "0.5";
     button.style.pointerEvents = "none";
   } else {
