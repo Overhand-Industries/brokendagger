@@ -882,6 +882,16 @@ function getHeavyArmourCost() {
   // For example, a base cost of 1500 scaled by (rank + 1)
   return Math.floor(250 * (calculateRank(killCount) + 1));
 }
+   function updateHeavyArmourButton() {
+  const button = document.getElementById("buyHeavyArmour");
+  if (player.heavyArmour) {
+    button.style.opacity = 0.5;
+    button.style.pointerEvents = "none"; // Prevent further clicks
+  } else {
+    button.style.opacity = 1;
+    button.style.pointerEvents = "auto";
+  }
+}
 function updateHeavyArmourCostDisplay() {
   document.getElementById("heavyArmourCostDisplay").innerText = getHeavyArmourCost();
 }
@@ -1027,6 +1037,8 @@ function updateUpgradeButton(upgradeId) {
     </button>
   `;
 }
+ updateHeavyArmourButton();
+
   inventoryContainer.innerHTML = html;
 }
 
@@ -2571,15 +2583,28 @@ if(healingCharmActive){
       }updateInventoryDisplay();
     }
    document.getElementById("buyHeavyArmour").addEventListener("click", function () {
+  // Check if the player already has heavy armour.
+  if (player.heavyArmour) {
+    showUpgradeAlert("You already have Heavy Armour!");
+    // Dim the button
+    this.style.opacity = 0.5;
+    this.style.pointerEvents = "none";
+    return; // Exit early so no purchase is made.
+  }
+  
   let cost = getHeavyArmourCost();
   if (points >= cost) {
     points -= cost;
-    // Give the player heavy armour (store it on the player object)
+    // Assign new heavy armour to the player.
     player.heavyArmour = new HeavyArmour(player.hp);
-    updateInventoryDisplay(); // Ensure your inventory UI now shows heavy armour
+    updateInventoryDisplay(); // Update UI to show the new heavy armour.
     playSFX("increase");
     showUpgradeAlert("Heavy Armour purchased!");
     document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    
+    // Optionally dim the button after purchase
+    this.style.opacity = 0.5;
+    this.style.pointerEvents = "none";
   } else {
     showUpgradeAlert("Not enough points!");
   }
@@ -2661,7 +2686,12 @@ function showUpgradeAlert(message) {
       }
       tallyContainer.innerHTML = tallyHTML;
     }
-    
+    function getMaxAllowedStrikeRange() {
+  const baseRange = 6; // base number of tiles
+  const rankIncrement = 1; // additional tile per rank (adjust as needed)
+  const currentRank = calculateRank(killCount); // your existing rank function
+  return baseRange + currentRank * rankIncrement;
+}
     function updateTrayHUD() {
       const pointsSlot = document.getElementById("pointsSlot");
       const pointsCounter = pointsSlot.querySelector('.counter');
@@ -2799,25 +2829,25 @@ document.getElementById("increaseAutoRun").addEventListener("click", () => {
 
 // Increase Strike Range Upgrade (Cost: 300; +1 tile to strike range)
 // Define your maximum allowed strike range.
-const maxAllowedStrikeRange = 6; // Default is 1; this upgrade adds one extra tile.
+const maxAllowedStrikeRange = 6; // Maximum allowed strike range
 
-// Helper function to update the strike range upgrade button's state.
 function updateStrikeRangeButton() {
-  const dashBtn = document.getElementById("increaseDash");
+  const button = document.getElementById("increaseDash");
+  const maxAllowedStrikeRange = getMaxAllowedStrikeRange();
   if (strikeRangeTiles >= maxAllowedStrikeRange) {
-    dashBtn.classList.add("dimmed");
-    dashBtn.style.pointerEvents = "none"; // disable interaction
+    button.style.opacity = "0.5";
+    button.style.pointerEvents = "none";
   } else {
-    dashBtn.classList.remove("dimmed");
-    dashBtn.style.pointerEvents = "auto";
+    button.style.opacity = "1";
+    button.style.pointerEvents = "auto";
   }
 }
 
-// Increase Strike Range Upgrade (Cost: 300; +1 tile to strike range)
 document.getElementById("increaseDash").addEventListener("click", () => {
   if (upgradeTimers.increaseDash > 0) return;
   const cost = 300;
-  // Check if we haven't reached the maximum allowed strike range.
+  const maxAllowedStrikeRange = getMaxAllowedStrikeRange();
+  
   if (points >= cost && strikeRangeTiles < maxAllowedStrikeRange) {
     points -= cost;
     strikeRangeTiles++;
@@ -2827,13 +2857,11 @@ document.getElementById("increaseDash").addEventListener("click", () => {
     upgradeTimers.increaseDash = getEffectiveCooldown("increaseDash");
     updateUpgradeButton("increaseDash");
   } else if (strikeRangeTiles >= maxAllowedStrikeRange) {
-    // If max is reached, dim the icon.
     showUpgradeAlert("Max strike range reached!");
   }
-  // Always update the button state afterward.
-  updateStrikeRangeButton();
+  updateStrikeRangeButton(); // Update button appearance
 });
-
+   
 // Increase Strike Meter Capacity Upgrade (Cost: 150; +10 capacity)
 document.getElementById("increaseStrikeMeter").addEventListener("click", () => {
   if (upgradeTimers.increaseStrikeMeter > 0) return;
