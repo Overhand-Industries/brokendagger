@@ -58,6 +58,7 @@
   color: #fff;
   cursor: pointer;
   outline: none;
+width: 100%;
 }
 
 /* Make each letter inline-block so we can animate them individually */
@@ -3170,8 +3171,8 @@ if (!player.moving && !player.isDashing) {
     }
     applyDamage(damage);
               if(defenseBoostActive){ damage *= (1 - baseShieldDamageReduction); }
-              player.hp -= damage;
-              player.flashDamage();
+              //player.hp -= damage;
+              //player.flashDamage();
               screenShakeTime = 0.2;
               screenShakeMagnitude = 5;
  playSFX("playerDamage");
