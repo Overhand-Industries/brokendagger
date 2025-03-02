@@ -871,6 +871,108 @@ document.getElementById("toggleBGM").addEventListener("click", function() {
     isMusicPlaying = true;
   }
 });
+
+   // ---------- NEW WEATHER SYSTEM CODE ----------
+
+// Helper to return a random number between min and max.
+function randomBetween(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// Global weather variables.
+let weatherState = "sunshine";  // possible states: "sunshine", "rain", "fog", "thunderstorm"
+let weatherTimer = randomBetween(20, 60); // duration in seconds for current weather
+let lightningTimer = randomBetween(5, 10); // for thunderstorm lightning
+
+// Picks a new weather state based on weighted probabilities.
+function pickNewWeatherState() {
+  let r = Math.random();
+  if (r < 0.7) return "sunshine";       // 70% chance for clear/sunny
+  else if (r < 0.8) return "rain";        // 10% chance for rain
+  else if (r < 0.9) return "fog";         // 10% chance for fog
+  else return "thunderstorm";            // 10% chance for thunderstorm
+}
+
+// Global weather variables and helper functions remain unchanged
+// (weatherState, weatherTimer, lightningTimer, etc.)
+
+// Update weather (as before)
+function updateWeather(deltaTime) {
+  weatherTimer -= deltaTime;
+  if (weatherTimer <= 0) {
+    weatherState = pickNewWeatherState();
+    weatherTimer = randomBetween(20, 60);
+    // Optionally, reset rain drops when entering a rainy state.
+  }
+  
+  if (weatherState === "thunderstorm") {
+    lightningTimer -= deltaTime;
+    if (lightningTimer <= 0) {
+      triggerLightningFlash();
+      lightningTimer = randomBetween(5, 10);
+    }
+  }
+}
+
+// Global renderWeather function that incorporates all effects
+function renderWeather(ctx) {
+  ctx.save();
+  
+  // Sunshine: gentle warm glow via a radial gradient.
+  if (weatherState === "sunshine") {
+    let sunX = canvas.width * 0.8;
+    let sunY = canvas.height * 0.2;
+    let outerRadius = canvas.width * 0.6;
+    let gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, outerRadius);
+    gradient.addColorStop(0, "rgba(255,255,200,0.3)"); // bright near the sun
+    gradient.addColorStop(1, "rgba(255,255,200,0)");    // fade to transparent
+    ctx.globalCompositeOperation = "lighter"; // blend additively for glow
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  // Fog: overlay a semi-transparent gray layer.
+  if (weatherState === "fog") {
+    ctx.fillStyle = "rgba(200,200,200,0.3)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  // Rain: a very subtle blue tint (while actual rain particles are rendered separately).
+  if (weatherState === "rain") {
+    ctx.fillStyle = "rgba(0,0,80,0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  // Thunderstorm: darken the scene.
+  if (weatherState === "thunderstorm") {
+    ctx.fillStyle = "rgba(0,0,50,0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  ctx.restore();
+}
+
+// Create a brief white flash to simulate lightning.
+function triggerLightningFlash() {
+  const flashDiv = document.createElement("div");
+  flashDiv.style.position = "fixed";
+  flashDiv.style.top = "0";
+  flashDiv.style.left = "0";
+  flashDiv.style.width = "100vw";
+  flashDiv.style.height = "100vh";
+  flashDiv.style.background = "white";
+  flashDiv.style.opacity = "0.9";
+  flashDiv.style.pointerEvents = "none";
+  flashDiv.style.transition = "opacity 0.2s ease-out";
+  document.body.appendChild(flashDiv);
+  setTimeout(() => {
+    flashDiv.style.opacity = "0";
+    setTimeout(() => flashDiv.remove(), 200);
+  }, 50);
+  // Optionally, trigger a thunder sound effect here.
+}
+
+// ---------- END NEW WEATHER SYSTEM CODE ----------
     // Shop & Upgrade Menu Logic
     // -------------------------
    class HeavyArmour {
@@ -2300,19 +2402,24 @@ return true;
       dragStart = null;
     });
     
-    function handleTap(evt) {
-      evt.preventDefault();
-      let rect = canvas.getBoundingClientRect();
-      let tapX = evt.clientX - rect.left, tapY = evt.clientY - rect.top;
-      if(performManualStrikeAt(tapX, tapY)) { triggerHeadbutt(); return; playSFX("attack");}
-      let dir = computeDirection(evt.clientX, evt.clientY);
-      if(dir && !player.moving && !player.isDashing) { player.move(dir); }
-      else {
-        let playerScreenPos = camera.worldToScreen(player.position);
-        if(tapX>=playerScreenPos.x && tapX<=playerScreenPos.x+player.width &&
-           tapY>=playerScreenPos.y && tapY<=playerScreenPos.y+player.height) { triggerHeadbutt(); }
-      }
-    }
+function handleTap(evt) {
+  evt.preventDefault();
+  let rect = canvas.getBoundingClientRect();
+  let tapX = evt.clientX - rect.left, tapY = evt.clientY - rect.top;
+  // If a manual strike is triggered (e.g. an enemy is tapped), process it.
+  if (performManualStrikeAt(tapX, tapY)) { 
+    triggerHeadbutt(); 
+    playSFX("attack");
+    return;
+  }
+  // Remove or comment out the movement portion:
+  // let dir = computeDirection(evt.clientX, evt.clientY);
+  // if (dir && !player.moving && !player.isDashing) { 
+  //   player.move(dir);
+  // }
+  // Optionally, if you want to trigger a strike when tapping on empty space:
+  // triggerHeadbutt();
+}
     
     function computeDirection(clientX, clientY) {
       let rect = canvas.getBoundingClientRect();
@@ -3195,6 +3302,19 @@ const strikeThreshold = 0.7 * fullExtent; // trigger if 70% of full drag is reac
   }
 }
     // --- Added Keyboard Controls ---
+   document.addEventListener("keydown", function(e) {
+  // Check if the spacebar is pressed.
+  if (e.code === "Space") {
+    // If the death overlay is visible...
+    const deathOverlay = document.getElementById("deathOverlay");
+    if (deathOverlay && deathOverlay.style.display === "block") {
+      // Trigger the respawn button's click event.
+      document.getElementById("respawnBtn").click();
+      // Prevent any other actions with the spacebar.
+      e.preventDefault();
+    }
+  }
+});
 document.addEventListener("keydown", function(e) {
   if (isUpgradeMenuVisible) return;
   // For movement keys, update state
@@ -3323,13 +3443,15 @@ function applyLighting(ctx) {
 
    //GAME LOOP
     function gameLoop() {updateDaggerContainerPosition();
+
+
       let currentTime = performance.now();
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
 updateUpgradeTimers(deltaTime);
 
-                         
+   let effectiveDelta = deltaTime * timeScale;                      
 if (!player.moving && !player.isDashing) {
   if (keysPressed['ArrowUp'] || keysPressed['KeyW']) {
     player.move("up");
@@ -3580,9 +3702,7 @@ document.addEventListener("keydown", function(e) {
   }
 });
 
-  // Update rain particles
-  rainDrops.forEach(drop => drop.update(deltaTime));
-
+  
   // Draw background and game elements as before
   ctx.fillStyle = "#505050";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -3597,14 +3717,21 @@ document.addEventListener("keydown", function(e) {
   player.render(ctx, camera);
 
   // Render rain on top of game elements
+// Update rain particles
+ if (weatherState === "rain" || weatherState === "thunderstorm") {
+  rainDrops.forEach(drop => drop.update(deltaTime));
   rainDrops.forEach(drop => drop.render(ctx));
+}
 
   // Finally, apply the lighting effect
-  applyLighting(ctx);
+      applyLighting(ctx);
+updateWeather(effectiveDelta);
+renderWeather(ctx);
 
 
-  updateHeavyArmourCostDisplay();
-                         updateExplosivesSlot();
+
+      updateHeavyArmourCostDisplay();
+      updateExplosivesSlot();
       updateAttackSlot();
       updatePowerupTraySlots();
       updateTrayHUD();
