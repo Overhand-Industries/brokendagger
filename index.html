@@ -493,6 +493,8 @@ width: 100%;
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
+
+
   <!-- Mobile directional controls overlay (only displayed on touch devices) -->
 <div id="mobileControls">
   <div class="control-button" id="move-up"></div>
@@ -1170,7 +1172,7 @@ function updateRankDisplay() {
               color = "#d2b48c";
             } else if (noiseValue > 0.8) {
               tileType = 3; // mountain
-              color = "#6e6e6e";
+              color = "#382b28";
             }
             row.push(new Tile(x, y, tileType, color));
           }
@@ -3258,23 +3260,62 @@ for (let i = 0; i < numRainDrops; i++) {
 
 // Lighting effect: Draw an overlay with a radial gradient
 function applyLighting(ctx) {
-  // Example: a dark overlay with a “light” circle around the player
-  // Adjust parameters (colors, radii) to suit your style.
-  let gradient = ctx.createRadialGradient(
-    player.position.x + player.width / 2,
-    player.position.y + player.height / 2,
-    50, // inner radius where light is brightest
-    player.position.x + player.width / 2,
-    player.position.y + player.height / 2,
-    canvas.width * 0.8 // outer radius where darkness prevails
-  );
-  // Gradient from transparent (light) to dark
-  gradient.addColorStop(0, "rgba(0,0,0,0)");
-  gradient.addColorStop(1, "rgba(0,0,0,0.45)");
-
+  // ----- DAY/NIGHT CYCLE OVERLAY -----
+  // Full cycle lasts 120 seconds (adjust as desired)
+  const cyclePeriod = 120;
+  // Normalized time (0 to 1) over the cycle; t=0 and t=1 represent midnight,
+  // while t=0.5 is midday.
+  const t = (globalTime % cyclePeriod) / cyclePeriod;
+  // Compute brightness using a sine function so brightness peaks at midday.
+  // Adjust these numbers to control how dark or light your scene gets.
+  const brightness = 0.3 + 0.7 * Math.sin(t * Math.PI);
+  // The overlay opacity is higher when brightness is lower.
+  const overlayAlpha = 1 - brightness;
+  
+  // Draw a full‑screen rectangle in dark blue with "multiply" blending to darken the scene.
   ctx.save();
-  // Change composite mode if needed (try "multiply" or "overlay")
   ctx.globalCompositeOperation = "multiply";
+  ctx.fillStyle = `rgba(0, 0, 50, ${overlayAlpha})`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+  
+  // ----- ORBITING SPOTLIGHT EFFECT -----
+  // Compute the grid's center in world coordinates (assumes worldMinX, etc. are defined)
+  const gridCenterX = (worldMinX + worldMaxX) / 2;
+  const gridCenterY = (worldMinY + worldMaxY) / 2;
+  
+  // Set orbit parameters: the light will circle around the grid center.
+  const rotationSpeed = 0.5;                    // Radians per second
+  const orbitRadiusWorld = tileMap.tileWidth * 3; // Orbit radius (world units)
+  const orbitAngle = globalTime * rotationSpeed;
+  const offsetX = Math.cos(orbitAngle) * orbitRadiusWorld;
+  const offsetY = Math.sin(orbitAngle) * orbitRadiusWorld;
+  
+  // Light's position in world space is the grid center plus the orbit offset.
+  const lightWorldPos = new Vector2(gridCenterX + offsetX, gridCenterY + offsetY);
+  // Convert to screen coordinates.
+  const lightScreenPos = camera.worldToScreen(lightWorldPos);
+  
+  // Size the spotlight relative to the grid.
+  const gridWidth = worldMaxX - worldMinX;
+  const gridHeight = worldMaxY - worldMinY;
+  const gridMin = Math.min(gridWidth, gridHeight);
+  // Here, the full diameter of the spotlight is 50% of the grid’s smallest dimension.
+  const outerRadiusWorld = gridMin * 0.75;         // Outer radius in world units
+  const outerRadius = outerRadiusWorld * camera.zoom; // Convert to screen units
+  const innerRadius = outerRadius * 0.3;             // Inner radius (for a smooth gradient)
+  
+  // Create a radial gradient for the spotlight.
+  ctx.save();
+  // Using "lighter" makes the spotlight brighten the scene over the dark overlay.
+  ctx.globalCompositeOperation = "lighter";
+  const gradient = ctx.createRadialGradient(
+    lightScreenPos.x, lightScreenPos.y, innerRadius,
+    lightScreenPos.x, lightScreenPos.y, outerRadius
+  );
+  // The center is bright; it fades out to transparent.
+  gradient.addColorStop(0, "rgba(255,255,200,0.2)");
+  gradient.addColorStop(1, "rgba(255,255,200,0)");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.restore();
