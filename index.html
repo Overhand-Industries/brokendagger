@@ -1160,17 +1160,17 @@ function updateRankDisplay() {
             noiseValue = (noiseValue + 1) / 2;
     
             let tileType = 0;
-            let color = "#64dd64"; // grass by default
+            let color = "#7a8450"; // grass by default
     
             if (noiseValue < 0.3) {
               tileType = 1; // water
-              color = "#3399ff";
+              color = "#4a6a8c";
             } else if (noiseValue < 0.5) {
               tileType = 2; // sand/beach
-              color = "#f4e285";
+              color = "#d2b48c";
             } else if (noiseValue > 0.8) {
               tileType = 3; // mountain
-              color = "#888888";
+              color = "#6e6e6e";
             }
             row.push(new Tile(x, y, tileType, color));
           }
@@ -1199,7 +1199,7 @@ function updateRankDisplay() {
             ctx.closePath();
             ctx.fillStyle = this.tiles[y][x].color;
             ctx.fill();
-            ctx.strokeStyle = "#000";
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.02)"; // 50% opacity black
             ctx.stroke();
           }
         }
