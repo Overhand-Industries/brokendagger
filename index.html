@@ -905,13 +905,32 @@ function updateWeather(deltaTime) {
     // Optionally, reset rain drops when entering a rainy state.
   }
   
-  if (weatherState === "thunderstorm") {
-    lightningTimer -= deltaTime;
-    if (lightningTimer <= 0) {
-      triggerLightningFlash();
-      lightningTimer = randomBetween(5, 10);
-    }
+  // Declare these outside your render loop (initialize once)
+let thunderTintAlpha = 0;         // current blue tint opacity
+const thunderFadeRate = 0.1;        // how fast the tint fades in (alpha per second)
+const maxTintAlpha = 0.4;           // maximum opacity for the blue tint
+
+// In your update/render code for thunderstorm:
+if (weatherState === "thunderstorm") {
+  // Decrease the lightning timer.
+  lightningTimer -= deltaTime;
+  
+  // Gradually increase the blue tint opacity.
+  thunderTintAlpha = Math.min(thunderTintAlpha + deltaTime * thunderFadeRate, maxTintAlpha);
+  
+  // When the timer runs out, trigger a lightning flash and reset the tint.
+  if (lightningTimer <= 0) {
+    triggerLightningFlash();
+    lightningTimer = randomBetween(5, 10);
+    thunderTintAlpha = 0; // reset tint opacity after flash
   }
+  
+  // Draw the blue tint overlay with the current opacity.
+  ctx.save();
+  ctx.fillStyle = `rgba(0, 0, 50, ${thunderTintAlpha})`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+}
 }
 
 // Global renderWeather function that incorporates all effects
@@ -924,18 +943,25 @@ if (weatherState === "sunshine") {
   const orbitCenterX = canvas.width / 2;
   const orbitCenterY = canvas.height / 2;
   const orbitRadius = Math.min(canvas.width, canvas.height) * 0.4; // adjust as needed
-  const rotationSpeed = 0.1; // radians per second
+  const rotationSpeed = 0.2; // radians per second
   const angle = globalTime * rotationSpeed;
   
-  // Compute the sun's position on its orbit.
+  // Compute the sun's orbiting position.
   const sunX = orbitCenterX + orbitRadius * Math.cos(angle);
   const sunY = orbitCenterY + orbitRadius * Math.sin(angle);
   
-  const outerRadius = canvas.width * 0.8;
+  // Compute a fade factor (oscillates between 0 and 1).
+  const fadeSpeed = 0.5; // adjust fade in/out speed
+  const intensity = (Math.sin(globalTime * fadeSpeed) + 1) / 2;
+  
+  const outerRadius = canvas.width * 0.6;
   const gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, outerRadius);
-  gradient.addColorStop(0, "rgba(255,255,200,0.3)"); // bright near the sun
-  gradient.addColorStop(1, "rgba(255,255,200,0)");    // fade to transparent
-  ctx.globalCompositeOperation = "lighter"; // blend additively for glow
+  
+  // Modulate the inner brightness by the intensity.
+  gradient.addColorStop(0, `rgba(255,255,200,${0.3 * intensity})`);
+  gradient.addColorStop(1, "rgba(255,255,200,0)");
+  
+  ctx.globalCompositeOperation = "lighter"; // additive blending for glow
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
