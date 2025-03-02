@@ -20,27 +20,153 @@
       display: block;
       background: #505050;
     }
+
+
+
+/* Container for the death options buttons */
+#deathOptions {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(1, 1fr);
+  justify-items: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* Base styles for both buttons */
+#deathOptions button {
+  font-family: 'Roboto', sans-serif;
+  font-size: 3rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Specific styles */
+/* Remove default button styling */
+#respawnBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+width: 100%;
+}
+
+/* Make each letter inline-block so we can animate them individually */
+#respawnBtn span {
+  display: inline-block;
+}
+
+/* Define the wave keyframes */
+@keyframes wave {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Trigger the animation on hover, active, or touch */
+#respawnBtn:hover span,
+#respawnBtn:active span {
+  animation: wave 0.6s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+/* Cascade delays for each letter */
+#respawnBtn span:nth-child(1) { animation-delay: 0s; }
+#respawnBtn span:nth-child(2) { animation-delay: 0.05s; }
+#respawnBtn span:nth-child(3) { animation-delay: 0.1s; }
+#respawnBtn span:nth-child(4) { animation-delay: 0.15s; }
+#respawnBtn span:nth-child(5) { animation-delay: 0.2s; }
+#respawnBtn span:nth-child(6) { animation-delay: 0.25s; }
+#respawnBtn span:nth-child(7) { animation-delay: 0.3s; }
+
+#viewMenuBtn {
+  background: linear-gradient(135deg, #1d976c, #93f9b9);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+ z-index: 5000;
+
+}
+
+/* Hover effects for both buttons */
+#deathOptions button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Mobile responsiveness: on small screens, stack buttons in a single column and increase size */
+@media (max-width: 600px) {
+  #deathOptions {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+  #deathOptions button {
+    font-size: 2.5rem;
+    padding: 1.5rem;
+  }
+}
+/* Mobile controls: only show on touch devices */
+@media (pointer: coarse) {
+  #mobileControls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none; /* allow children to receive touches */
+    z-index: 50;
+  }
+  .control-button {
+    position: absolute;
+    pointer-events: auto;
+    width: 64px;    /* same as tileMap.tileWidth */
+    height: 32px;   /* same as tileMap.tileHeight */
+    background: rgba(255,255,255,0.7);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    /* Default no rotation (for "up") */
+    transform: rotate(0deg);
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  /* Rotate for each direction */
+  #move-right { transform: rotate(0deg); }
+  #move-down  { transform: rotate(0deg); }
+  #move-left  { transform: rotate(0deg); }
+  
+  .control-button:active {
+    opacity: 0.9;
+  }
+}
     /* --- Headbutt Effect Styling --- */
      
 /* Container that will always be positioned at the player's center */
 #daggerContainer {
   position: absolute;
   pointer-events: none;
-  transform: translate(-50%, -50%);
+   transform: translate(-50%, -50%) scaleX(-1) scaleY(-1);
 }
 
 /* Dagger element */
 #headbuttEffect {
-  font-size: 32px; /* dagger size */
-  line-height: 32px;
+  font-size: 20px; /* dagger size */
+  line-height: 20px;
   text-align: center;
   /* Fix the hilt (top-right corner) as the pivot */
-  transform-origin: 100% 0%;
+  transform-origin: 79% 0%;
   /* Initially hidden/scaled to zero */
   transform: scale(0) rotate(var(--rotation, 0deg));
   opacity: 0;
 }
-
+ 
 #headbuttEffect.active {
   animation: headbuttAnim 0.3s forwards;
 }
@@ -367,8 +493,15 @@
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
-  
-  <!-- Headbutt Effect Overlay -->
+
+
+  <!-- Mobile directional controls overlay (only displayed on touch devices) -->
+<div id="mobileControls">
+  <div class="control-button" id="move-up"></div>
+  <div class="control-button" id="move-right"></div>
+  <div class="control-button" id="move-down"></div>
+  <div class="control-button" id="move-left"></div>
+</div>  <!-- Headbutt Effect Overlay -->
 <div id="daggerContainer">
   <div id="headbuttEffect">🗡️</div>
 </div>
@@ -428,11 +561,21 @@
     <button id="buyBomb">
       <div class="marquee"><p class="icon" style="font-size:3rem">💣</p>
        <div class="label">
-<b><i><div class="cost" id="bombCostDisplay"></div></i></b>   </div>
+<b><i><div class="cost" id="bombCostDisplay"></div></i></b></div>
         <span>Buy a Bomb</span> </div></button>
 
  
     <!-- Add additional shop buttons here as needed -->
+<button id="buyHeavyArmour">
+  <div class="marquee">
+    <p class="icon" style="font-size:3rem">🛡️+🔗</p>
+    <div class="label">
+       <b><i> <div class="count" id="heavyArmourCostDisplay"></div></i></b></div>
+     <span>Buy Heavy Armour</span></div>
+</button>
+    <!-- Add additional shop buttons here as needed -->
+
+
   </div>
 </div>
 
@@ -447,7 +590,23 @@
 </div>
   
   <!-- Item Tray -->
-  <div id="itemTray">
+  <div id="itemTray"><button onclick="enterPortal('https://overhand-industries.github.io/kill-da-bear/leveltest.json')">
+  Test Portal
+</button>
+<script>
+  function enterPortal(levelFile) {
+    fetch(levelFile)
+      .then(response => {
+        if (!response.ok) throw new Error("Failed to load level file: " + response.status);
+        return response.json();
+      })
+      .then(levelObj => {
+        console.log("Loaded level:", levelObj);
+        // Convert levelObj into your TileMap and switch levels.
+      })
+      .catch(err => console.error("Error loading level:", err));
+  }
+</script>
     <div class="tray-group passive">
       <div class="tray-slot" id="pointsSlot">💰<div class="counter">0</div></div>
       <div class="tray-slot" id="killsSlot">💀<div class="counter">0</div></div>
@@ -462,6 +621,9 @@
         ➡️<div class="tally-container"></div>
       </div>
     </div>
+    
+    
+    
     <div class="divider"></div>
     <div class="tray-group active">
       <div class="tray-slot" id="explosivesSlot">💣<div class="counter">0</div></div>
@@ -476,6 +638,14 @@
     </div>
   </div>
 </button>
+   <div id="deathOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:red; opacity:0; z-index:12000; transition: opacity 0.5s;">
+  <div id="deathOptions" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+    <button id="respawnBtn">
+  <span>R</span><span>E</span><span>S</span><span>P</span><span>A</span><span>W</span><span>N</span>
+</button>
+    
+  </div>
+</div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const buyBombBtn = document.getElementById("buyBomb");
@@ -485,13 +655,13 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Bomb button clicked!");
     });
   }
-  // All your other code...
+  // All your other code...<button id="viewMenuBtn" style="font-size:2rem; margin:0.5rem; padding:0.5rem 1rem;">View Menu</button>
 });
     "use strict";
     let preservedAutoStrikeTime = 0;
 let preservedStrikeMeter = 0;
-
-    // Constants and global state
+// Define a flag at the top of your script
+let deathOverlayShown = false;    // Constants and global state
     const PIXEL_SIZE = 4;
     const goldDecayRate = 5;
     
@@ -552,7 +722,28 @@ window.addEventListener("blur", () => { isPageActive = false; });
         ctx.restore();
       }
     }
-   
+   // Base cooldown times (in seconds) for each upgrade
+const baseUpgradeCooldowns = {
+  increaseHP: 30,
+  increaseAutoRun: 20,
+  increaseDash: 200,            // Strike Range upgrade takes longest
+  increaseStrikeMeter: 25,
+  increaseHealingCharmTime: 25,
+  increaseShieldingTime: 25
+};
+
+// This object will hold the current cooldown timer for each upgrade button.
+let upgradeTimers = {
+  increaseHP: 0,
+  increaseAutoRun: 0,
+  increaseDash: 0,
+  increaseStrikeMeter: 0,
+  increaseHealingCharmTime: 0,
+  increaseShieldingTime: 0
+};
+
+// A factor that scales cooldown based on rank. (For example, 0.1 means a 10% increase per rank.)
+const cooldownScaleFactor = 0.1;
 // ✅ Preload and create sound instances
 const sfx = {
    collect: createAudio("item1.wav"), 
@@ -595,6 +786,50 @@ function playSFX(sound, cooldown = 100) {
     audio.play().catch(err => console.warn(`SFX Error: ${err}`));
   }
 }
+
+document.getElementById("respawnBtn").addEventListener("touchstart", () => {
+  // This will trigger the :active state – you can also add a class if you wish to control the effect via JS.
+});
+   //death 
+function showDeathOverlay() {
+  const overlay = document.getElementById("deathOverlay");
+  overlay.style.display = "block";
+  // Force a reflow then fade in
+  void overlay.offsetWidth;
+  overlay.style.opacity = "0.8"; // Adjust brightness if needed
+}
+
+function hideDeathOverlay() {
+  const overlay = document.getElementById("deathOverlay");
+  overlay.style.opacity = "0";
+  setTimeout(() => { overlay.style.display = "none"; }, 500);
+}
+
+// Set up the button event listeners once (after DOMContentLoaded)
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("respawnBtn").addEventListener("click", () => {
+    // Directly respawn the player without showing the menu.
+    hideDeathOverlay();
+    // Reset necessary game state for a respawn.
+    enemies.length = 0;
+    bullets.length = 0;
+    pickups.length = 0;
+    baitBombs.length = 0;
+    player.respawn();
+    autoStrikeTime = baseAutoStrikeTime;
+    timeScale = 1.0;
+    // Optionally, hide the upgrade menu if visible.
+    document.getElementById("upgradeMenu").style.display = "none";
+    document.getElementById("upgradeButton").style.display = "block";
+  });
+  
+  document.getElementById("viewMenuBtn").addEventListener("click", () => {
+    hideDeathOverlay();
+    // Then show the upgrade menu (triggered by death).
+    showUpgradeMenu(true);
+  });
+});
+
     // --- Sword Effect for Max Strike ---
     // This effect draws a spinning sword emoji from the player to each struck enemy.
     class SwordEffect {
@@ -655,8 +890,169 @@ document.getElementById("toggleBGM").addEventListener("click", function() {
     isMusicPlaying = true;
   }
 });
+
+   // ---------- NEW WEATHER SYSTEM CODE ----------
+
+// Helper to return a random number between min and max.
+function randomBetween(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// Global weather variables.
+let weatherState = "sunshine";  // possible states: "sunshine", "rain", "fog", "thunderstorm"
+let weatherTimer = randomBetween(20, 60); // duration in seconds for current weather
+let lightningTimer = randomBetween(5, 10); // for thunderstorm lightning
+
+// Picks a new weather state based on weighted probabilities.
+function pickNewWeatherState() {
+  let r = Math.random();
+  if (r < 0.7) return "sunshine";       // 70% chance for clear/sunny
+  else if (r < 0.8) return "rain";        // 10% chance for rain
+  else if (r < 0.9) return "fog";         // 10% chance for fog
+  else return "thunderstorm";            // 10% chance for thunderstorm
+}
+
+// Global weather variables and helper functions remain unchanged
+// (weatherState, weatherTimer, lightningTimer, etc.)
+
+// Update weather (as before)
+function updateWeather(deltaTime) {
+  weatherTimer -= deltaTime;
+  if (weatherTimer <= 0) {
+    weatherState = pickNewWeatherState();
+    weatherTimer = randomBetween(20, 60);
+    // Optionally, reset rain drops when entering a rainy state.
+  }
+  
+  // Declare these outside your render loop (initialize once)
+let thunderTintAlpha = 0;         // current blue tint opacity
+const thunderFadeRate = 0.1;        // how fast the tint fades in (alpha per second)
+const maxTintAlpha = 0.4;           // maximum opacity for the blue tint
+
+// In your update/render code for thunderstorm:
+if (weatherState === "thunderstorm") {
+  // Decrease the lightning timer.
+  lightningTimer -= deltaTime;
+  
+  // Gradually increase the blue tint opacity.
+  thunderTintAlpha = Math.min(thunderTintAlpha + deltaTime * thunderFadeRate, maxTintAlpha);
+  
+  // When the timer runs out, trigger a lightning flash and reset the tint.
+  if (lightningTimer <= 0) {
+    triggerLightningFlash();
+    lightningTimer = randomBetween(5, 10);
+    thunderTintAlpha = 0; // reset tint opacity after flash
+  }
+  
+  // Draw the blue tint overlay with the current opacity.
+  ctx.save();
+  ctx.fillStyle = `rgba(0, 0, 50, ${thunderTintAlpha})`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+}
+}
+
+// Global renderWeather function that incorporates all effects
+function renderWeather(ctx) {
+  ctx.save();
+  
+  // Sunshine: gentle warm glow via a radial gradient.
+if (weatherState === "sunshine") {
+  // Define the orbit center and radius.
+  const orbitCenterX = canvas.width / 2;
+  const orbitCenterY = canvas.height / 2;
+  const orbitRadius = Math.min(canvas.width, canvas.height) * 0.4; // adjust as needed
+  const rotationSpeed = 0.1; // radians per second
+  const angle = globalTime * rotationSpeed;
+  
+  // Compute the sun's orbiting position.
+  const sunX = orbitCenterX + orbitRadius * Math.cos(angle);
+  const sunY = orbitCenterY + orbitRadius * Math.sin(angle);
+  
+  // Compute a fade factor (oscillates between 0 and 1).
+  const fadeSpeed = 0.5; // adjust fade in/out speed
+  const intensity = (Math.sin(globalTime * fadeSpeed) + 1) / 2;
+  
+  const outerRadius = canvas.width * 1;
+  const gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, outerRadius);
+  
+  // Modulate the inner brightness by the intensity.
+  gradient.addColorStop(0, `rgba(255,255,200,${0.3 * intensity})`);
+  gradient.addColorStop(1, "rgba(255,255,200,0)");
+  
+  ctx.globalCompositeOperation = "lighter"; // additive blending for glow
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+  
+  // Fog: overlay a semi-transparent gray layer.
+  if (weatherState === "fog") {
+    ctx.fillStyle = "rgba(200,200,200,0.3)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  // Rain: a very subtle blue tint (while actual rain particles are rendered separately).
+  if (weatherState === "rain") {
+    ctx.fillStyle = "rgba(0,0,80,0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  // Thunderstorm: darken the scene.
+  if (weatherState === "thunderstorm") {
+    ctx.fillStyle = "rgba(0,0,50,0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  ctx.restore();
+}
+
+// Create a brief white flash to simulate lightning.
+function triggerLightningFlash() {
+  const flashDiv = document.createElement("div");
+  flashDiv.style.position = "fixed";
+  flashDiv.style.top = "0";
+  flashDiv.style.left = "0";
+  flashDiv.style.width = "100vw";
+  flashDiv.style.height = "100vh";
+  flashDiv.style.background = "white";
+  flashDiv.style.opacity = "0.9";
+  flashDiv.style.pointerEvents = "none";
+  flashDiv.style.transition = "opacity 0.2s ease-out";
+  document.body.appendChild(flashDiv);
+  setTimeout(() => {
+    flashDiv.style.opacity = "0";
+    setTimeout(() => flashDiv.remove(), 200);
+  }, 50);
+  // Optionally, trigger a thunder sound effect here.
+}
+
+// ---------- END NEW WEATHER SYSTEM CODE ----------
     // Shop & Upgrade Menu Logic
     // -------------------------
+   class HeavyArmour {
+  constructor(playerHP) {
+    // Set the armour’s durability to 500% of the player's current HP at purchase.
+    this.durability = 7 * playerHP;
+  }
+}
+
+function getHeavyArmourCost() {
+  // For example, a base cost of 1500 scaled by (rank + 1)
+  return Math.floor(250 * (calculateRank(killCount) + 1));
+}
+   function updateHeavyArmourButton() {
+  const button = document.getElementById("buyHeavyArmour");
+  if (player.heavyArmour) {
+    button.style.opacity = 0.5;
+    button.style.pointerEvents = "none"; // Prevent further clicks
+  } else {
+    button.style.opacity = 1;
+    button.style.pointerEvents = "auto";
+  }
+}
+function updateHeavyArmourCostDisplay() {
+  document.getElementById("heavyArmourCostDisplay").innerText = getHeavyArmourCost();
+}
     function getBombCost() {
       // Cost scales with rank: cost = 50 × (rank + 1)
       return Math.floor(50 * (calculateRank(killCount) + 1));
@@ -674,7 +1070,17 @@ document.getElementById("toggleBGM").addEventListener("click", function() {
         document.getElementById("pointsDisplay").textContent = Math.floor(points);
       }
     });
-    
+    function calculateRank(kills) {
+  let rank = 0;
+  let threshold = 100;
+  let remainingKills = kills;
+  while (remainingKills >= threshold) {
+    rank++;
+    remainingKills -= threshold;
+    threshold = Math.floor(threshold * 1.5);
+  }
+  return rank;
+}
     // Tab switching for upgrade menu
 document.getElementById("upgradesTab").addEventListener("click", function() {
   document.getElementById("upgradesSection").style.display = "block";
@@ -709,7 +1115,35 @@ document.getElementById("inventoryTab").addEventListener("click", function() {
     document.getElementById("resumeGame").addEventListener("click", () => { 
   resumeGame(); 
 });
-
+function updateUpgradeButton(upgradeId) {
+  const btn = document.getElementById(upgradeId);
+  const remaining = upgradeTimers[upgradeId];
+  // Assume you add a child span (or create one) to show the timer.
+  let timerSpan = btn.querySelector(".cooldown-timer");
+  if (!timerSpan) {
+    timerSpan = document.createElement("span");
+    timerSpan.className = "cooldown-timer";
+    // Style the timer span (small yellow text, positioned top right)
+    timerSpan.style.position = "absolute";
+    timerSpan.style.top = "2px";
+    timerSpan.style.right = "2px";
+    timerSpan.style.fontSize = "0.8rem";
+    timerSpan.style.color = "yellow";
+    btn.style.position = "relative"; // ensure proper positioning
+    btn.appendChild(timerSpan);
+  }
+  
+  if (remaining > 0) {
+    // Dim the button and disable pointer events
+    btn.style.opacity = "0.5";
+    btn.style.pointerEvents = "none";
+    timerSpan.textContent = Math.ceil(remaining) + "s";
+  } else {
+    btn.style.opacity = "1";
+    btn.style.pointerEvents = "auto";
+    timerSpan.textContent = "";
+  }
+}
     // --- Ranking System Variables & Functions ---
     const rankEmojis = ["🔰", "🥉", "🥈", "🥇", "🏆", "👑", "💎", "🔥", "🚀"];
     const rankNames  = ["Beginner", "Novice", "Warrior", "Veteran", "Elite", "Master", "Champion", "Legend", "Mythic"];
@@ -743,14 +1177,26 @@ document.getElementById("inventoryTab").addEventListener("click", function() {
     html += `
       <button class="inventory-item"><div class="marquee">
         <div class="icon" style="font-size:3rem">🧿</div>
-        <div class="label"><b><i>ReflexAmulet</i></b><br>
+        <div class="label"><b><i>6mg ZYN</i></b><br>
 <span> Player starts with Auto-Strike for 10s</span></div>
       </button>
     `;
   }
    
   // Add similar blocks for other items if needed.
-  
+     if (player.heavyArmour) {
+  html += `
+    <button class="inventory-item">
+      <div class="marquee">
+        <div class="icon" style="font-size:3rem">🛡️+🔗</div>
+        <div class="label"><b><i>Heavy Armour</i></b></div>
+        <div class="count">Dur: ${Math.floor(player.heavyArmour.durability)}</div>
+      </div>
+    </button>
+  `;
+}
+ updateHeavyArmourButton();
+
   inventoryContainer.innerHTML = html;
 }
 
@@ -872,17 +1318,17 @@ function updateRankDisplay() {
             noiseValue = (noiseValue + 1) / 2;
     
             let tileType = 0;
-            let color = "#64dd64"; // grass by default
+            let color = "#7a8450"; // grass by default
     
             if (noiseValue < 0.3) {
               tileType = 1; // water
-              color = "#3399ff";
+              color = "#4a6a8c";
             } else if (noiseValue < 0.5) {
               tileType = 2; // sand/beach
-              color = "#f4e285";
+              color = "#d2b48c";
             } else if (noiseValue > 0.8) {
               tileType = 3; // mountain
-              color = "#888888";
+              color = "#382b28";
             }
             row.push(new Tile(x, y, tileType, color));
           }
@@ -911,7 +1357,7 @@ function updateRankDisplay() {
             ctx.closePath();
             ctx.fillStyle = this.tiles[y][x].color;
             ctx.fill();
-            ctx.strokeStyle = "#000";
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.02)"; // 50% opacity black
             ctx.stroke();
           }
         }
@@ -1159,6 +1605,8 @@ playSFX("explosion");
     // --- Player Class ---
     class Player {
       constructor(tileX, tileY, tileMap) {
+ this.heavyArmorGlowTimer = 0;
+
         this.animTime = 0;
         this.tileMap = tileMap;
         this.gridX = tileX;
@@ -1185,7 +1633,7 @@ playSFX("explosion");
         this.spriteSheet = new Image();
         this.spriteLoaded = false;
         this.spriteSheet.onload = () => { this.spriteLoaded = true; };
-        this.spriteSheet.src = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/WalkingDemo-SHIRMOND-SHEET.png";
+        this.spriteSheet.src = "https://overhand-industries.github.io/kill-da-bear/sprite.png";
         this.frameCount = 4;
         this.currentFrame = 0;
         this.frameTime = 0;
@@ -1234,8 +1682,10 @@ playSFX("explosion");
     // Independently update the walk animation timer
     this.animTime += deltaTime;
     this.currentFrame = Math.floor(this.animTime / this.frameDelay) % this.frameCount;
-    
-    if (t >= 1) {
+    if (this.heavyArmorGlowTimer > 0) {
+      this.heavyArmorGlowTimer -= deltaTime;
+      if (this.heavyArmorGlowTimer < 0) this.heavyArmorGlowTimer = 0;
+    }    if (t >= 1) {
       this.moving = false;
       this.gridX = this.targetGridX;
       this.gridY = this.targetGridY;
@@ -1376,7 +1826,37 @@ render(ctx, camera) {
     );
     ctx.restore();
   }
+  // Heavy Armour glow effect (gold)
+  if (this.heavyArmorGlowTimer > 0 && this.heavyArmour) {
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(255,255,255,0.98)"; // Gold glow
+    ctx.drawImage(
+      this.spriteSheet,
+      srcX, srcY, 32, 32,
+      screenPos.x, screenPos.y, this.width, this.height
 
+
+    );
+    ctx.restore();
+  }
+    if (this.heavyArmorGlowTimer > 0 && this.heavyArmour) {
+   let offCanvas = document.createElement("canvas");
+    offCanvas.width = this.width;
+    offCanvas.height = this.height;
+    let offCtx = offCanvas.getContext("2d");
+
+    // Draw the sprite onto the offscreen canvas
+    offCtx.drawImage(this.spriteSheet, srcX, srcY, 32, 32, 0, 0, this.width, this.height);
+
+    // Mask with red fill (using source-atop so it only covers the sprite shape)
+    offCtx.globalCompositeOperation = "source-atop";
+    offCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    offCtx.fillRect(0, 0, this.width, this.height);
+
+    // Draw the tinted sprite on top of the base sprite
+    ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
+}
   // --- Draw the base player sprite on top of the glows ---
   ctx.drawImage(
     this.spriteSheet,
@@ -1441,7 +1921,7 @@ _getRowForDirection() {
   // Set the movement duration.
      
   // If the tile is a mountain (tileType 3), slow down movement further.
-const baseMoveDuration = 0.24;  // Base duration for normal tiles
+const baseMoveDuration = 0.17;  // Base duration for normal tiles
 let speedMultiplier;
 if (targetTile.tileType === 3) {       // mountain: slower
   speedMultiplier = 2;
@@ -1558,7 +2038,7 @@ updateDaggerContainerAt(effectX, effectY);
         this.spriteSheet = new Image();
         this.spriteLoaded = false;
         this.spriteSheet.onload = () => { this.spriteLoaded = true; };
-        this.spriteSheet.src = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/WalkingDemo-BEAR-SHEET.png";
+        this.spriteSheet.src = "https://overhand-industries.github.io/kill-da-bear/sprite3.png";
         this.alive = true;
         this.maxHP = 40;
         this.hp = 40;
@@ -1647,6 +2127,8 @@ updateDaggerContainerAt(effectX, effectY);
         this.knockback = this.knockback.scale(0.9);
       }
    render(ctx, camera) {
+
+
   // Calculate screen position (and add any shake offsets)
   let pos = this.position.add(this.knockback);
   let screenPos = camera.worldToScreen(pos);
@@ -1702,7 +2184,7 @@ updateDaggerContainerAt(effectX, effectY);
       ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
     }
   } else {
-    ctx.fillStyle = "green";
+    ctx.fillStyle = "rgba(255, 0, 0, 0.0)";
     ctx.fillRect(screenPos.x, screenPos.y, this.width, this.height);
   }
   
@@ -1903,15 +2385,27 @@ updateDaggerContainerAt(effectX, effectY);
       spriteFlashes.push({position, timer: 0.5, duration: 0.5});
     }
     
-    function knockbackEnemyToEdge(enemy) {
-      let direction = new Vector2(enemy.position.x-player.position.x, enemy.position.y-player.position.y).normalize();
-      let knockbackDistance = Math.max(tileMap.width,tileMap.height)*50;
-      let finalPos = enemy.position.add(direction.scale(knockbackDistance));
-      enemy.position = finalPos; x
-      spawnEnemyExplosionEffect(enemy.position);
-      killCount++;
-    }
-    
+function knockbackEnemyToEdge(enemy) {
+  let direction = new Vector2(
+    enemy.position.x - player.position.x,
+    enemy.position.y - player.position.y
+  ).normalize();
+  let knockbackDistance = Math.max(tileMap.width, tileMap.height) * 50;
+  let finalPos = enemy.position.add(direction.scale(knockbackDistance));
+  enemy.position = finalPos;
+
+  // Initiate the red tint flash on the enemy:
+  enemy.damageFlashTimer = 0.5;  // Duration in seconds for the red tint
+  // Optionally, if you use a spriteFlashes array to handle flashes:
+  spriteFlashes.push({
+    enemy: enemy,
+    timer: 0.5,
+    duration: 0.5
+  });
+
+  spawnEnemyExplosionEffect(enemy.position);
+  killCount++;
+}
     function performManualStrikeAt(tapX, tapY) {
       const tileSize = 50;
       const currentMeleeRange = strikeRangeTiles*tileSize;
@@ -1922,13 +2416,13 @@ updateDaggerContainerAt(effectX, effectY);
            tapY>=enemyRect.y && tapY<=enemyRect.y+enemyRect.height){
           let playerCenter = new Vector2(player.position.x+player.width/2, player.position.y+player.height/2);
           let enemyCenter = new Vector2(enemy.position.x+enemy.width/2, enemy.position.y+enemy.height/2);
-          if(playerCenter.subtract(enemyCenter).length()<=currentMeleeRange){
+          if(playerCenter.subtract(enemyCenter).length()<=currentMeleeRange){ addSpriteFlash(enemy.position);
             playSFX("attack");         swordEffects.push(new SwordEffect(playerCenter, enemyCenter));
 let angle = Math.atan2(enemyCenter.y - playerCenter.y, enemyCenter.x - playerCenter.x);
 let effectX = playerCenter.x + Math.cos(angle) * 20;
 let effectY = playerCenter.y + Math.sin(angle) * 20;
 
-addSpriteFlash(enemy.position);
+
 spawnMeleeEffect(effectX, effectY, angle);
 
 // Instead of killing immediately, set a death timer (if not already set)
@@ -1962,19 +2456,24 @@ return true;
       dragStart = null;
     });
     
-    function handleTap(evt) {
-      evt.preventDefault();
-      let rect = canvas.getBoundingClientRect();
-      let tapX = evt.clientX - rect.left, tapY = evt.clientY - rect.top;
-      if(performManualStrikeAt(tapX, tapY)) { triggerHeadbutt(); return; playSFX("attack");}
-      let dir = computeDirection(evt.clientX, evt.clientY);
-      if(dir && !player.moving && !player.isDashing) { player.move(dir); }
-      else {
-        let playerScreenPos = camera.worldToScreen(player.position);
-        if(tapX>=playerScreenPos.x && tapX<=playerScreenPos.x+player.width &&
-           tapY>=playerScreenPos.y && tapY<=playerScreenPos.y+player.height) { triggerHeadbutt(); }
-      }
-    }
+function handleTap(evt) {
+  evt.preventDefault();
+  let rect = canvas.getBoundingClientRect();
+  let tapX = evt.clientX - rect.left, tapY = evt.clientY - rect.top;
+  // If a manual strike is triggered (e.g. an enemy is tapped), process it.
+  if (performManualStrikeAt(tapX, tapY)) { 
+    triggerHeadbutt(); 
+    playSFX("attack");
+    return;
+  }
+  // Remove or comment out the movement portion:
+  // let dir = computeDirection(evt.clientX, evt.clientY);
+  // if (dir && !player.moving && !player.isDashing) { 
+  //   player.move(dir);
+  // }
+  // Optionally, if you want to trigger a strike when tapping on empty space:
+  // triggerHeadbutt();
+}
     
     function computeDirection(clientX, clientY) {
       let rect = canvas.getBoundingClientRect();
@@ -2074,13 +2573,13 @@ function updateDaggerOrientationFromPlayer() {
   
   // Set rotation based on player's direction
   let rotationDeg = 0;
-  switch (player.direction) {
-    case "up":    rotationDeg = 0; break;
-    case "right": rotationDeg = 90; break;
-    case "down":  rotationDeg = 180; break;
-    case "left":  rotationDeg = 270; break;
-    default:      rotationDeg = 0;
-  }
+switch (player.direction) {
+  case "up":    rotationDeg = 0; break;
+  case "right": rotationDeg = 90; break;
+  case "down":  rotationDeg = 180; break;
+  case "left":  rotationDeg = 270; break;
+  default:      rotationDeg = 0;
+}
   dagger.style.setProperty("--rotation", rotationDeg + "deg");
   
   // Restart the animation
@@ -2183,6 +2682,11 @@ function updateDaggerContainerPosition() {
     function updatePowerupTraySlots() {
       const defenseSlot = document.getElementById("defenseSlot");
       const charmsSlot = document.getElementById("charmsSlot");
+       if (player.heavyArmour) {
+   defenseSlot.style.border = "2px solid white";
+   defenseSlot.style.boxShadow += " 0 0 8px white";
+   defenseSlot.innerHTML += "<div class='durability'>Dur: " + Math.floor(player.heavyArmour.durability) + "</div>";
+}
    if(defenseBoostActive){
   defenseSlot.classList.remove("dimmed");
   const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
@@ -2246,7 +2750,35 @@ if(healingCharmActive){
         }
       }updateInventoryDisplay();
     }
+   document.getElementById("buyHeavyArmour").addEventListener("click", function () {
+  // Check if the player already has heavy armour.
+  if (player.heavyArmour) {
+    showUpgradeAlert("You already have Heavy Armour!");
+    // Dim the button
+    this.style.opacity = 0.5;
+    this.style.pointerEvents = "none";
+    return; // Exit early so no purchase is made.
+  }
+  
+  let cost = getHeavyArmourCost();
+  if (points >= cost) {
+    points -= cost;
+    // Assign new heavy armour to the player.
+    player.heavyArmour = new HeavyArmour(player.hp);
+    updateInventoryDisplay(); // Update UI to show the new heavy armour.
+    playSFX("increase");
+    showUpgradeAlert("Heavy Armour purchased!");
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
     
+    // Optionally dim the button after purchase
+    this.style.opacity = 0.5;
+    this.style.pointerEvents = "none";
+  } else {
+    showUpgradeAlert("Not enough points!");
+  }
+});
+
+
     function updateBaitBombs(deltaTime) {
       for(let i=baitBombs.length-1;i>=0;i--){
         baitBombs[i].update(deltaTime);
@@ -2273,7 +2805,73 @@ if(healingCharmActive){
       }
     }
 let alertToggle = false;
+// List of level JSON file URLs (adjust these paths as needed)
+const levelFiles = [
+  "levels/level1.json",
+  "levels/level2.json",
+  "levels/level3.json"
+];
 
+// Helper function to load a JSON file and then call the level loader.
+function loadLevelFile(filePath) {
+  fetch(filePath)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network error loading level: " + filePath);
+      }
+      return response.json();
+    })
+    .then(levelObj => {
+      const newMap = loadLevelFromJSONObj(levelObj);
+      enterPortalWithMap(newMap);
+    })
+    .catch(err => console.error(err));
+}
+
+// Function to convert a parsed JSON object to a TileMap
+function loadLevelFromJSONObj(levelObj) {
+  const newTiles = [];
+  for (let y = 0; y < levelObj.height; y++) {
+    const row = [];
+    for (let x = 0; x < levelObj.width; x++) {
+      const type = levelObj.tiles[y][x];
+      let color;
+      switch (type) {
+        case 0: color = "#7a8450"; break; // grass
+        case 1: color = "#4a6a8c"; break; // water
+        case 2: color = "#d2b48c"; break; // sand
+        case 3: color = "#382b28"; break; // mountain
+        default: color = "#7a8450";
+      }
+      row.push(new Tile(x, y, type, color));
+    }
+    newTiles.push(row);
+  }
+  return new TileMap(levelObj.width, levelObj.height, levelObj.tileWidth, levelObj.tileHeight, newTiles);
+}
+
+// Function to switch levels using a loaded TileMap
+function enterPortalWithMap(newMap) {
+  // Optional: add transition effects here (fade out/in)
+  currentMap = newMap;
+  // For example, reposition the player to the center of the new map:
+  player.gridX = Math.floor(newMap.width / 2);
+  player.gridY = Math.floor(newMap.height / 2);
+  player.position = newMap.gridToWorld(player.gridX, player.gridY);
+  // Optionally trigger a fade-in effect here.
+}
+
+// Example collision check for a portal that chooses a level
+function checkPortalCollision() {
+  if (rectIntersect(player, portal)) {
+    // Decide which level to load.
+    // This could be based on portal properties, progression, or randomly.
+    // For example, randomly pick a level file:
+    const randomIndex = Math.floor(Math.random() * levelFiles.length);
+    const fileToLoad = levelFiles[randomIndex];
+    loadLevelFile(fileToLoad);
+  }
+}
 function showUpgradeAlert(message) {
   // Create the alert element.
   const alertDiv = document.createElement('div');
@@ -2322,7 +2920,12 @@ function showUpgradeAlert(message) {
       }
       tallyContainer.innerHTML = tallyHTML;
     }
-    
+    function getMaxAllowedStrikeRange() {
+  const baseRange = 4; // base number of tiles
+  const rankIncrement = 2; // additional tile per rank (adjust as needed)
+  const currentRank = calculateRank(killCount); // your existing rank function
+  return baseRange + currentRank * rankIncrement;
+}
     function updateTrayHUD() {
       const pointsSlot = document.getElementById("pointsSlot");
       const pointsCounter = pointsSlot.querySelector('.counter');
@@ -2363,16 +2966,73 @@ if (player.strikeMeter > 0) {
 }
       const defenseSlot = document.getElementById("defenseSlot");
       const charmsSlot = document.getElementById("charmsSlot");
-      if(defenseBoostActive){
-        defenseSlot.classList.remove("dimmed");
-        const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
-        defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio*100}%, transparent ${defRatio*100}%)`;
-        defenseSlot.innerHTML = "🛡️<div class='timer'>"+Math.ceil(defenseBoostTimer)+"s</div>";
-      } else {
-        defenseSlot.classList.add("dimmed");
-        defenseSlot.style.background = "";
-        defenseSlot.innerHTML = "🛡️";
-      }
+
+    if (player.heavyArmour) {
+  // Always undim the slot when heavy armour is equipped.
+  defenseSlot.classList.remove("dimmed");
+
+  // Prepare the base shield icon.
+  let html = "🛡️";
+  
+  // If the shield meter is active (defense boost), include that timer/meter.
+  if (defenseBoostActive) {
+    const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
+    // You might use a separate element or just append text.
+    html += `<div class='timer' style="
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      font-size: 0.8rem;
+      color: yellow;
+    ">${Math.ceil(defenseBoostTimer)}s</div>`;
+    // Set the blue glow for defense boost.
+    defenseSlot.style.boxShadow = "0 0 8px 2px rgba(0,0,255,0.6)";
+    // Optionally set a background gradient.
+    defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio * 100}%, transparent ${defRatio * 100}%)`;
+  } else {
+    // No defense boost active – no blue glow.
+    defenseSlot.style.boxShadow = "";
+    defenseSlot.style.background = "";
+  }
+  
+  // Now, add the heavy armour's white glow.
+  // You can append the white glow by combining box shadows.
+  defenseSlot.style.boxShadow += " 0 0 8px 2px white";
+  
+  // Add the heavy armour durability info in the lower left.
+  html += `<div class="durability" style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.55rem;
+    color: white;
+    background: rgba(0,0,0,0.0);
+    padding: 1px 3px;
+    border-radius: 3px;
+  ">🔗: ${Math.floor(player.heavyArmour.durability)}</div>`;
+  
+  defenseSlot.innerHTML = html;
+} else {
+  // Regular behavior when no heavy armour is equipped:
+  if (defenseBoostActive) {
+    defenseSlot.classList.remove("dimmed");
+    const defRatio = defenseBoostTimer / baseDefenseBoostDuration;
+    defenseSlot.style.background = `linear-gradient(to top, blue ${defRatio * 100}%, transparent ${defRatio * 100}%)`;
+    defenseSlot.style.boxShadow = "0 0 8px 2px rgba(0,0,255,0.6)";
+    defenseSlot.innerHTML = "🛡️<div class='timer' style='position:absolute; bottom:2px; right:2px; font-size:0.8rem; color:yellow;'>" + Math.ceil(defenseBoostTimer) + "s</div>";
+  } else {
+    defenseSlot.classList.add("dimmed");
+    defenseSlot.style.background = "";
+    defenseSlot.style.boxShadow = "";
+    defenseSlot.innerHTML = "🛡️";
+  }
+}
+
+// If heavy armour is active, add an extra white glow and durability display
+if (player.heavyArmour) {
+  // Append an extra white glow (you can adjust the size/blur as needed)
+  defenseSlot.style.boxShadow += " 0 0 8px 2px white";
+}
       if(healingCharmActive){
         charmsSlot.classList.remove("dimmed");
         const charmRatio = healingCharmTimer / baseHealingCharmDuration;
@@ -2419,78 +3079,362 @@ function resumeGame() {
   
   timeScale = 1.0;
   document.getElementById("upgradeButton").style.display = "block";
+ deathOverlayShown = false;
+
 }
-    document.getElementById("increaseHP").addEventListener("click", ()=>{
-      const cost = 50;
-      if(points>=cost){
-        points -= cost;
-        player.maxHP += 20;
-        player.hp += 20;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- // Show the HP upgrade alert.
-       playSFX("increase"); 
+   
+ // Increase HP Upgrade (Cost: 50; +20 HP)
+document.getElementById("increaseHP").addEventListener("click", () => {
+  if (upgradeTimers.increaseHP > 0) return; // Button is on cooldown
+  const cost = 50;
+  if (points >= cost) {
+    points -= cost;
+    player.maxHP += 20;
+    player.hp += 20;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
     showUpgradeAlert("HP UP!");
-      }
-    });
-    document.getElementById("increaseAutoRun").addEventListener("click", ()=>{
-      const cost = 200;
-      if(points>=cost){
-        points -= cost;
-        baseAutoStrikeTime += 10;
-        autoStrikeTime += 10;
-        autoStrikeBonus += 5;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- // Show the upgrade alert.
-        playSFX("increase"); 
-   showUpgradeAlert("Autostrike time increased!");
-      }
-    });
-    document.getElementById("increaseDash").addEventListener("click", ()=>{
-      const cost = 300;
-      if(points>=cost && strikeRangeTiles < tileMap.width){
-        points -= cost;
-        strikeRangeTiles++;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    upgradeTimers.increaseHP = getEffectiveCooldown("increaseHP");
+    updateUpgradeButton("increaseHP");
+  }
+});
 
-       showUpgradeAlert("Strike range increased!");
-      } playSFX("increase"); 
-    });
-    document.getElementById("increaseStrikeMeter").addEventListener("click", ()=>{
-      const cost = 150;
-      if(points>=cost){
-        points -= cost;
-        strikeMeterCapacity += 10;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
- playSFX("increase"); 
-showUpgradeAlert("Strike Endurance increased!");
-      }
-    });
-    document.getElementById("increaseHealingCharmTime").addEventListener("click", ()=>{
-      const cost = 250;
-      if(points>=cost){
-        points -= cost;
-        baseHealingCharmDuration += 2;
-        baseHealingCharmHeal += 0.5;
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
+// Increase Auto Strike Time Upgrade (Cost: 200; +10s Auto‑Strike, + Bonus)
+document.getElementById("increaseAutoRun").addEventListener("click", () => {
+  if (upgradeTimers.increaseAutoRun > 0) return;
+  const cost = 200;
+  if (points >= cost) {
+    points -= cost;
+    baseAutoStrikeTime += 10;
+    autoStrikeTime += 10;
+    autoStrikeBonus += 5;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Autostrike time increased!");
+    upgradeTimers.increaseAutoRun = getEffectiveCooldown("increaseAutoRun");
+    updateUpgradeButton("increaseAutoRun");
+  }
+});
 
- playSFX("increase"); showUpgradeAlert("Auto-Heal increased!");
-      }
-    });
-    document.getElementById("increaseShieldingTime").addEventListener("click", ()=>{
-      const cost = 250;
-      if(points>=cost){
-        points -= cost;
-        baseDefenseBoostDuration += 2;
-        baseShieldDamageReduction = Math.min(baseShieldDamageReduction+0.1,0.9);
-        document.getElementById("pointsDisplay").textContent = Math.floor(points);
 
- playSFX("increase"); 
-       showUpgradeAlert("Shielding increased!");
-      }
-    });
+
+// Increase Strike Range Upgrade (Cost: 300; +1 tile to strike range)
+// Define your maximum allowed strike range.
+const maxAllowedStrikeRange = 12; // Maximum allowed strike range
+
+function updateStrikeRangeButton() {
+  const button = document.getElementById("increaseDash");
+  const maxAllowed = getMaxAllowedStrikeRange();
+  if (strikeRangeTiles >= maxAllowed) {
+    button.style.opacity = "0.5";
+    button.style.pointerEvents = "none";
+  } else {
+    button.style.opacity = "1";
+    button.style.pointerEvents = "auto";
+  }
+}
+
+document.getElementById("increaseDash").addEventListener("click", () => {
+  if (upgradeTimers.increaseDash > 0) return;
+  const cost = 300;
+  const maxAllowedStrikeRange = getMaxAllowedStrikeRange();
+  
+  if (points >= cost && strikeRangeTiles < maxAllowedStrikeRange) {
+    points -= cost;
+    strikeRangeTiles++;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Strike range increased!");
+    upgradeTimers.increaseDash = getEffectiveCooldown("increaseDash");
+    updateUpgradeButton("increaseDash");
+  } else if (strikeRangeTiles >= maxAllowedStrikeRange) {
+    showUpgradeAlert("Max strike range reached!");
+  }
+  updateStrikeRangeButton(); // Update button appearance
+});
+   
+// Increase Strike Meter Capacity Upgrade (Cost: 150; +10 capacity)
+document.getElementById("increaseStrikeMeter").addEventListener("click", () => {
+  if (upgradeTimers.increaseStrikeMeter > 0) return;
+  const cost = 150;
+  if (points >= cost) {
+    points -= cost;
+    strikeMeterCapacity += 10;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Strike Endurance increased!");
+    upgradeTimers.increaseStrikeMeter = getEffectiveCooldown("increaseStrikeMeter");
+    updateUpgradeButton("increaseStrikeMeter");
+  }
+});
+
+// Increase Healing Charm Duration/Heal Upgrade (Cost: 250; +2s and +0.5 heal)
+document.getElementById("increaseHealingCharmTime").addEventListener("click", () => {
+  if (upgradeTimers.increaseHealingCharmTime > 0) return;
+  const cost = 250;
+  if (points >= cost) {
+    points -= cost;
+    baseHealingCharmDuration += 2;
+    baseHealingCharmHeal += 0.5;
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Auto-Heal increased!");
+    upgradeTimers.increaseHealingCharmTime = getEffectiveCooldown("increaseHealingCharmTime");
+    updateUpgradeButton("increaseHealingCharmTime");
+  }
+});
+
+// Increase Shielding Duration/Reduction Upgrade (Cost: 250; +2s and +0.1 reduction up to 0.9)
+document.getElementById("increaseShieldingTime").addEventListener("click", () => {
+  if (upgradeTimers.increaseShieldingTime > 0) return;
+  const cost = 250;
+  if (points >= cost) {
+    points -= cost;
+    baseDefenseBoostDuration += 2;
+    baseShieldDamageReduction = Math.min(baseShieldDamageReduction + 0.1, 0.9);
+    document.getElementById("pointsDisplay").textContent = Math.floor(points);
+    playSFX("increase");
+    showUpgradeAlert("Shielding increased!");
+    upgradeTimers.increaseShieldingTime = getEffectiveCooldown("increaseShieldingTime");
+    updateUpgradeButton("increaseShieldingTime");
+  }
+});
+
+
+function applyDamage(damage) {
+  // Check if player has Heavy Armour.
+  if (player.heavyArmour) {
+    let remainingDurability = player.heavyArmour.durability - damage;
+    if (remainingDurability > 0) {
+      // Armour fully absorbs the damage.
+      player.heavyArmour.durability = remainingDurability;
+      console.log("Armour absorbed damage. New durability:", player.heavyArmour.durability);
+      updateInventoryDisplay();
+      // Set glow timer so the heavy armour effect is visible.
+      player.heavyArmorGlowTimer = 0.5;
+      return; // Exit so no HP is lost.
+    } else {
+      // Armour is broken; calculate the leftover damage.
+      damage = -remainingDurability;
+      player.heavyArmour = null;
+      showUpgradeAlert("Heavy Armour destroyed!");
+      updateInventoryDisplay();
+    }
+  }
+  
+  // Apply any remaining damage to the player's HP.
+  player.hp -= damage;
+  console.log("Player HP:", player.hp);
+  player.flashDamage();
+}
     document.getElementById("resumeGame").addEventListener("click", ()=>{ resumeGame(); });
+    // Only initialize mobile controls if touch events are supported.
+   function getEffectiveCooldown(upgradeId) {
+  // Get the player's rank from kills
+  const playerRank = calculateRank(killCount);
+  // Use the base cooldown from your baseUpgradeCooldowns object and apply the scaling factor
+  return baseUpgradeCooldowns[upgradeId] * (1 + playerRank * cooldownScaleFactor);
+}
+// Only initialize mobile controls if touch events are supported.
+if ("ontouchstart" in window) {
+  const tileOffset = 5; // 5 tiles away from player's grid position
+  const mobileControls = document.getElementById("mobileControls");
+  const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
+  const movementIntervals = {};
+
+  // Set up hold-to-move behavior for each control button.
+  controlIDs.forEach(id => {
+    const btn = document.getElementById(id);
+    btn.addEventListener("touchstart", (evt) => {
+      evt.preventDefault();
+      const direction = id.split("-")[1]; // e.g. "up", "right", etc.
+      // Immediately trigger a move if not already moving/dashing.
+      if (!player.moving && !player.isDashing) player.move(direction);
+      // Then set an interval (200ms) to repeatedly call move.
+      movementIntervals[id] = setInterval(() => {
+        if (!player.moving && !player.isDashing) {
+          player.move(direction);
+        }
+      }, 100);
+    });
+    btn.addEventListener("touchend", () => clearInterval(movementIntervals[id]));
+    btn.addEventListener("touchcancel", () => clearInterval(movementIntervals[id]));
+  });
+
+  // Update positions of the mobile control buttons each frame.
+  function updateMobileControls() {
+    // Define grid offsets for each control (5 tiles away).
+    const offsets = {
+      "move-up":    { dx: 2,  dy: 2-tileOffset },
+      "move-right": { dx: tileOffset + 1, dy: 1 },
+      "move-down":  { dx: 2,  dy: tileOffset },
+      "move-left":  { dx: 3 - tileOffset, dy: 1 }
+    };
+  controlIDs.forEach(id => {
+    const btn = document.getElementById(id);
+    // Expand the button to cover 3x3 tiles.
+    btn.style.width = (tileMap.tileWidth * 3) + "px";
+    btn.style.height = (tileMap.tileHeight * 3) + "px";
     
+    // Get the central (original) tile's world position.
+    let targetGridX = player.gridX + offsets[id].dx;
+    let targetGridY = player.gridY + offsets[id].dy;
+    let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
+    let screenPos = camera.worldToScreen(worldPos);
+    
+    // Position the button so its center (half its width/height) is at that screenPos.
+    btn.style.left = (screenPos.x - (tileMap.tileWidth * 3) / 2) + "px";
+    btn.style.top  = (screenPos.y - (tileMap.tileHeight * 3) / 2) + "px";
+  });
+}
+
+
+
+   // --- DRAG SLIDE CONTROLS OVER THE 3x3 D-PAD ---
+document.addEventListener("DOMContentLoaded", () => {
+  if ("ontouchstart" in window) {
+  // A threshold (in pixels) for triggering the strike.
+  const maxDx = tileMap.tileWidth;  // or another value that represents maximum drag distance horizontally
+const maxDy = tileMap.tileHeight; // similarly for vertical
+const fullExtent = Math.sqrt(maxDx * maxDx + maxDy * maxDy);
+const strikeThreshold = 0.7 * fullExtent; // trigger if 70% of full drag is reached
+  // Define the control IDs and their associated directions.
+  const controlIDs = ["move-up", "move-right", "move-down", "move-left"];
+  const controlDirections = {
+    "move-up": "up",
+    "move-right": "right",
+    "move-down": "down",
+    "move-left": "left"
+  };
+
+  // For each control button…
+  controlIDs.forEach(id => {
+    const btn = document.getElementById(id);
+    let startX, startY;
+    let strikeTriggered = false;
+
+    btn.addEventListener("touchstart", evt => {
+      // Record initial touch position.
+      const touch = evt.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      strikeTriggered = false;
+      // Remove any transition so the button follows immediately.
+      btn.style.transition = "none";
+    });
+
+    btn.addEventListener("touchmove", evt => {
+      evt.preventDefault();
+      const touch = evt.touches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      // Clamp movement to a maximum if desired:
+      const maxDx = 1 * tileMap.tileWidth;
+      const maxDy = 1 * tileMap.tileHeight;
+      const clampedDx = Math.max(-maxDx, Math.min(dx, maxDx));
+      const clampedDy = Math.max(-maxDy, Math.min(dy, maxDy));
+      
+      // Visually move the control.
+      btn.style.transform = `translate(${clampedDx}px, ${clampedDy}px)`;
+
+      // When the drag distance exceeds the threshold, trigger a strike.
+      const dragDistance = Math.sqrt(clampedDx * clampedDx + clampedDy * clampedDy);
+      if (!strikeTriggered && dragDistance > strikeThreshold) {
+        const direction = controlDirections[id];
+       if (!player.moving && !player.isDashing && !strikeTriggered) {
+  const direction = controlDirections[id];
+  console.log("Attack triggered for direction:", direction);
+  // Call the primary strike method (which triggers headbutt/melee)
+  player.strike(direction);
+  // Also, call any additional attack functions you might have:
+  // For instance, if you have a separate melee or headbutt function:
+  if (typeof performMeleeStrike === "function") {
+    performMeleeStrike(direction);
+  }
+  if (typeof triggerHeadbutt === "function") {
+    triggerHeadbutt();
+  }
+  strikeTriggered = true;
+}
+        strikeTriggered = true;
+      }
+    });
+
+    // On touchend or cancel, animate the control back to its default position.
+    const resetControl = () => {
+      btn.style.transition = "transform 0.3s ease-out";
+      btn.style.transform = "translate(0, 0)";
+    };
+    btn.addEventListener("touchend", resetControl);
+    btn.addEventListener("touchcancel", resetControl);
+  });
+
+    // Update the on-screen positions of the control grids relative to the player's center.
+    function updateMobileControls() {
+      // Offsets for each button (adjust based on your grid layout)
+      const offsets = {
+        "move-up":    { dx: 2,  dy: 2 - tileOffset },
+        "move-right": { dx: tileOffset + 1, dy: 1 },
+        "move-down":  { dx: 2,  dy: tileOffset },
+        "move-left":  { dx: 3 - tileOffset, dy: 1 }
+      };
+
+      controlIDs.forEach(id => {
+        const btn = document.getElementById(id);
+        // Ensure each button is sized to cover a 3×3 area.
+        btn.style.width = (tileMap.tileWidth * 3) + "px";
+        btn.style.height = (tileMap.tileHeight * 3) + "px";
+        
+        // Compute the target position based on the player's grid coordinates.
+        let targetGridX = player.gridX + offsets[id].dx;
+        let targetGridY = player.gridY + offsets[id].dy;
+        let worldPos = tileMap.gridToWorld(targetGridX, targetGridY);
+        let screenPos = camera.worldToScreen(worldPos);
+        
+        // Center the button.
+        btn.style.left = (screenPos.x - (tileMap.tileWidth * 3) / 2) + "px";
+        btn.style.top  = (screenPos.y - (tileMap.tileHeight * 3) / 2) + "px";
+      });
+    }
+
+    (function mobileControlsLoop() {
+      updateMobileControls();
+      requestAnimationFrame(mobileControlsLoop);
+    })();
+  }
+});
+
+   
+  // Continuously update mobile control positions.
+  (function mobileControlsLoop() {
+    updateMobileControls();
+    requestAnimationFrame(mobileControlsLoop);
+  })();
+}
+   function updateUpgradeTimers(deltaTime) {
+  for (let key in upgradeTimers) {
+    if (upgradeTimers[key] > 0) {
+      upgradeTimers[key] -= deltaTime;
+      if (upgradeTimers[key] < 0) upgradeTimers[key] = 0;
+      updateUpgradeButton(key);
+    }
+  }
+}
     // --- Added Keyboard Controls ---
+   document.addEventListener("keydown", function(e) {
+  // Check if the spacebar is pressed.
+  if (e.code === "Space") {
+    // If the death overlay is visible...
+    const deathOverlay = document.getElementById("deathOverlay");
+    if (deathOverlay && deathOverlay.style.display === "block") {
+      // Trigger the respawn button's click event.
+      document.getElementById("respawnBtn").click();
+      // Prevent any other actions with the spacebar.
+      e.preventDefault();
+    }
+  }
+});
 document.addEventListener("keydown", function(e) {
   if (isUpgradeMenuVisible) return;
   // For movement keys, update state
@@ -2516,13 +3460,81 @@ document.addEventListener("keydown", function(e) {
 });
     
     let lastTime = performance.now();
+// Weather particle class for rain drops
+class RainDrop {
+  constructor(canvasWidth, canvasHeight) {
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * this.canvasWidth;
+    this.y = Math.random() * -this.canvasHeight;
+    this.speedY = 300 + Math.random() * 200;
+    this.length = 10 + Math.random() * 10;
+    this.opacity = 0.2 + Math.random() * 0.3;
+  }
+  update(deltaTime) {
+    this.y += this.speedY * deltaTime;
+    if (this.y > this.canvasHeight) {
+      this.reset();
+      this.y = 0;
+    }
+  }
+  render(ctx) {
+    ctx.strokeStyle = `rgba(174,194,224,${this.opacity})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(this.x, this.y + this.length);
+    ctx.stroke();
+  }
+}
+
+// Initialize rain particles
+let rainDrops = [];
+const numRainDrops = 200; // adjust density as needed
+for (let i = 0; i < numRainDrops; i++) {
+  rainDrops.push(new RainDrop(canvas.width, canvas.height));
+}
+
+// Lighting effect: Draw an overlay with a radial gradient
+function applyLighting(ctx) {
+  // ----- DAY/NIGHT CYCLE OVERLAY -----
+  // Full cycle lasts 120 seconds (adjust as desired)
+  const cyclePeriod = 120;
+  // Normalized time (0 to 1) over the cycle; t=0 and t=1 represent midnight,
+  // while t=0.5 is midday.
+  const t = (globalTime % cyclePeriod) / cyclePeriod;
+  // Compute brightness using a sine function so brightness peaks at midday.
+  // Adjust these numbers to control how dark or light your scene gets.
+  const brightness = 0.3 + 0.7 * Math.sin(t * Math.PI);
+  // The overlay opacity is higher when brightness is lower.
+  const overlayAlpha = 1 - brightness;
+  
+  // Draw a full‑screen rectangle in dark blue with "multiply" blending to darken the scene.
+  ctx.save();
+  ctx.globalCompositeOperation = "multiply";
+  ctx.fillStyle = `rgba(0, 0, 50, ${overlayAlpha})`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+  
+ // ----- ORBITING SPOTLIGHT EFFECT -----
+
+ 
+}
 
    //GAME LOOP
     function gameLoop() {updateDaggerContainerPosition();
+
+
       let currentTime = performance.now();
       let deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       globalTime += deltaTime;
+updateUpgradeTimers(deltaTime);
+
+   let effectiveDelta = deltaTime * timeScale;                      
 if (!player.moving && !player.isDashing) {
   if (keysPressed['ArrowUp'] || keysPressed['KeyW']) {
     player.move("up");
@@ -2584,11 +3596,15 @@ if (!player.moving && !player.isDashing) {
                bullet.position.x<=player.position.x+player.width &&
                bullet.position.y>=player.position.y &&
                bullet.position.y<=player.position.y+player.height){
-              bullet.alive = false;
-              let damage = 20;
+               bullet.alive = false;
+    let damage = 20;
+    if (defenseBoostActive) {
+      damage *= (1 - baseShieldDamageReduction);
+    }
+    applyDamage(damage);
               if(defenseBoostActive){ damage *= (1 - baseShieldDamageReduction); }
-              player.hp -= damage;
-              player.flashDamage();
+              //player.hp -= damage;
+              //player.flashDamage();
               screenShakeTime = 0.2;
               screenShakeMagnitude = 5;
  playSFX("playerDamage");
@@ -2664,12 +3680,11 @@ playSFX("playerDie");
           if(autoStrikeTime<0) autoStrikeTime = 0;
         }
         
-      if(player.isDead && !isUpgradeMenuVisible){
+      if(player.isDead && !isUpgradeMenuVisible){showUpgradeAlert("YOU DIED!"); 
 
   slowMotionTimer -= deltaTime;
   if(slowMotionTimer <= 0){
-showUpgradeAlert("YOU DIED!");
-    showUpgradeMenu(true); // Menu triggered by death.
+deathOverlayShown = true; showDeathOverlay();    // Menu showUpgradeMenu(true); triggered by death.
   }
 }
         
@@ -2736,14 +3751,19 @@ renderSwordEffects(ctx, camera);
           if(flash.timer<=0) spriteFlashes.splice(i,1);
           continue;
         }
-        let alpha = flash.timer/flash.duration;
-        ctx.fillStyle = "rgba(255,0,0,"+alpha+")";
-        let flashScreenPos = camera.worldToScreen(flash.position);
-        ctx.beginPath();
-        ctx.arc(flashScreenPos.x, flashScreenPos.y, 32, 0, Math.PI*2);
-        ctx.fill();
-        flash.timer -= deltaTime;
-        if(flash.timer<=0) spriteFlashes.splice(i,1);
+       if (flash.enemy) {
+  // Get the enemy's screen position and dimensions
+  const screenPos = camera.worldToScreen(flash.enemy.position);
+  const width = flash.enemy.width;
+  const height = flash.enemy.height;
+  
+  // Use the same alpha value to modulate the tint's opacity
+  let alpha = flash.timer / flash.duration;
+  ctx.fillStyle = "rgba(255,0,0," + alpha + ")";
+  ctx.fillRect(screenPos.x, screenPos.y, width, height);
+}
+flash.timer -= deltaTime;
+if (flash.timer <= 0) spriteFlashes.splice(i, 1);
       }
      
 const upgradeButton = document.getElementById("upgradeButton");
@@ -2765,10 +3785,35 @@ document.addEventListener("keydown", function(e) {
   }
 });
 
+  
+  // Draw background and game elements as before
+  ctx.fillStyle = "#505050";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  tileMap.render(ctx, camera);
+  renderSwordEffects(ctx, camera);
+  enemies.forEach(enemy => enemy.render(ctx, camera));
+  pickups.forEach(pickup => pickup.render(ctx, camera, globalTime));
+  baitBombs.forEach(bomb => bomb.render(ctx, camera, globalTime));
+  bullets.forEach(bullet => bullet.render(ctx, camera));
+  renderEffects(ctx, camera);
+  renderMeleeEffects(ctx, camera);
+  player.render(ctx, camera);
+
+  // Render rain on top of game elements
+// Update rain particles
+ if (weatherState === "rain" || weatherState === "thunderstorm") {
+  rainDrops.forEach(drop => drop.update(deltaTime));
+  rainDrops.forEach(drop => drop.render(ctx));
+}
+
+  // Finally, apply the lighting effect
+      applyLighting(ctx);
+updateWeather(effectiveDelta);
+renderWeather(ctx);
 
 
 
-
+      updateHeavyArmourCostDisplay();
       updateExplosivesSlot();
       updateAttackSlot();
       updatePowerupTraySlots();
