@@ -2692,7 +2692,7 @@ function showUpgradeAlert(message) {
       tallyContainer.innerHTML = tallyHTML;
     }
     function getMaxAllowedStrikeRange() {
-  const baseRange = 2; // base number of tiles
+  const baseRange = 4; // base number of tiles
   const rankIncrement = 2; // additional tile per rank (adjust as needed)
   const currentRank = calculateRank(killCount); // your existing rank function
   return baseRange + currentRank * rankIncrement;
