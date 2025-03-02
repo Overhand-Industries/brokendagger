@@ -3189,57 +3189,47 @@ const strikeThreshold = 0.7 * fullExtent; // trigger if 70% of full drag is reac
 
   // For each control button…
   controlIDs.forEach(id => {
-    const btn = document.getElementById(id);
-    let startX, startY;
-    let strikeTriggered = false;
+const fullExtent = Math.sqrt(maxDx * maxDx + maxDy * maxDy);
+  const walkThreshold = 0.3 * fullExtent;   // modest drag for a normal strike
+  const dashThreshold = 0.9 * fullExtent;     // far swipe triggers dash attack
 
-    btn.addEventListener("touchstart", evt => {
-      // Record initial touch position.
-      const touch = evt.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      strikeTriggered = false;
-      // Remove any transition so the button follows immediately.
-      btn.style.transition = "none";
-    });
+  // Assume btn is defined for the current id:
+  btn.addEventListener("touchstart", evt => {
+    // Record initial touch position.
+    const touch = evt.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    strikeTriggered = false;
+    btn.style.transition = "none";
+  });
 
-    btn.addEventListener("touchmove", evt => {
-      evt.preventDefault();
-      const touch = evt.touches[0];
-      const dx = touch.clientX - startX;
-      const dy = touch.clientY - startY;
+  btn.addEventListener("touchmove", evt => {
+    evt.preventDefault();
+    const touch = evt.touches[0];
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
 
-      // Clamp movement to a maximum if desired:
-      const maxDx = 1 * tileMap.tileWidth;
-      const maxDy = 1 * tileMap.tileHeight;
-      const clampedDx = Math.max(-maxDx, Math.min(dx, maxDx));
-      const clampedDy = Math.max(-maxDy, Math.min(dy, maxDy));
-      
-      // Visually move the control.
-      btn.style.transform = `translate(${clampedDx}px, ${clampedDy}px)`;
+    // Clamp movement to our maximum values.
+    const clampedDx = Math.max(-maxDx, Math.min(dx, maxDx));
+    const clampedDy = Math.max(-maxDy, Math.min(dy, maxDy));
 
-      // When the drag distance exceeds the threshold, trigger a strike.
-      const dragDistance = Math.sqrt(clampedDx * clampedDx + clampedDy * clampedDy);
-      if (!strikeTriggered && dragDistance > strikeThreshold) {
-        const direction = controlDirections[id];
-       if (!player.moving && !player.isDashing && !strikeTriggered) {
-  const direction = controlDirections[id];
-  console.log("Attack triggered for direction:", direction);
-  // Call the primary strike method (which triggers headbutt/melee)
-  player.strike(direction);
-  // Also, call any additional attack functions you might have:
-  // For instance, if you have a separate melee or headbutt function:
-  if (typeof performMeleeStrike === "function") {
-    performMeleeStrike(direction);
-  }
-  if (typeof triggerHeadbutt === "function") {
-    triggerHeadbutt();
-  }
-  strikeTriggered = true;
-}
-        strikeTriggered = true;
+    // Visually move the control.
+    btn.style.transform = `translate(${clampedDx}px, ${clampedDy}px)`;
+
+    // Calculate the drag distance.
+    const dragDistance = Math.sqrt(clampedDx * clampedDx + clampedDy * clampedDy);
+
+    // If the drag distance exceeds the dash threshold and an attack hasn't been triggered:
+    if (!strikeTriggered && dragDistance > dashThreshold) {
+      const direction = controlDirections[id]; // e.g., "up", "down", etc.
+      if (!player.moving && !player.isDashing) {
+        console.log("Dash attack triggered for direction:", direction);
+        // Trigger the dash attack.
+        player.startDash(direction);
       }
-    });
+      strikeTriggered = true;
+    }
+  });
 
     // On touchend or cancel, animate the control back to its default position.
     const resetControl = () => {
