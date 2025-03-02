@@ -919,17 +919,26 @@ function renderWeather(ctx) {
   ctx.save();
   
   // Sunshine: gentle warm glow via a radial gradient.
-  if (weatherState === "sunshine") {
-    let sunX = canvas.width * 0.8;
-    let sunY = canvas.height * 0.2;
-    let outerRadius = canvas.width * 0.6;
-    let gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, outerRadius);
-    gradient.addColorStop(0, "rgba(255,255,200,0.3)"); // bright near the sun
-    gradient.addColorStop(1, "rgba(255,255,200,0)");    // fade to transparent
-    ctx.globalCompositeOperation = "lighter"; // blend additively for glow
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
+if (weatherState === "sunshine") {
+  // Define the orbit center and radius.
+  const orbitCenterX = canvas.width / 2;
+  const orbitCenterY = canvas.height / 2;
+  const orbitRadius = Math.min(canvas.width, canvas.height) * 0.4; // adjust as needed
+  const rotationSpeed = 0.1; // radians per second
+  const angle = globalTime * rotationSpeed;
+  
+  // Compute the sun's position on its orbit.
+  const sunX = orbitCenterX + orbitRadius * Math.cos(angle);
+  const sunY = orbitCenterY + orbitRadius * Math.sin(angle);
+  
+  const outerRadius = canvas.width * 0.8;
+  const gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, outerRadius);
+  gradient.addColorStop(0, "rgba(255,255,200,0.3)"); // bright near the sun
+  gradient.addColorStop(1, "rgba(255,255,200,0)");    // fade to transparent
+  ctx.globalCompositeOperation = "lighter"; // blend additively for glow
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
   
   // Fog: overlay a semi-transparent gray layer.
   if (weatherState === "fog") {
@@ -3189,47 +3198,57 @@ const strikeThreshold = 0.7 * fullExtent; // trigger if 70% of full drag is reac
 
   // For each control button…
   controlIDs.forEach(id => {
-const fullExtent = Math.sqrt(maxDx * maxDx + maxDy * maxDy);
-  const walkThreshold = 0.3 * fullExtent;   // modest drag for a normal strike
-  const dashThreshold = 0.9 * fullExtent;     // far swipe triggers dash attack
+    const btn = document.getElementById(id);
+    let startX, startY;
+    let strikeTriggered = false;
 
-  // Assume btn is defined for the current id:
-  btn.addEventListener("touchstart", evt => {
-    // Record initial touch position.
-    const touch = evt.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
-    strikeTriggered = false;
-    btn.style.transition = "none";
-  });
+    btn.addEventListener("touchstart", evt => {
+      // Record initial touch position.
+      const touch = evt.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      strikeTriggered = false;
+      // Remove any transition so the button follows immediately.
+      btn.style.transition = "none";
+    });
 
-  btn.addEventListener("touchmove", evt => {
-    evt.preventDefault();
-    const touch = evt.touches[0];
-    const dx = touch.clientX - startX;
-    const dy = touch.clientY - startY;
+    btn.addEventListener("touchmove", evt => {
+      evt.preventDefault();
+      const touch = evt.touches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
 
-    // Clamp movement to our maximum values.
-    const clampedDx = Math.max(-maxDx, Math.min(dx, maxDx));
-    const clampedDy = Math.max(-maxDy, Math.min(dy, maxDy));
+      // Clamp movement to a maximum if desired:
+      const maxDx = 1 * tileMap.tileWidth;
+      const maxDy = 1 * tileMap.tileHeight;
+      const clampedDx = Math.max(-maxDx, Math.min(dx, maxDx));
+      const clampedDy = Math.max(-maxDy, Math.min(dy, maxDy));
+      
+      // Visually move the control.
+      btn.style.transform = `translate(${clampedDx}px, ${clampedDy}px)`;
 
-    // Visually move the control.
-    btn.style.transform = `translate(${clampedDx}px, ${clampedDy}px)`;
-
-    // Calculate the drag distance.
-    const dragDistance = Math.sqrt(clampedDx * clampedDx + clampedDy * clampedDy);
-
-    // If the drag distance exceeds the dash threshold and an attack hasn't been triggered:
-    if (!strikeTriggered && dragDistance > dashThreshold) {
-      const direction = controlDirections[id]; // e.g., "up", "down", etc.
-      if (!player.moving && !player.isDashing) {
-        console.log("Dash attack triggered for direction:", direction);
-        // Trigger the dash attack.
-        player.startDash(direction);
+      // When the drag distance exceeds the threshold, trigger a strike.
+      const dragDistance = Math.sqrt(clampedDx * clampedDx + clampedDy * clampedDy);
+      if (!strikeTriggered && dragDistance > strikeThreshold) {
+        const direction = controlDirections[id];
+       if (!player.moving && !player.isDashing && !strikeTriggered) {
+  const direction = controlDirections[id];
+  console.log("Attack triggered for direction:", direction);
+  // Call the primary strike method (which triggers headbutt/melee)
+  player.strike(direction);
+  // Also, call any additional attack functions you might have:
+  // For instance, if you have a separate melee or headbutt function:
+  if (typeof performMeleeStrike === "function") {
+    performMeleeStrike(direction);
+  }
+  if (typeof triggerHeadbutt === "function") {
+    triggerHeadbutt();
+  }
+  strikeTriggered = true;
+}
+        strikeTriggered = true;
       }
-      strikeTriggered = true;
-    }
-  });
+    });
 
     // On touchend or cancel, animate the control back to its default position.
     const resetControl = () => {
@@ -3389,46 +3408,9 @@ function applyLighting(ctx) {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.restore();
   
-  // ----- ORBITING SPOTLIGHT EFFECT -----
-  // Compute the grid's center in world coordinates (assumes worldMinX, etc. are defined)
-  const gridCenterX = (worldMinX + worldMaxX) / 2;
-  const gridCenterY = (worldMinY + worldMaxY) / 2;
-  
-  // Set orbit parameters: the light will circle around the grid center.
-  const rotationSpeed = 0.5;                    // Radians per second
-  const orbitRadiusWorld = tileMap.tileWidth * 3; // Orbit radius (world units)
-  const orbitAngle = globalTime * rotationSpeed;
-  const offsetX = Math.cos(orbitAngle) * orbitRadiusWorld;
-  const offsetY = Math.sin(orbitAngle) * orbitRadiusWorld;
-  
-  // Light's position in world space is the grid center plus the orbit offset.
-  const lightWorldPos = new Vector2(gridCenterX + offsetX, gridCenterY + offsetY);
-  // Convert to screen coordinates.
-  const lightScreenPos = camera.worldToScreen(lightWorldPos);
-  
-  // Size the spotlight relative to the grid.
-  const gridWidth = worldMaxX - worldMinX;
-  const gridHeight = worldMaxY - worldMinY;
-  const gridMin = Math.min(gridWidth, gridHeight);
-  // Here, the full diameter of the spotlight is 50% of the grid’s smallest dimension.
-  const outerRadiusWorld = gridMin * 2.00;         // Outer radius in world units
-  const outerRadius = outerRadiusWorld * camera.zoom; // Convert to screen units
-  const innerRadius = outerRadius * 0.3;             // Inner radius (for a smooth gradient)
-  
-  // Create a radial gradient for the spotlight.
-  ctx.save();
-  // Using "lighter" makes the spotlight brighten the scene over the dark overlay.
-  ctx.globalCompositeOperation = "lighter";
-  const gradient = ctx.createRadialGradient(
-    lightScreenPos.x, lightScreenPos.y, innerRadius,
-    lightScreenPos.x, lightScreenPos.y, outerRadius
-  );
-  // The center is bright; it fades out to transparent.
-  gradient.addColorStop(0, "rgba(255,255,200,0.2)");
-  gradient.addColorStop(1, "rgba(255,255,200,0)");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.restore();
+ // ----- ORBITING SPOTLIGHT EFFECT -----
+
+ 
 }
 
    //GAME LOOP
