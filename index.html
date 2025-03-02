@@ -3421,7 +3421,7 @@ function applyLighting(ctx) {
   const gridHeight = worldMaxY - worldMinY;
   const gridMin = Math.min(gridWidth, gridHeight);
   // Here, the full diameter of the spotlight is 50% of the grid’s smallest dimension.
-  const outerRadiusWorld = gridMin * 0.75;         // Outer radius in world units
+  const outerRadiusWorld = gridMin * 2.00;         // Outer radius in world units
   const outerRadius = outerRadiusWorld * camera.zoom; // Convert to screen units
   const innerRadius = outerRadius * 0.3;             // Inner radius (for a smooth gradient)
   
