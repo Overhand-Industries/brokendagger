@@ -943,7 +943,7 @@ if (weatherState === "sunshine") {
   const orbitCenterX = canvas.width / 2;
   const orbitCenterY = canvas.height / 2;
   const orbitRadius = Math.min(canvas.width, canvas.height) * 0.4; // adjust as needed
-  const rotationSpeed = 0.2; // radians per second
+  const rotationSpeed = 0.1; // radians per second
   const angle = globalTime * rotationSpeed;
   
   // Compute the sun's orbiting position.
@@ -954,7 +954,7 @@ if (weatherState === "sunshine") {
   const fadeSpeed = 0.5; // adjust fade in/out speed
   const intensity = (Math.sin(globalTime * fadeSpeed) + 1) / 2;
   
-  const outerRadius = canvas.width * 0.6;
+  const outerRadius = canvas.width * 1;
   const gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, outerRadius);
   
   // Modulate the inner brightness by the intensity.
@@ -2165,7 +2165,7 @@ updateDaggerContainerAt(effectX, effectY);
       ctx.drawImage(offCanvas, screenPos.x, screenPos.y);
     }
   } else {
-    ctx.fillStyle = "green";
+    ctx.fillStyle = "rgba(255, 0, 0, 0.0)";
     ctx.fillRect(screenPos.x, screenPos.y, this.width, this.height);
   }
   
