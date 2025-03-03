@@ -1684,7 +1684,7 @@ playSFX("explosion");
         if (this.isDashing) return;
         this.isDashing = true;
         this.dashElapsed = 0;
-        const dashDistance = strikeRangeTiles * 50;
+        const dashDistance = strikeRangeTiles;
         let dashVector;
         switch(direction) {
           case "up":    dashVector = new Vector2(0, -dashDistance); break;
