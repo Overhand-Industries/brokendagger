@@ -150,40 +150,86 @@ width: 100%;
      
 /* Container that will always be positioned at the player's center */
 #daggerContainer {
+
   position: absolute;
-  pointer-events: none;
-   transform: translate(-50%, -50%) scaleX(-1) scaleY(-1);
+  pointer-events: none;     
+      height: 0px;
+   transform: translate(10%, -10%) scaleX(-1) scaleY(-1);
 }
 
 /* Dagger element */
-#headbuttEffect {
+#headbuttEffect {left: 50px;
   font-size: 20px; /* dagger size */
   line-height: 20px;
   text-align: center;
   /* Fix the hilt (top-right corner) as the pivot */
-  transform-origin: 79% 0%;
+  transform-origin: 100% 0%;
   /* Initially hidden/scaled to zero */
   transform: scale(0) rotate(var(--rotation, 0deg));
   opacity: 0;
 }
  
-#headbuttEffect.active {
-  animation: headbuttAnim 0.3s forwards;
+#headbuttEffect {
+  left: 50px;
+  font-size: 20px;
+  line-height: 20px;
+  text-align: center;
+  transform-origin: 118% 0%; /* keep the original pivot */
+  transform: rotate(90deg) translate(0, 0);
+  opacity: 0;
 }
 
-@keyframes headbuttAnim {
+#headbuttEffect.active {
+  /* Run two animations simultaneously:
+     - headbuttPivot moves/scales the dagger.
+     - trailShadow animates a drop-shadow that appears as a trailing blur.
+  */
+  animation: headbuttPivot 0.2s ease-out forwards, 
+             trailShadow 0.2s ease-out forwards;
+}
+
+@keyframes headbuttPivot {
   0% {
-    transform: scale(0) rotate(var(--rotation, 0deg));
+    transform: rotate(90deg) translate(0, 0);
     opacity: 1;
+  }
+  /* Slightly extend out while keeping close to the pivot */
+  20% {
+    transform: rotate(90deg) translate(3px, -3px);
+    opacity: 1;
+  }
+  /* Rotate slightly past the final rotation */
+  50% {
+    transform: rotate(calc(var(--rotation, 0deg) + 3deg)) translate(3px, -3px);
+    opacity: 1;
+  }
+  /* Swing back to the final rotation with the same slight offset */
+  70% {
+    transform: rotate(var(--rotation, 0deg)) translate(3px, -3px);
+    opacity: 1;
+  }
+  /* Swiftly scale down and fade out */
+  100% {
+    transform: rotate(var(--rotation, 0deg)) translate(3px, -3px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes trailShadow {
+  0% {
+    filter: drop-shadow(0px 0px 0px lightblue);
+  }
+  20% {
+    filter: drop-shadow(3px -3px 6px lightblue);
   }
   50% {
-    /* Optionally, you can add a slight extra rotation (e.g. +30deg) for a swing effect */
-    transform: scale(1.2) rotate(calc(var(--rotation, 0deg) + 30deg));
-    opacity: 1;
+    filter: drop-shadow(3px -3px 6px lightblue);
+  }
+  70% {
+    filter: drop-shadow(3px -3px 6px lightblue);
   }
   100% {
-    transform: scale(0) rotate(calc(var(--rotation, 0deg) + 60deg));
-    opacity: 0;
+    filter: drop-shadow(3px -3px 0px lightblue);
   }
 }
     
@@ -2494,19 +2540,19 @@ function handleTap(evt) {
   // (These values are examples; tweak them to get the swing effect you desire.)
   switch (player.direction) {
     case "up":
-      rotationAngle = "-90deg";
+      rotationAngle = "-30deg";
       flip = "scaleY(-1)";  // flip vertically for a swipe upward
-      translateX = "0px";
+      translateX = "40px";
       translateY = "-50px"; // move upward
       break;
     case "down":
-      rotationAngle = "90deg";
+      rotationAngle = "151deg";
       flip = "none";
       translateX = "0px";
-      translateY = "50px"; // move downward
+      translateY = "-26px"; // move downward
       break;
     case "left":
-      rotationAngle = "180deg";
+      rotationAngle = "190deg";
       flip = "none";
       translateX = "-50px"; // move left
       translateY = "0px";
@@ -2514,7 +2560,7 @@ function handleTap(evt) {
     case "right":
       rotationAngle = "0deg";
       flip = "none";
-      translateX = "50px";  // move right
+      translateX = "-50px";  // move right
       translateY = "0px";
       break;
   }
