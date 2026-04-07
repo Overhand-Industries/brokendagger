@@ -275,19 +275,19 @@ width: 100%;
 
     /* Fullscreen overlay for the upgrade menu */
     @keyframes menuSlideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to   { transform: translateX(0);    opacity: 1; }
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
     }
     @keyframes menuSlideOut {
-      from { transform: translateX(0);    opacity: 1; }
-      to   { transform: translateX(100%); opacity: 0; }
+      from { transform: translateY(0);     opacity: 1; }
+      to   { transform: translateY(-100%); opacity: 0; }
     }
     #upgradeMenu {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.92);
       display: none;
       align-items: center;
       justify-content: center;
@@ -303,69 +303,81 @@ width: 100%;
     }
     /* Expanded menu content that fills the screen */
     .menu-content {
-      background: #ffebcd;
+      background: #182d31;
       width: 100%;
       height: 100%;
-      padding: 1rem;
+      min-height: 100vh;
+      padding: 11.5rem 1rem;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
+      justify-content: flex-start;
       align-items: center;
       overflow-y: auto; z-index: 10000;
+      color: #e8dcc8;
     }
-    /* Headings and text scale up for readability */
     .menu-content h1 {
-      font-size: 3rem;
-      margin: 0.5rem 0;
+      font-size: 1.4rem;
+      margin: 0.2rem 0;
+      color: #ffe066;
+      letter-spacing: 0.08em;
     }
     .menu-content p {
-      font-size: 1.8rem;
-      margin: 0.5rem 0;
+      font-size: 0.85rem;
+      margin: 0.15rem 0;
+      color: #c8b890;
     }
     /* Tabs styling */
     .tabs {
       display: flex;
       justify-content: center;
-      margin: 1rem 0;
+      margin: 0.4rem 0;
       width: 100%;
     }
     .tabs button {
-      background: #ddd;
-      border: none;
-      padding: 1rem 2rem;
-      margin: 0 0.5rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,224,102,0.2);
+      padding: 0.4rem 0.6rem;
+      margin: 0 0.2rem;
       cursor: pointer;
       border-radius: 5px;
       transition: background 0.2s;
-      font-size: 1.8rem;
+      font-size: 0.8rem;
       font-weight: bold;
       flex: 1;
+      color: #c8b890;
     }
     .tabs button.active {
-      background: #ffebcd;
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+      background: rgba(255,224,102,0.15);
+      border-color: rgba(255,224,102,0.6);
+      color: #07302f;
+      box-shadow: 0 0 8px rgba(255,224,102,0.2);
     }
     /* --- Section Containers --- */
     .section { display: none; }
     /* Responsive grid for upgrade/shop buttons */
 .menu-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 180px);
-  gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0.5rem;
   width: 100%;
-  padding: 1rem;
+  padding: 5.4rem;
   box-sizing: border-box;
+  overflow-x: auto;
 }
-    /* Enlarged buttons for easier touch interaction */
+    /* Scaled-down buttons */
     .menu-buttons button {
       background: rgba(0,0,0,0.5);
       border: 2px solid white;
       border-radius: 10px;
-      width: 100%;
-  aspect-ratio: 1;
-  font-size: 1.5rem;
-  padding: 1.0rem;
+      flex: 0 0 auto;
+      width: 100px;
+      aspect-ratio: 1;
+      font-size: 0.7rem;
+      padding: 0.4rem;
       color: white;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -373,22 +385,25 @@ width: 100%;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-   
+    }
+    .menu-buttons button p.icon {
+      font-size: 1.4rem !important;
+      margin: 0 0 2px 0;
     }
     .menu-buttons button:active {
       border: 2px solid red;
       box-shadow: 0 0 10px 3px rgba(255,0,0,0.8);
     }
     .shrine-chosen {
-      border-color: #b8860b !important;
-      background: rgba(255,224,0,0.22) !important;
-      box-shadow: 0 0 12px rgba(180,140,0,0.3) !important;
-      color: #2a1a08 !important;
+      border-color: #ffe066 !important;
+      background: rgba(255,224,0,0.12) !important;
+      box-shadow: 0 0 12px rgba(255,200,0,0.25) !important;
+      color: #ffe066 !important;
     }
     .shrine-rejected {
-      opacity: 0.38 !important;
+      opacity: 0.35 !important;
       cursor: default !important;
-      color: #3d2a10 !important;
+      color: rgba(255,255,255,0.3) !important;
     }
     .gp-focus {
       border: 2px solid #ffe066 !important;
@@ -401,14 +416,14 @@ width: 100%;
     }
     /* Resume Game Button */
     #resumeGame {
-      margin-top: 1rem;
-      padding: 1rem 2rem;
-      font-size: 2rem;
-      border: none;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      border: 1px solid rgba(255,224,102,0.4);
       border-radius: 5px;
       cursor: pointer;
-      background: #ffebcd;
-      color: black;
+      background: rgba(255,224,102,0.12);
+      color: #ffe066;
       width: 90%;
       max-width: 400px;
     }
@@ -585,17 +600,7 @@ width: 100%;
 #inventorySection {
   display: flex;
   justify-content: center;
-}
-#inventorySection .menu-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 180px);
-  grid-template-rows: repeat(3, auto);
-  grid-auto-flow: column;
-  grid-auto-columns: 180px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  justify-content: center;
-  width: auto;
+  width: 100%;
 }
   justify-items: center;
 }
@@ -757,7 +762,8 @@ width: 100%;
       <button id="upgradesTab" class="active">Upgrades</button>
       <button id="shopTab">Craft</button>
       <button id="inventoryTab">Inventory</button>
-      <button id="shrineTab">✨ Blessings</button>
+      <button id="echoesTab">🔗 Echoes</button>
+      <button id="statusTab">⚙️ Status</button>
     </div>
     <div id="upgradesSection" class="section" style="display:block;">
       <div class="menu-buttons">
@@ -843,7 +849,7 @@ width: 100%;
 
 <button id="buyZyn">
   <div class="marquee">
-    <p class="icon"><svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="22" fill="#ffe600" stroke="#cc9900" stroke-width="2"/><text x="24" y="31" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="14" fill="#1a1a00" letter-spacing="1">ZYN</text></svg></p>
+    <p class="icon"><svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="22" fill="#ffe600" stroke="#cc9900" stroke-width="2"/><text x="24" y="31" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="14" fill="#1a1a00" letter-spacing="1">ZYN</text></svg></p>
     <div class="label">
       <b><i><div class="cost" id="zynCostDisplay"></div></i></b></div>
     <span>Craft 6mg ZYN — slow-mo · invincibility · autostrike</span>
@@ -861,10 +867,18 @@ width: 100%;
       </div>
     </div>
 
-    <div id="shrineSection" class="section">
+    <div id="shrineSection" class="section" style="display:none;">
       <div id="shrineHistoryTree" style="padding:0;color:#1a1208;">
         <div style="text-align:center;opacity:0.5;margin-top:40px;">No shrines visited yet</div>
       </div>
+    </div>
+
+    <div id="echoesSection" class="section">
+      <div id="echoesContent" style="width:100%;padding:0.5rem;box-sizing:border-box;"></div>
+    </div>
+
+    <div id="statusSection" class="section">
+      <div id="statusContent" style="width:100%;padding:0.5rem;box-sizing:border-box;"></div>
     </div>
   
     <button id="resumeGame">▶️ Resume Game</button>
@@ -1999,11 +2013,13 @@ document.getElementById("upgradesTab").addEventListener("click", function() {
   document.getElementById("upgradesSection").style.display = "block";
   document.getElementById("shopSection").style.display = "none";
   document.getElementById("inventorySection").style.display = "none";
-  document.getElementById("shrineSection").style.display = "none";
+  document.getElementById("echoesSection").style.display = "none";
+  document.getElementById("statusSection").style.display = "none";
   this.classList.add("active");
   document.getElementById("shopTab").classList.remove("active");
   document.getElementById("inventoryTab").classList.remove("active");
-  document.getElementById("shrineTab").classList.remove("active");
+  document.getElementById("echoesTab").classList.remove("active");
+  document.getElementById("statusTab").classList.remove("active");
   document.getElementById("pointsDisplay").textContent = Math.floor(points);
 });
 
@@ -2011,11 +2027,13 @@ document.getElementById("shopTab").addEventListener("click", function() {
   document.getElementById("shopSection").style.display = "block";
   document.getElementById("upgradesSection").style.display = "none";
   document.getElementById("inventorySection").style.display = "none";
-  document.getElementById("shrineSection").style.display = "none";
+  document.getElementById("echoesSection").style.display = "none";
+  document.getElementById("statusSection").style.display = "none";
   this.classList.add("active");
   document.getElementById("upgradesTab").classList.remove("active");
   document.getElementById("inventoryTab").classList.remove("active");
-  document.getElementById("shrineTab").classList.remove("active");
+  document.getElementById("echoesTab").classList.remove("active");
+  document.getElementById("statusTab").classList.remove("active");
   document.getElementById("pointsDisplay").textContent = Math.floor(points);
   updateBombCostDisplay();
   updateZoneTileCostDisplay();
@@ -2029,25 +2047,223 @@ document.getElementById("inventoryTab").addEventListener("click", function() {
   document.getElementById("inventorySection").style.display = "block";
   document.getElementById("upgradesSection").style.display = "none";
   document.getElementById("shopSection").style.display = "none";
-  document.getElementById("shrineSection").style.display = "none";
+  document.getElementById("echoesSection").style.display = "none";
+  document.getElementById("statusSection").style.display = "none";
   this.classList.add("active");
   document.getElementById("upgradesTab").classList.remove("active");
   document.getElementById("shopTab").classList.remove("active");
-  document.getElementById("shrineTab").classList.remove("active");
+  document.getElementById("echoesTab").classList.remove("active");
+  document.getElementById("statusTab").classList.remove("active");
+  _invPage = 0;
   updateInventoryDisplay();
+  renderInventoryTab();
 });
 
-document.getElementById("shrineTab").addEventListener("click", function() {
-  document.getElementById("shrineSection").style.display = "block";
+
+document.getElementById("echoesTab").addEventListener("click", function() {
+  document.getElementById("echoesSection").style.display = "block";
   document.getElementById("upgradesSection").style.display = "none";
   document.getElementById("shopSection").style.display = "none";
   document.getElementById("inventorySection").style.display = "none";
+  document.getElementById("statusSection").style.display = "none";
   this.classList.add("active");
   document.getElementById("upgradesTab").classList.remove("active");
   document.getElementById("shopTab").classList.remove("active");
   document.getElementById("inventoryTab").classList.remove("active");
-  renderShrineHistory();
+  document.getElementById("statusTab").classList.remove("active");
+  _echoPage = 0;
+  renderEchoesTab();
 });
+
+document.getElementById("statusTab").addEventListener("click", function() {
+  document.getElementById("statusSection").style.display = "block";
+  document.getElementById("upgradesSection").style.display = "none";
+  document.getElementById("shopSection").style.display = "none";
+  document.getElementById("inventorySection").style.display = "none";
+  document.getElementById("echoesSection").style.display = "none";
+  this.classList.add("active");
+  document.getElementById("upgradesTab").classList.remove("active");
+  document.getElementById("shopTab").classList.remove("active");
+  document.getElementById("inventoryTab").classList.remove("active");
+  document.getElementById("echoesTab").classList.remove("active");
+  renderStatusTab();
+});
+
+let _echoPage = 0;
+const ECHO_PAGE_SIZE = 8;
+
+function renderEchoesTab(page) {
+  const el = document.getElementById("echoesContent");
+  if (!el) return;
+  if (page !== undefined) _echoPage = page;
+
+  const C = { head:"#2a1a08", body:"#3d2a10", muted:"#7a5a30", gold:"#b8860b" };
+  const TIER_ICON = ["", "✦", "✦✦", "✦✦✦"];
+  const pool      = typeof _selfPool        !== "undefined" ? _selfPool       : [];
+  const clones    = typeof _syncedClones    !== "undefined" ? _syncedClones   : [];
+  const formation = typeof _cloneFormation  !== "undefined" ? _cloneFormation : "follow";
+  const worlds    = typeof discoveredWorlds !== "undefined" ? discoveredWorlds : [];
+  const FORMATION_LABELS = { follow:"Follow", row:"▬ Row", wedge:"⋀ Wedge", circle:"◎ Ring", hold:"⚓ Hold" };
+
+  function worldLabel(realmId) {
+    const w = worlds.find(w => w.id === realmId);
+    return w ? (w.icon ? w.icon + "\u00a0" + w.name : w.name) : (realmId || "?");
+  }
+
+  if (pool.length === 0) {
+    el.innerHTML = `<div style="text-align:center;color:${C.muted};padding:2rem;font-size:0.85rem;">
+      No echoes synced yet.<br><br>
+      <span style="font-size:0.75rem;opacity:0.7;">Find wanderers in combat worlds and hold <b>LB+RB</b> near them to sync.</span>
+    </div>`;
+    return;
+  }
+
+  const totalPages = Math.ceil(pool.length / ECHO_PAGE_SIZE);
+  _echoPage = Math.max(0, Math.min(_echoPage, totalPages - 1));
+  const start = _echoPage * ECHO_PAGE_SIZE;
+  const pagePool = pool.slice(start, start + ECHO_PAGE_SIZE);
+  const activeCount = clones.filter(c => c.alive).length;
+  const formLabel = FORMATION_LABELS[formation] || formation;
+
+  // ── Header ──
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px;">
+    <div style="font-size:0.75rem;color:${C.body};">
+      <b style="color:${C.head}">${pool.length}</b> echoes &nbsp;·&nbsp;
+      <b style="color:${C.head}">${activeCount}</b> active &nbsp;·&nbsp;
+      <b style="color:${C.gold}">${formLabel}</b>
+    </div>
+    <div style="font-size:0.65rem;color:${C.muted};">LB+RB: rally · ←/→ row · ↑ ring · ↓ hold</div>
+  </div>`;
+
+  // ── Echo row — same flex layout as menu-buttons ──
+  html += `<div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:0.5rem;padding:0.4rem;">`;
+  pagePool.forEach((profile, localIdx) => {
+    const i = start + localIdx;
+    const q = profile.quality || 1;
+    const tier = q >= 10 ? 3 : q >= 5 ? 2 : 1;
+    const dmgPct = Math.round((1 + (q - 1) * 0.05) * 100);
+    const hpBase = Math.max(20, Math.floor((typeof player !== "undefined" ? player.maxHP : 100) * 0.3));
+    const hp = Math.round(hpBase * (1 + (q - 1) * 0.08));
+    const live = clones[i];
+    const isActive = live && live.alive;
+    const liveHP = isActive ? Math.round(live.hp) : null;
+    const tierCol = tier === 3 ? "#cc9900" : tier === 2 ? "#4499bb" : C.muted;
+    const borderCol = isActive ? "rgba(64,255,200,0.6)" : "rgba(80,60,30,0.4)";
+    const bgCol = isActive ? "rgba(0,35,25,0.6)" : "rgba(25,16,8,0.5)";
+    html += `<div style="flex:0 0 auto;width:100px;aspect-ratio:1;background:${bgCol};border:2px solid ${borderCol};
+      border-radius:10px;padding:0.4rem;text-align:center;font-size:0.68rem;color:${C.body};
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-sizing:border-box;">
+      <div style="color:${tierCol};font-size:0.8rem;">${TIER_ICON[tier] || "✦"}</div>
+      <div style="color:${C.head};font-weight:bold;">Q${q}</div>
+      <div>⚔️ ${dmgPct}%</div>
+      <div>❤️ ${liveHP !== null ? liveHP + "/" + hp : hp}</div>
+      <div style="color:${C.muted};font-size:0.58rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px;">${worldLabel(profile.realm)}</div>
+      ${isActive ? `<div style="color:#40ffcc;font-size:0.58rem;">● active</div>` : ""}
+    </div>`;
+  });
+  html += `</div>`;
+
+  // ── Pagination ──
+  if (totalPages > 1) {
+    html += `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;">
+      <button onclick="renderEchoesTab(${_echoPage - 1})" ${_echoPage === 0 ? "disabled" : ""}
+        style="background:rgba(40,25,10,0.7);border:1px solid rgba(180,130,60,0.4);border-radius:6px;
+        padding:3px 12px;color:${C.body};cursor:pointer;font-size:0.8rem;
+        opacity:${_echoPage === 0 ? 0.3 : 1};">◀</button>
+      <span style="font-size:0.72rem;color:${C.muted};">Page ${_echoPage + 1} / ${totalPages}</span>
+      <button onclick="renderEchoesTab(${_echoPage + 1})" ${_echoPage >= totalPages - 1 ? "disabled" : ""}
+        style="background:rgba(40,25,10,0.7);border:1px solid rgba(180,130,60,0.4);border-radius:6px;
+        padding:3px 12px;color:${C.body};cursor:pointer;font-size:0.8rem;
+        opacity:${_echoPage >= totalPages - 1 ? 0.3 : 1};">▶</button>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+function renderStatusTab() {
+  const el = document.getElementById("statusContent");
+  if (!el) return;
+  const C = { head:"#2a1a08", body:"#3d2a10", muted:"#7a5a30", gold:"#b8860b" };
+  const dur = (typeof player !== "undefined" && player._archivistDurability) ? player._archivistDurability : {};
+  const DURABILITY = typeof ARCHIVIST_DURABILITY !== "undefined" ? ARCHIVIST_DURABILITY : {};
+  const WARES = typeof ARCHIVIST_WARES !== "undefined" ? ARCHIVIST_WARES : [];
+
+  const tileRow = (items) =>
+    `<div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:0.5rem;padding:0.4rem;">` +
+    items + `</div>`;
+
+  const tile = (icon, name, detail, borderCol = "rgba(255,255,255,0.3)", bgCol = "rgba(0,0,0,0.5)") =>
+    `<div style="flex:0 0 auto;width:100px;aspect-ratio:1;background:${bgCol};border:2px solid ${borderCol};
+      border-radius:10px;padding:0.4rem;text-align:center;font-size:0.68rem;color:white;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-sizing:border-box;">
+      <div style="font-size:1.4rem;line-height:1;">${icon}</div>
+      <div style="font-weight:bold;font-size:0.65rem;color:#ffe0b0;line-height:1.2;">${name}</div>
+      <div style="font-size:0.6rem;opacity:0.75;">${detail}</div>
+    </div>`;
+
+  const sectionLabel = (text) =>
+    `<div style="font-size:0.72rem;font-weight:bold;color:${C.muted};letter-spacing:0.08em;
+      margin:4px 0 2px;text-align:center;">${text}</div>`;
+
+  let html = "";
+
+  // ── Archivist items ──
+  const activeItems = WARES.filter(w => {
+    if (dur[w.id] !== undefined) return true;
+    if (w.id === "soul_anchor" && typeof player !== "undefined" && player._freeRespawn) return true;
+    return false;
+  });
+
+  html += sectionLabel("🧙 ARCHIVIST ITEMS");
+  if (activeItems.length === 0) {
+    html += `<div style="text-align:center;color:${C.muted};font-size:0.72rem;padding:0.3rem 0 0.6rem;">
+      None active — visit the Archivist in a stabilised world.</div>`;
+  } else {
+    const tiles = activeItems.map(w => {
+      const d = dur[w.id];
+      const max = DURABILITY[w.id] || 1;
+      const pct = d !== undefined ? Math.round(d / max * 100) : 100;
+      const durCol = pct > 50 ? "#44ff88" : pct > 25 ? "#ffcc44" : "#ff5555";
+      const detail = d !== undefined ? `<span style="color:${durCol}">${d}w left</span>` : "active";
+      const border = pct > 50 ? "rgba(64,255,136,0.5)" : pct > 25 ? "rgba(255,200,60,0.5)" : "rgba(255,80,80,0.5)";
+      return tile(w.icon, w.name, detail, border, "rgba(0,0,0,0.5)");
+    }).join("");
+    html += tileRow(tiles);
+  }
+
+  // ── Blessings ──
+  const shrineHist = typeof shrineHistory !== "undefined" ? shrineHistory : [];
+  html += sectionLabel("✨ ACTIVE BLESSINGS");
+  if (shrineHist.length === 0) {
+    html += `<div style="text-align:center;color:${C.muted};font-size:0.72rem;padding:0.3rem 0 0.6rem;">
+      None yet — defeat a Boss Siege to earn a blessing.</div>`;
+  } else {
+    const tiles = shrineHist.map(e => {
+      const icon = e.chosen.name.match(/[\u{1F300}-\u{1FFFF}]|[\u2600-\u27FF]/u)?.[0] || "✨";
+      const name = e.chosen.name.replace(/^[\u{1F300}-\u{1FFFF}\u2600-\u27FF\s]+/u, "").trim() || e.chosen.name;
+      return tile(icon, name, "", "rgba(160,120,255,0.5)", "rgba(30,10,50,0.5)");
+    }).join("");
+    html += tileRow(tiles);
+  }
+
+  // ── Combat stats ──
+  const strikeDmg = typeof player !== "undefined" ? Math.round((player._strikeDmgBoost || 1) * 100) : 100;
+  const maxHP = typeof player !== "undefined" ? player.maxHP : 100;
+  const combatMode = typeof COMBAT_MODES !== "undefined" && typeof _combatMode !== "undefined"
+    ? COMBAT_MODES[_combatMode] : null;
+  const echoCount = typeof _selfPool !== "undefined" ? _selfPool.length : 0;
+
+  html += sectionLabel("📊 COMBAT STATS");
+  html += tileRow([
+    tile("❤️", "Max HP", maxHP),
+    tile("⚔️", "Strike", strikeDmg + "%"),
+    tile(combatMode ? combatMode.icon : "🗡️", "Mode", combatMode ? combatMode.label : "—"),
+    tile("🔗", "Echoes", echoCount),
+  ].join(""));
+
+  el.innerHTML = html;
+}
 
     
     document.getElementById("resumeGame").addEventListener("click", () => { 
@@ -2225,6 +2441,103 @@ function updateUpgradeButton(upgradeId) {
   if (!html) html = `<p style="color:white;padding:1rem;">No items held.</p>`;
   updateHeavyArmourButton();
   inventoryContainer.innerHTML = html;
+}
+
+let _invPage = 0;
+const INV_CATEGORIES = [
+  { id: "combat",    label: "⚔️ Combat",    color: "rgba(255,100,60,0.7)"  },
+  { id: "sanctuary", label: "🏛️ Sanctuary", color: "rgba(160,120,255,0.7)" },
+];
+
+function renderInventoryTab() {
+  const inventoryContainer = document.getElementById("inventoryItems");
+  if (!inventoryContainer) return;
+
+  // Build category buckets from current game state
+  const combatItems = [];
+  const sanctuaryItems = [];
+
+  if (typeof gemXP !== "undefined" && gemXP > 0)
+    combatItems.push({ icon:"💎", name:"Gems", detail:`${Math.floor(gemXP)} collected` });
+  if (typeof bombCount !== "undefined" && bombCount > 0)
+    combatItems.push({ icon:"💣", name:"Bombs", detail:`${bombCount}` });
+  if (typeof zoneCharges !== "undefined" && zoneCharges > 0)
+    combatItems.push({ icon:"🧱", name:"Zone Tiles", detail:`${zoneCharges}` });
+  if (typeof towerCharges !== "undefined" && towerCharges > 0)
+    combatItems.push({ icon:"🗼", name:"Towers", detail:`${towerCharges} charges` });
+  if (typeof placedTowers !== "undefined" && placedTowers.length > 0)
+    combatItems.push({ icon:"🗼✅", name:"Active", detail:`${placedTowers.length} placed` });
+  if (typeof player !== "undefined" && player.heavyArmour)
+    combatItems.push({ icon:"🛡️+🔗", name:"Heavy Armour", detail:`Dur: ${Math.floor(player.heavyArmour.durability)}` });
+  if (typeof saltCharges !== "undefined" && saltCharges > 0)
+    combatItems.push({ icon:"🧂", name:"Salt", detail:`${saltCharges}/${typeof MAX_SALT !== "undefined" ? MAX_SALT : "?"}` });
+  if (typeof zynCount !== "undefined" && (zynCount > 0 || (typeof zynMeters !== "undefined" && zynMeters > 0) || (typeof zynCooldown !== "undefined" && zynCooldown > 0))) {
+    const det = typeof zynMeters !== "undefined" && zynMeters > 0 ? `${zynMeters} meters`
+              : typeof zynCooldown !== "undefined" && zynCooldown > 0 ? `CD ${Math.ceil(zynCooldown)}s`
+              : `${zynCount} pack${zynCount !== 1 ? "s" : ""}`;
+    combatItems.push({ icon:"🟡", name:"ZYN", detail: det });
+  }
+
+  if (typeof carriedItems !== "undefined") {
+    carriedItems.forEach(ci => {
+      sanctuaryItems.push({ icon: ci.def.icon, name: ci.def.name, detail:"📦 Pack" });
+    });
+  }
+  if (typeof sanctuaryPlaced !== "undefined") {
+    sanctuaryPlaced.forEach(p => {
+      sanctuaryItems.push({ icon: p.def.icon, name: p.def.name, detail:"🏛️ Active" });
+    });
+  }
+
+  const categories = [
+    { label:"⚔️ Combat",    items: combatItems,    color:"rgba(255,100,60,0.8)"  },
+    { label:"🏛️ Sanctuary", items: sanctuaryItems, color:"rgba(160,120,255,0.8)" },
+  ].filter(c => c.items.length > 0);
+
+  if (categories.length === 0) {
+    inventoryContainer.innerHTML = `<p style="color:white;padding:1rem;">No items held.</p>`;
+    updateHeavyArmourButton();
+    return;
+  }
+
+  _invPage = Math.max(0, Math.min(_invPage, categories.length - 1));
+  window._invCatLen = categories.length; // expose for inline onclick
+  const cat = categories[_invPage];
+  const C = { head:"#2a1a08", muted:"#7a5a30" };
+
+  // ── Category pagination ──
+  let html = `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;">
+    <button onclick="_invPage=Math.max(0,_invPage-1);renderInventoryTab()"
+      ${_invPage === 0 ? "disabled" : ""}
+      style="background:rgba(0,0,0,0.4);border:2px solid ${_invPage === 0 ? "rgba(255,255,255,0.2)" : "white"};
+      border-radius:6px;padding:3px 12px;color:white;cursor:pointer;font-size:0.8rem;
+      opacity:${_invPage === 0 ? 0.3 : 1};">◀</button>
+    <span style="font-size:0.8rem;color:${C.head};font-weight:bold;">
+      ${cat.label} &nbsp;<span style="opacity:0.5;font-size:0.7rem;">${_invPage + 1} / ${categories.length}</span>
+    </span>
+    <button onclick="_invPage=Math.min(_invCatLen-1,_invPage+1);renderInventoryTab()"
+      ${_invPage >= categories.length - 1 ? "disabled" : ""}
+      style="background:rgba(0,0,0,0.4);border:2px solid ${_invPage >= categories.length - 1 ? "rgba(255,255,255,0.2)" : "white"};
+      border-radius:6px;padding:3px 12px;color:white;cursor:pointer;font-size:0.8rem;
+      opacity:${_invPage >= categories.length - 1 ? 0.3 : 1};">▶</button>
+  </div>`;
+
+  // Items as horizontal tiles — wrap so no scrollbar
+  html += `<div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:0.5rem;padding:0.4rem;">`;
+  cat.items.forEach(item => {
+    html += `<div style="flex:0 0 auto;width:100px;aspect-ratio:1;
+      background:rgba(0,0,0,0.5);border:2px solid white;border-radius:10px;
+      padding:0.4rem;text-align:center;font-size:0.68rem;color:white;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-sizing:border-box;">
+      <div style="font-size:1.4rem;line-height:1;">${item.icon}</div>
+      <div style="font-weight:bold;font-size:0.65rem;color:#ffe0b0;">${item.name}</div>
+      <div style="font-size:0.6rem;opacity:0.75;">${item.detail}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  inventoryContainer.innerHTML = html;
+  updateHeavyArmourButton();
 }
 
 function updateRankDisplay() {
@@ -2876,6 +3189,9 @@ playSFX("explosion");
       _swipeEffects.length  = 0;
       _cloneDaggerAnims.length = 0;
       _echoTracers.length   = 0;
+      _cloneAnims.length    = 0;
+      effects.length        = 0;
+      briarPatches.length   = 0;
       nukeFlash             = null;
       pickups.length        = 0;
       baitBombs.length      = 0;
@@ -2883,7 +3199,15 @@ playSFX("explosion");
       snakePath  && (snakePath.length  = 0);
       snakeSet   && snakeSet.clear();
       snakeActive = false;
-      screenFlashAlpha = 0;
+      screenFlashAlpha      = 0;
+      screenShakeTime       = 0;
+      screenShakeMagnitude  = 0;
+      slowMotionTimer       = 0;
+      timeScale             = 1.0;
+      activeCurse           = null;
+      _darknessTarget       = 0;
+      _gatePulse            = 0;
+      zynOveruseActive      = 0;
       // World-specific gameplay objects
       placedTowers && (placedTowers.length = 0);
       safeZoneTiles && safeZoneTiles.clear();
@@ -3229,7 +3553,10 @@ render(ctx, camera) {
     ctx.stroke();
     if (_wt > 0) {
       // Rotating illumination — bright spot orbiting the ring
-      const _spinSpeed = 2 + _wt * 4; // faster as charge builds
+      const _extracting = _warpComboFiring && typeof _extractionTimer !== "undefined";
+      const _spinSpeed = _extracting
+        ? 3 + 2 * Math.sin(globalTime * 0.5)  // steady pulse during countdown
+        : 2 + _wt * 4;                         // normal charge speed
       const _spotA = globalTime * _spinSpeed;
       const _spotX = _mx + _r  * Math.cos(_spotA);
       const _spotY = _my2 + _ry * Math.sin(_spotA);
@@ -3258,6 +3585,36 @@ render(ctx, camera) {
         ctx.shadowBlur = _wt >= 1 ? 8 : 2;
         ctx.shadowColor = "#aaddff";
         ctx.stroke();
+      }
+
+      // Orbiting sigil runes — follow the same spin as the bright dot
+      if (_wt > 0.15) {
+        const RUNES = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ";
+        const _runeCount = 6;
+        const _fontSize = Math.round(8 + _wt * 5);
+        // During extraction countdown, pulse brightness with timer
+        const _extractPulse = (_warpComboFiring && typeof _extractionTimer !== "undefined")
+          ? 0.7 + 0.3 * Math.sin(globalTime * 4)
+          : 1.0;
+        ctx.font = `bold ${_fontSize}px serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        for (let _ri = 0; _ri < _runeCount; _ri++) {
+          const _angle = globalTime * _spinSpeed + (_ri / _runeCount) * Math.PI * 2;
+          const _rx = _mx + Math.cos(_angle) * _r;
+          const _ry3 = _my2 + Math.sin(_angle) * _ry;
+          const _rune = RUNES[(_ri * 7 + Math.floor(globalTime * 0.5)) % RUNES.length];
+          const _runeAlpha = _wt * 0.9 * _extractPulse;
+          ctx.save();
+          ctx.globalAlpha = _runeAlpha;
+          ctx.shadowBlur = (8 + 6 * _extractPulse) * _wt;
+          ctx.shadowColor = _warpComboFiring ? "#88ccff" : "#aaddff";
+          ctx.fillStyle = _warpComboFiring ? "#cceeff" : (_wt >= 1 ? "#ffffff" : "#aaddff");
+          ctx.translate(_rx, _ry3);
+          ctx.rotate(_angle + Math.PI / 2);
+          ctx.fillText(_rune, 0, 0);
+          ctx.restore();
+        }
       }
     }
     ctx.restore();
@@ -3314,6 +3671,35 @@ render(ctx, camera) {
       ctx.ellipse(_mx, _my, _r, _ry, 0, _startA, _startA + Math.PI * 2 * _st);
       ctx.strokeStyle = _st >= 1 ? "rgba(255,255,255,0.85)" : `rgba(140,255,180,${0.3 + _st * 0.5})`;
       ctx.lineWidth = 1.5; ctx.shadowBlur = _st >= 1 ? 10 : 4; ctx.shadowColor = "#88ffcc"; ctx.stroke();
+
+      // Orbiting sigil runes — travel along the ellipse with the rotation
+      const RUNES = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ";
+      const _runeCount = 6;
+      const _rotSpeed = globalTime * 1.8; // rotation speed
+      ctx.font = `bold ${Math.round(9 + _st * 5)}px serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (let _ri = 0; _ri < _runeCount; _ri++) {
+        const _angle = _startA + (_ri / _runeCount) * Math.PI * 2 + _rotSpeed;
+        const _rx = _mx + Math.cos(_angle) * _r;
+        const _ry2 = _my + Math.sin(_angle) * _ry;
+        const _rune = RUNES[(_ri * 7 + Math.floor(globalTime * 0.4)) % RUNES.length];
+        // Fade in with charge, and fade out runes ahead of sweep arc
+        const _runeProgress = ((_angle - _startA) / (Math.PI * 2) + 1) % 1;
+        const _inSweep = _runeProgress <= _st;
+        const _runeAlpha = _st * (_inSweep ? 0.9 : 0.2);
+        if (_runeAlpha < 0.05) continue;
+        ctx.save();
+        ctx.globalAlpha = _runeAlpha;
+        ctx.shadowBlur = _inSweep ? 10 : 3;
+        ctx.shadowColor = "#88ffcc";
+        ctx.fillStyle = _inSweep ? (_st >= 1 ? "#ffffff" : "#aaffcc") : "rgba(140,255,180,0.5)";
+        // Rotate each rune to follow the ellipse tangent
+        ctx.translate(_rx, _ry2);
+        ctx.rotate(_angle + Math.PI / 2);
+        ctx.fillText(_rune, 0, 0);
+        ctx.restore();
+      }
 
       // When NPC detected: draw pointer line + dot toward it
       if (_nearestNPC) {
@@ -4186,7 +4572,7 @@ updateDaggerContainerAt(effectX, effectY);
       ctx.drawImage(offCanvas, 0, 0, this.width, this.height, screenPos.x, screenPos.y, this.width, this.height);
     } else {
       // Type tint only when not flashing (avoids layering on top of flash)
-      const tintMap = { rusher: "rgba(255,60,60,0.35)", tank: "rgba(140,80,20,0.38)", splitter: "rgba(220,200,0,0.32)", boss: "rgba(120,0,0,0.4)", ranged: "rgba(60,180,255,0.32)", npc_hostile: "rgba(160,60,255,0.4)", phantom: "rgba(180,100,255,0.4)", ember: "rgba(255,120,20,0.45)", briar: "rgba(40,160,40,0.38)", void_stalker: "rgba(100,0,200,0.45)", frenzied: "rgba(255,60,120,0.38)", regenerator: "rgba(40,200,80,0.35)" };
+      const tintMap = { rusher: "rgba(255,60,60,0.35)", tank: "rgba(140,80,20,0.38)", splitter: "rgba(220,200,0,0.32)", boss: "rgba(120,0,0,0.4)", ranged: "rgba(60,180,255,0.32)", npc_hostile: "rgba(160,60,255,0.4)", phantom: "rgba(180,100,255,0.4)", ember: "rgba(255,120,20,0.45)", briar: "rgba(255,90,20,0.42)", void_stalker: "rgba(100,0,200,0.45)", frenzied: "rgba(255,60,120,0.38)", regenerator: "rgba(40,200,80,0.35)" };
       const tint = tintMap[this._type];
       if (tint) {
         const cacheKey = `_tintCanvas_${this._type}`;
@@ -4844,8 +5230,15 @@ updateDaggerContainerAt(effectX, effectY);
         briarPatches[i].timer -= deltaTime;
         if (briarPatches[i].timer <= 0) { briarPatches.splice(i, 1); continue; }
         if (player.gridX === briarPatches[i].x && player.gridY === briarPatches[i].y) {
-          player._briarSlowTimer = 0.5;
+          // Damage on contact — must melee the Briar before it trails across your path
+          if (!briarPatches[i]._damageCooldown || briarPatches[i]._damageCooldown <= 0) {
+            player.hp -= 8;
+            player.damageFlashTimer = 0.15;
+            briarPatches[i]._damageCooldown = 0.6; // damage every 0.6s while standing in it
+            if (player.hp <= 0) player.hp = 0;
+          }
         }
+        if (briarPatches[i]._damageCooldown > 0) briarPatches[i]._damageCooldown -= deltaTime;
       }
     }
 
@@ -4853,14 +5246,31 @@ updateDaggerContainerAt(effectX, effectY);
       if (briarPatches.length === 0) return;
       const _map = _activeMap || tileMap;
       briarPatches.forEach(p => {
-        const alpha = Math.min(1, p.timer / 1.5) * 0.55;
+        const lifePct = p.timer / 6.0;
+        const alpha = Math.min(1, p.timer / 1.0) * 0.7;
         const wp = _map.gridToWorld(p.x, p.y);
         const sp = camera.worldToScreen(wp);
+        const cx = sp.x + _map.tileWidth  / 2;
+        const cy = sp.y + _map.tileHeight / 2;
+        const rx = _map.tileWidth  * 0.38;
+        const ry = _map.tileHeight * 0.28;
+        const pulse = 0.85 + 0.15 * Math.sin(globalTime * 5 + p.x + p.y);
         ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.font = "18px serif";
-        ctx.textAlign = "center";
-        ctx.fillText("🌿", sp.x + _map.tileWidth/2, sp.y + _map.tileHeight/2);
+        ctx.globalAlpha = alpha * pulse;
+        // Outer glow ring
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = "#ff6622";
+        ctx.lineWidth = 1.5;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "#ff4400";
+        ctx.stroke();
+        // Inner fill — fades as timer runs out
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx * 0.65, ry * 0.65, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,80,20,${(lifePct * 0.35).toFixed(2)})`;
+        ctx.shadowBlur = 0;
+        ctx.fill();
         ctx.restore();
       });
     }
@@ -5032,37 +5442,76 @@ updateDaggerContainerAt(effectX, effectY);
         ctx.font = "bold 11px sans-serif";
         ctx.textAlign = "right";
         ctx.strokeStyle = "rgba(0,0,0,0.6)"; ctx.lineWidth = 2;
+        const _cw = canvas.width/(window.devicePixelRatio||1);
+        const _dur = player._archivistDurability || {};
         let _ay = canvas.height/(window.devicePixelRatio||1) - 14;
-        if (player._ward) {
-          ctx.fillStyle = player._wardReady ? "rgba(120,200,255,0.95)" : "rgba(255,255,255,0.2)";
-          const wardTxt = player._wardReady ? "🧿 Ward: READY" : "🧿 Ward: spent";
-          ctx.strokeText(wardTxt, canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          ctx.fillText(wardTxt,   canvas.width/(window.devicePixelRatio||1) - 12, _ay);
+
+        function _durLabel(id) {
+          const d = _dur[id];
+          if (d === undefined) return "";
+          const max = ARCHIVIST_DURABILITY[id] || 1;
+          const pct = Math.round(d / max * 100);
+          const col = pct > 50 ? "rgba(140,255,180,0.7)" : pct > 25 ? "rgba(255,220,80,0.85)" : "rgba(255,80,80,0.9)";
+          return { text: d + "w", color: col };
+        }
+
+        function _drawItemRow(label, color, durId) {
+          const dl = _durLabel(durId);
+          ctx.fillStyle = color;
+          ctx.strokeText(label, _cw - 12, _ay);
+          ctx.fillText(label, _cw - 12, _ay);
+          if (dl) {
+            // Draw wave counter to the left of the label
+            const labelW = ctx.measureText(label).width;
+            ctx.font = "10px sans-serif";
+            ctx.fillStyle = dl.color;
+            ctx.textAlign = "right";
+            ctx.strokeText(dl.text, _cw - 16 - labelW, _ay);
+            ctx.fillText(dl.text, _cw - 16 - labelW, _ay);
+            ctx.font = "bold 11px sans-serif";
+          }
           _ay -= 16;
+        }
+
+        if (player._ward) {
+          _drawItemRow(player._wardReady ? "🧿 Ward: READY" : "🧿 Ward: spent",
+            player._wardReady ? "rgba(120,200,255,0.95)" : "rgba(255,255,255,0.2)", "ward_shard");
         }
         if (player._echoBlade) {
           const _ec = player._echoCount || 0;
-          ctx.fillStyle = "rgba(255,220,80,0.85)";
-          ctx.strokeText("⚔️✨ Echo: " + _ec + "/5", canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          ctx.fillText("⚔️✨ Echo: " + _ec + "/5",   canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          _ay -= 16;
+          _drawItemRow("⚔️✨ Echo: " + _ec + "/5", "rgba(255,220,80,0.85)", "echo_blade");
         }
         if (player._voidStep) {
-          ctx.fillStyle = player.isDashing ? "rgba(180,140,255,0.95)" : "rgba(180,140,255,0.5)";
-          ctx.strokeText("👻 Void Step" + (player.isDashing ? ": PHASING" : ""), canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          ctx.fillText("👻 Void Step" + (player.isDashing ? ": PHASING" : ""),   canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          _ay -= 16;
+          _drawItemRow("👻 Void Step" + (player.isDashing ? ": PHASING" : ""),
+            player.isDashing ? "rgba(180,140,255,0.95)" : "rgba(180,140,255,0.5)", "void_step");
         }
         if (player._voidEngine) {
-          ctx.fillStyle = "rgba(100,200,255,0.7)";
-          ctx.strokeText("🌀 Void Engine: ON", canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          ctx.fillText("🌀 Void Engine: ON",   canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          _ay -= 16;
+          _drawItemRow("🌀 Void Engine: ON", "rgba(100,200,255,0.7)", "void_engine");
         }
         if (player._riftLens) {
-          ctx.fillStyle = "rgba(140,255,180,0.7)";
-          ctx.strokeText("🔭 Rift Lens: ON", canvas.width/(window.devicePixelRatio||1) - 12, _ay);
-          ctx.fillText("🔭 Rift Lens: ON",   canvas.width/(window.devicePixelRatio||1) - 12, _ay);
+          _drawItemRow("🔭 Rift Lens: ON", "rgba(140,255,180,0.7)", "rift_lens");
+        }
+        if (player._lifesteal) {
+          _drawItemRow("🩸 Lifedrain: ON", "rgba(255,120,120,0.7)", "lifedrain_edge");
+        }
+        if (player._magnet) {
+          _drawItemRow("💎 Gem Attractor: ON", "rgba(140,220,255,0.7)", "gem_attractor");
+        }
+        if (player._strikeDmgBoost > 1) {
+          const _boost = Math.round((_dur["strike_core"] !== undefined || _dur["convergence_heart"] !== undefined) ? 1 : 0);
+          if (_dur["strike_core"] !== undefined)
+            _drawItemRow("🔥 Strike Core: ON", "rgba(255,160,60,0.75)", "strike_core");
+          if (_dur["convergence_heart"] !== undefined)
+            _drawItemRow("💜 Conv. Heart: ON", "rgba(200,120,255,0.75)", "convergence_heart");
+        }
+        if (player._ricochet) {
+          _drawItemRow("🪞 Bullet Mirror: ON", "rgba(200,200,255,0.7)", "bullet_mirror");
+        }
+        if (player._phase) {
+          _drawItemRow("👁️ Phase Mantle: ON", "rgba(180,255,220,0.7)", "phase_mantle");
+        }
+        if (_dur["gate_key"] !== undefined) {
+          _drawItemRow("🗝️ Rift Key: ON", "rgba(255,240,120,0.7)", "gate_key");
         }
         ctx.restore();
       }
@@ -5639,6 +6088,7 @@ updateDaggerContainerAt(effectX, effectY);
       player._strikeDmgBoost = 1;
       player._gemGateDiscount = 0;
       player._archivistMaxHP = 0;
+      player._archivistDurability = {};
       player.maxHP = 100; player.hp = 100; // restore base HP
       // Reset per-world sync data
       discoveredWorlds.forEach(w => { w.syncedSelves = 0; w.synced = false; });
@@ -6745,56 +7195,41 @@ updateDaggerContainerAt(effectX, effectY);
         enemies.length = 0; bullets.length = 0; clearWorldVisuals();
         _lastCombatGridX = sx; _lastCombatGridY = sy;
 
-        showNarrativeCard({
-          icon: world.icon,
-          title: world.name,
-          text: world.sub + (_startWave > 1
-            ? ". The familiar darkness greets you. The demons remember. Wave " + _startWave + " resumes."
-            : ". The gate closes behind you. Whatever is here — it does not know you yet. Wave 1 begins."),
-          onDismiss: () => {
-            // Reset any lingering weather then apply world bias
-            weatherState = "sunshine"; thunderTintAlpha = 0;
-            const _arrWorld = discoveredWorlds.find(w => w.id === currentRealm);
-            if (_arrWorld && _arrWorld.weatherBias) {
-              const wb = _arrWorld.weatherBias;
-              const r = Math.random();
-              let acc = 0;
-              for (const [state, prob] of Object.entries(wb)) {
-                acc += prob;
-                if (r < acc) { weatherState = state; break; }
-              }
-              weatherTimer = randomBetween(120, 240); // shorter cycles in new worlds
-            }
-            // Switch to combat and resume at highestWave
-            realmPhase = "combat";
-            _despawnNPC(); _despawnHintNpcs(); _despawnArchivist(); // will respawn if pacified
-            // Check if any harvester needs repair in this world (below 70% = visible damage)
-            const _brokenHere = placedHarvesters.find(
-              h => h.durability < 70 && h.linkedWorldId === currentRealm
-            );
-            if (_brokenHere) {
-              const aeCost = _harvesterRepairAetherCost(_brokenHere);
-              setTimeout(() => {
-                showUpgradeAlert("🔧 " + _brokenHere.def.name + " damaged — walk to it and press [E] to repair (✨" + aeCost + " aether)");
-              }, 2500);
-            }
-            waveNumber = _startWave - 1; // _updateIntermission will do waveNumber++ → _startWave
-            bossWaveIndex = Math.floor(_startWave / 5);
-            waveKillsThisWave = 0;
-            bossKillsThisWave = 0;
-            waveStartKillCount = killCount;
-            waveKillsNeeded = waveKillsForWave(_startWave);
-            waveBetween = true;
-            // Grace period: if harvester is damaged, 30s before waves begin
-            // Khem always gets 20s grace so player can talk to Archivist/wanderers
-            // If healthy, waves are suppressed entirely (handled in WaveManager)
-            const _hasDamagedHarv = placedHarvesters.some(h => h.linkedWorldId === currentRealm && h.durability < 95);
-            const _khemGrace = currentRealm === "khem" && !_hasDamagedHarv;
-            waveBetweenTimer = _hasDamagedHarv ? 30.0 : _khemGrace ? 20.0 : 2.0;
-            _harvesterGraceTimer = _hasDamagedHarv ? 30.0 : 0;
-            respawnWave = false;
+        // Reset any lingering weather then apply world bias
+        weatherState = "sunshine"; thunderTintAlpha = 0;
+        const _arrWorld = discoveredWorlds.find(w => w.id === currentRealm);
+        if (_arrWorld && _arrWorld.weatherBias) {
+          const wb = _arrWorld.weatherBias;
+          const r = Math.random();
+          let acc = 0;
+          for (const [state, prob] of Object.entries(wb)) {
+            acc += prob;
+            if (r < acc) { weatherState = state; break; }
           }
-        });
+          weatherTimer = randomBetween(120, 240);
+        }
+        realmPhase = "combat";
+        _despawnNPC(); _despawnHintNpcs(); _despawnArchivist();
+        const _brokenHere = placedHarvesters.find(
+          h => h.durability < 70 && h.linkedWorldId === currentRealm
+        );
+        if (_brokenHere) {
+          const aeCost = _harvesterRepairAetherCost(_brokenHere);
+          setTimeout(() => {
+            showUpgradeAlert("🔧 " + _brokenHere.def.name + " damaged — walk to it and press [E] to repair (✨" + aeCost + " aether)");
+          }, 2500);
+        }
+        waveNumber = _startWave - 1;
+        bossWaveIndex = Math.floor(_startWave / 5);
+        waveKillsThisWave = 0;
+        bossKillsThisWave = 0;
+        waveStartKillCount = killCount;
+        waveKillsNeeded = waveKillsForWave(_startWave);
+        waveBetween = true;
+        const _hasDamagedHarv = placedHarvesters.some(h => h.linkedWorldId === currentRealm && h.durability < 95);
+        waveBetweenTimer = _hasDamagedHarv ? 30.0 : 20.0;
+        _harvesterGraceTimer = _hasDamagedHarv ? 30.0 : 0;
+        respawnWave = false;
       });
     }
 
@@ -7505,6 +7940,8 @@ updateDaggerContainerAt(effectX, effectY);
           _tier:        stats.tier,
           _quality:     stats.quality,
           _poolIndex:   i,            // which _selfPool slot this echo came from
+          _hpRingAlpha: 1.5,          // fades to 0; set to >0 to show HP ring briefly
+          _hpLast:      stats.hp,     // tracks last-known HP to detect damage
           alive:        true,
           _spawning:    true,
           _w:           player.width,
@@ -7749,6 +8186,15 @@ updateDaggerContainerAt(effectX, effectY);
       if (_cloneFormationDebounce > 0) _cloneFormationDebounce -= dt;
       if (_formationLabelTimer > 0) _formationLabelTimer = Math.max(0, _formationLabelTimer - dt);
 
+      // Tick HP ring alpha down; re-triggers on LB+RB rally or when echoes take damage
+      _syncedClones.forEach(c => {
+        if (!c.alive) return;
+        if (c._hpLast === undefined) c._hpLast = c.hp;
+        if (c.hp < c._hpLast) c._hpRingAlpha = 1.5; // damage taken — flash ring
+        c._hpLast = c.hp;
+        if (c._hpRingAlpha > 0) c._hpRingAlpha = Math.max(0, c._hpRingAlpha - dt * 1.4);
+      });
+
       const _map = _activeMap || tileMap;
       const playerMoving = player.moving;
       const count = _syncedClones.filter(c => c.alive).length;
@@ -7883,6 +8329,7 @@ updateDaggerContainerAt(effectX, effectY);
           c.currentFrame = 0;
         }
         if (c.attackFlash > 0) c.attackFlash = Math.max(0, c.attackFlash - dt * 5);
+        if ((c._strikeRingFlash || 0) > 0) c._strikeRingFlash = Math.max(0, c._strikeRingFlash - dt * 5);
       });
       } catch(e) { console.warn("_updateClones error:", e); }
     }
@@ -7956,11 +8403,11 @@ updateDaggerContainerAt(effectX, effectY);
         const flash = c.attackFlash;
         const tintA = c._tintAlpha || 0.30;
 
-        // Strike ring — behind sprite
-        if (flash > 0) {
+        // Strike ring — behind sprite; only on formation, sigil burst, or enemy contact (not rapid attack)
+        if ((c._strikeRingFlash || 0) > 0) {
           const sp = camera.worldToScreen(c.position);
           ctx.save();
-          ctx.globalAlpha = flash * 0.7;
+          ctx.globalAlpha = c._strikeRingFlash * 0.7;
           ctx.strokeStyle = "#40ffcc";
           ctx.lineWidth   = 1.5;
           ctx.shadowBlur  = 10;
@@ -7972,7 +8419,8 @@ updateDaggerContainerAt(effectX, effectY);
         }
 
         // HP arc — drawn inside the teal ground ellipse, behind sprite
-        {
+        if ((c._hpRingAlpha || 0) > 0) {
+          const _ringA = Math.min(1, c._hpRingAlpha); // clamp to 1 for fade-in overshoot
           const sp    = camera.worldToScreen(c.position);
           const ex    = sp.x + c._w / 2;
           const ey    = sp.y + c._h * 0.88;
@@ -7983,7 +8431,7 @@ updateDaggerContainerAt(effectX, effectY);
           const startA = -Math.PI;
           const endA   = startA + Math.PI * 2 * hpPct;
           ctx.save();
-          ctx.globalAlpha = 0.9;
+          ctx.globalAlpha = 0.9 * _ringA;
           // Dark track ring
           ctx.beginPath();
           ctx.ellipse(ex, ey, rx * 0.78, ry * 0.78, 0, -Math.PI, Math.PI);
@@ -7996,7 +8444,7 @@ updateDaggerContainerAt(effectX, effectY);
             ctx.ellipse(ex, ey, rx * 0.78, ry * 0.78, 0, startA, endA);
             ctx.strokeStyle = arcColor;
             ctx.lineWidth = 2;
-            ctx.shadowBlur = 6;
+            ctx.shadowBlur = 6 * _ringA;
             ctx.shadowColor = arcColor;
             ctx.stroke();
           }
@@ -8088,6 +8536,7 @@ updateDaggerContainerAt(effectX, effectY);
       _syncedClones.forEach(c => {
         if (!c.alive) return;
         c.attackFlash = 1.0;
+        c._strikeRingFlash = 1.0; // sigil burst — ring is appropriate here
         const cx = c.position.x + c._w / 2;
         const cy = c.position.y + c._h / 2;
         const cCenter = new Vector2(cx, cy);
@@ -8488,6 +8937,85 @@ updateDaggerContainerAt(effectX, effectY);
     // Appears on any stabilised world. Sells unique items for aether.
     // Items expand over time — scaffold is here, stock added later.
 
+    // ── Archivist item durability ─────────────────────────────────
+    // Each carried archivist item has a wave durability. Tracked in
+    // player._archivistDurability[id] = wavesRemaining.
+    // Ticked down on wave start; onExpire strips the effect.
+    const ARCHIVIST_DURABILITY = {
+      aether_flask:       0,   // consumable — no durability (used on buy)
+      rift_lens:          10,
+      ward_shard:         10,
+      soul_anchor:        0,   // consumed on use, no tick needed
+      echo_blade:         8,
+      resonance_skin:     12,
+      void_step:          8,
+      gem_attractor:      10,
+      strike_core:        8,
+      bullet_mirror:      8,
+      lifedrain_edge:     10,
+      phase_mantle:       10,
+      momentum_core:      10,
+      gate_key:           15,
+      convergence_heart:  18,
+      void_engine:        15,
+    };
+
+    function _archivistExpireItem(id) {
+      switch (id) {
+        case "rift_lens":       player._riftLens = false; break;
+        case "ward_shard":      player._ward = false; player._wardReady = false; break;
+        case "echo_blade":      player._echoBlade = false; break;
+        case "resonance_skin":
+          const _rs = 40;
+          player.maxHP = Math.max(1, player.maxHP - _rs);
+          player.hp    = Math.min(player.hp, player.maxHP);
+          player._archivistMaxHP = Math.max(0, (player._archivistMaxHP || 0) - _rs);
+          break;
+        case "void_step":       player._voidStep = false; break;
+        case "gem_attractor":
+          player._magnet = false;
+          player._gemBoost = Math.max(1, (player._gemBoost || 1) / 1.25);
+          break;
+        case "strike_core":
+          player._strikeDmgBoost = Math.max(1, (player._strikeDmgBoost || 1) / 1.3);
+          break;
+        case "bullet_mirror":   player._ricochet = false; break;
+        case "lifedrain_edge":  player._lifesteal = false; break;
+        case "phase_mantle":    player._phase = false; break;
+        case "momentum_core":   player._momentum = false; player._momentumStacks = 0; break;
+        case "gate_key":
+          player._gemGateDiscount = Math.max(0, (player._gemGateDiscount || 0) - 25);
+          break;
+        case "convergence_heart":
+          const _ch = 80;
+          player.maxHP = Math.max(1, player.maxHP - _ch);
+          player.hp    = Math.min(player.hp, player.maxHP);
+          player._archivistMaxHP = Math.max(0, (player._archivistMaxHP || 0) - _ch);
+          player._strikeDmgBoost = Math.max(1, (player._strikeDmgBoost || 1) / 1.4);
+          player._ward = false; player._wardReady = false;
+          break;
+        case "void_engine":     player._voidEngine = false; break;
+      }
+      // Remove from carriedItems
+      const _ci = carriedItems.findIndex(c => c.id === id);
+      if (_ci !== -1) carriedItems.splice(_ci, 1);
+      // Remove durability tracking
+      if (player._archivistDurability) delete player._archivistDurability[id];
+      showUpgradeAlert("⚠️ " + (ARCHIVIST_WARES.find(w => w.id === id) || {}).name + " worn out — effect faded");
+    }
+
+    function _tickArchivistDurability() {
+      if (!player._archivistDurability) return;
+      const expired = [];
+      Object.keys(player._archivistDurability).forEach(id => {
+        const dur = ARCHIVIST_DURABILITY[id];
+        if (!dur) return; // 0 = consumable, skip
+        player._archivistDurability[id]--;
+        if (player._archivistDurability[id] <= 0) expired.push(id);
+      });
+      expired.forEach(id => _archivistExpireItem(id));
+    }
+
     const ARCHIVIST_WARES = [
       // ── Utility (10-20% of aether, min 30) ────────────────────
       {
@@ -8497,9 +9025,7 @@ updateDaggerContainerAt(effectX, effectY);
         pct: 0.12, minCost: 30,
         lore: "Distilled from stabilised timelines. Tastes like static.",
         onBuy: (cost) => {
-          // The buy handler already deducted `cost` from aetherStored.
-          // Flask needs an additional 50 aether on top — refund cost and check total.
-          aetherStored += cost; // temporarily restore
+          aetherStored += cost;
           if (aetherStored < 50) { showUpgradeAlert("⚠️ Need 50 aether to use."); return false; }
           aetherStored -= 50; player.hp = player.maxHP;
           showUpgradeAlert("🧪 Aether Flask — full HP restored"); return true;
@@ -8510,20 +9036,30 @@ updateDaggerContainerAt(effectX, effectY);
       {
         id: "rift_lens",
         icon: "🔭", name: "Rift Lens",
-        desc: "Reveals all wanderers on the map as faint glows.",
+        desc: "Reveals all wanderers on the map as faint glows. Lasts 10 waves.",
         pct: 0.12, minCost: 30,
         lore: "Tuned to parallel resonance. You see them before they see you.",
-        onBuy: () => { player._riftLens = true; showUpgradeAlert("🔭 Rift Lens — wanderers visible across the map"); return true; },
+        onBuy: () => {
+          player._riftLens = true;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["rift_lens"] = ARCHIVIST_DURABILITY["rift_lens"];
+          showUpgradeAlert("🔭 Rift Lens — wanderers visible across the map"); return true;
+        },
         canBuy: () => !player._riftLens,
         soldOut: () => !!player._riftLens,
       },
       {
         id: "ward_shard",
         icon: "🔷", name: "Ward Shard",
-        desc: "Absorbs the next hit each wave. Resets on wave start.",
+        desc: "Absorbs the next hit each wave. Resets on wave start. Lasts 10 waves.",
         pct: 0.15, minCost: 40,
         lore: "A sliver of stabilised void. It remembers the shape of harm.",
-        onBuy: () => { player._ward = true; player._wardReady = true; showUpgradeAlert("🔷 Ward Shard — absorbs your next hit each wave"); return true; },
+        onBuy: () => {
+          player._ward = true; player._wardReady = true;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["ward_shard"] = ARCHIVIST_DURABILITY["ward_shard"];
+          showUpgradeAlert("🔷 Ward Shard — absorbs your next hit each wave"); return true;
+        },
         canBuy: () => !player._ward,
         soldOut: () => !!player._ward,
       },
@@ -8541,60 +9077,91 @@ updateDaggerContainerAt(effectX, effectY);
       {
         id: "echo_blade",
         icon: "⚔️✨", name: "Echo Blade",
-        desc: "Every 5th strike fires ghost strikes in all 4 directions.",
+        desc: "Every 5th strike fires ghost strikes in all 4 directions. Lasts 8 waves.",
         pct: 0.25, minCost: 60,
         lore: "Folded from a weapon used in a timeline that chose differently.",
-        onBuy: () => { player._echoBlade = true; player._echoCount = 0; showUpgradeAlert("⚔️✨ Echo Blade — every 5th strike echoes outward"); return true; },
+        onBuy: () => {
+          player._echoBlade = true; player._echoCount = 0;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["echo_blade"] = ARCHIVIST_DURABILITY["echo_blade"];
+          showUpgradeAlert("⚔️✨ Echo Blade — every 5th strike echoes outward"); return true;
+        },
         canBuy: () => !player._echoBlade,
         soldOut: () => !!player._echoBlade,
       },
       {
         id: "resonance_skin",
         icon: "🛡️", name: "Resonance Skin",
-        desc: "+40 max HP permanently.",
+        desc: "+40 max HP. Fades after 12 waves.",
         pct: 0.28, minCost: 70,
         lore: "Grown from stabilised timeline matter. Feels like a second self.",
-        onBuy: () => { player.maxHP += 40; player.hp = Math.min(player.hp + 40, player.maxHP); player._archivistMaxHP = (player._archivistMaxHP || 0) + 40; showUpgradeAlert("🛡️ Resonance Skin — +40 max HP"); return true; },
+        onBuy: () => {
+          player.maxHP += 40; player.hp = Math.min(player.hp + 40, player.maxHP);
+          player._archivistMaxHP = (player._archivistMaxHP || 0) + 40;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["resonance_skin"] = ARCHIVIST_DURABILITY["resonance_skin"];
+          showUpgradeAlert("🛡️ Resonance Skin — +40 max HP"); return true;
+        },
         canBuy: () => true,
         soldOut: () => false,
       },
       {
         id: "void_step",
         icon: "👻", name: "Void Step",
-        desc: "Dash passes through enemy bullets without damage.",
+        desc: "Dash passes through enemy bullets without damage. Lasts 8 waves.",
         pct: 0.30, minCost: 80,
         lore: "A brief phasing — enough to slip through what wants to kill you.",
-        onBuy: () => { player._voidStep = true; showUpgradeAlert("👻 Void Step — dash through bullets safely"); return true; },
+        onBuy: () => {
+          player._voidStep = true;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["void_step"] = ARCHIVIST_DURABILITY["void_step"];
+          showUpgradeAlert("👻 Void Step — dash through bullets safely"); return true;
+        },
         canBuy: () => !player._voidStep,
         soldOut: () => !!player._voidStep,
       },
       {
         id: "gem_attractor",
         icon: "💎", name: "Gem Attractor",
-        desc: "Doubles gem pickup radius and boosts gem value by 25%.",
+        desc: "Doubles gem pickup radius and boosts gem value by 25%. Lasts 10 waves.",
         pct: 0.30, minCost: 80,
         lore: "Calibrated to the resonance of compressed value. Gems drift toward it.",
-        onBuy: () => { player._magnet = true; player._gemBoost = (player._gemBoost || 1) * 1.25; showUpgradeAlert("💎 Gem Attractor — wider pickup, +25% gem value"); return true; },
+        onBuy: () => {
+          player._magnet = true; player._gemBoost = (player._gemBoost || 1) * 1.25;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["gem_attractor"] = ARCHIVIST_DURABILITY["gem_attractor"];
+          showUpgradeAlert("💎 Gem Attractor — wider pickup, +25% gem value"); return true;
+        },
         canBuy: () => !player._magnet,
         soldOut: () => !!player._magnet,
       },
       {
         id: "strike_core",
         icon: "🔥", name: "Strike Core",
-        desc: "Strike damage permanently +30%.",
+        desc: "Strike damage +30%. Fades after 8 waves.",
         pct: 0.35, minCost: 90,
         lore: "Compressed kinetic memory from a thousand battles.",
-        onBuy: () => { player._strikeDmgBoost = (player._strikeDmgBoost || 1) * 1.3; showUpgradeAlert("🔥 Strike Core — +30% strike damage"); return true; },
+        onBuy: () => {
+          player._strikeDmgBoost = (player._strikeDmgBoost || 1) * 1.3;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["strike_core"] = ARCHIVIST_DURABILITY["strike_core"];
+          showUpgradeAlert("🔥 Strike Core — +30% strike damage"); return true;
+        },
         canBuy: () => true,
         soldOut: () => false,
       },
       {
         id: "bullet_mirror",
         icon: "🪞", name: "Bullet Mirror",
-        desc: "Deflected bullets split into 3 spread shots.",
+        desc: "Deflected bullets split into 3 spread shots. Lasts 8 waves.",
         pct: 0.38, minCost: 100,
         lore: "Reflects more than light. It reflects intent.",
-        onBuy: () => { player._ricochet = true; showUpgradeAlert("🪞 Bullet Mirror — deflections split into 3"); return true; },
+        onBuy: () => {
+          player._ricochet = true;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["bullet_mirror"] = ARCHIVIST_DURABILITY["bullet_mirror"];
+          showUpgradeAlert("🪞 Bullet Mirror — deflections split into 3"); return true;
+        },
         canBuy: () => !player._ricochet,
         soldOut: () => !!player._ricochet,
       },
@@ -8602,30 +9169,45 @@ updateDaggerContainerAt(effectX, effectY);
       {
         id: "lifedrain_edge",
         icon: "🩸", name: "Lifedrain Edge",
-        desc: "Each kill restores 3 HP.",
+        desc: "Each kill restores 3 HP. Lasts 10 waves.",
         pct: 0.45, minCost: 120,
         lore: "It takes something back from everything it ends. So do you, now.",
-        onBuy: () => { player._lifesteal = true; showUpgradeAlert("🩸 Lifedrain Edge — +3 HP per kill"); return true; },
+        onBuy: () => {
+          player._lifesteal = true;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["lifedrain_edge"] = ARCHIVIST_DURABILITY["lifedrain_edge"];
+          showUpgradeAlert("🩸 Lifedrain Edge — +3 HP per kill"); return true;
+        },
         canBuy: () => !player._lifesteal,
         soldOut: () => !!player._lifesteal,
       },
       {
         id: "phase_mantle",
         icon: "👁️", name: "Phase Mantle",
-        desc: "Every 5th strike hits ALL enemies on screen.",
+        desc: "Every 5th strike hits ALL enemies on screen. Lasts 10 waves.",
         pct: 0.55, minCost: 150,
         lore: "Borrowed from a self that learned to strike everywhere at once.",
-        onBuy: () => { player._phase = true; player._phaseCount = 0; showUpgradeAlert("👁️ Phase Mantle — every 5th strike hits every enemy"); return true; },
+        onBuy: () => {
+          player._phase = true; player._phaseCount = 0;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["phase_mantle"] = ARCHIVIST_DURABILITY["phase_mantle"];
+          showUpgradeAlert("👁️ Phase Mantle — every 5th strike hits every enemy"); return true;
+        },
         canBuy: () => !player._phase,
         soldOut: () => !!player._phase,
       },
       {
         id: "momentum_core",
         icon: "⚡", name: "Momentum Core",
-        desc: "Consecutive hits build stacks — up to ×10, +5% dmg each.",
+        desc: "Consecutive hits build stacks — up to ×10, +5% dmg each. Lasts 10 waves.",
         pct: 0.55, minCost: 150,
         lore: "Violence compounds. The core makes it legible.",
-        onBuy: () => { player._momentum = true; player._momentumStacks = 0; showUpgradeAlert("⚡ Momentum Core — build stacks for up to +50% damage"); return true; },
+        onBuy: () => {
+          player._momentum = true; player._momentumStacks = 0;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["momentum_core"] = ARCHIVIST_DURABILITY["momentum_core"];
+          showUpgradeAlert("⚡ Momentum Core — build stacks for up to +50% damage"); return true;
+        },
         canBuy: () => !player._momentum,
         soldOut: () => !!player._momentum,
       },
@@ -8633,17 +9215,22 @@ updateDaggerContainerAt(effectX, effectY);
       {
         id: "gate_key",
         icon: "🗝️", name: "Rift Key",
-        desc: "Gate gem cost -25 permanently across all worlds.",
+        desc: "Gate gem cost -25. Lasts 15 waves.",
         pct: 0.70, minCost: 200,
         lore: "Cut from the frame of a gate that was never meant to close.",
-        onBuy: () => { player._gemGateDiscount = (player._gemGateDiscount || 0) + 25; showUpgradeAlert("🗝️ Rift Key — gate cost reduced by 25 gems"); return true; },
+        onBuy: () => {
+          player._gemGateDiscount = (player._gemGateDiscount || 0) + 25;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["gate_key"] = ARCHIVIST_DURABILITY["gate_key"];
+          showUpgradeAlert("🗝️ Rift Key — gate cost reduced by 25 gems"); return true;
+        },
         canBuy: () => true,
         soldOut: () => false,
       },
       {
         id: "convergence_heart",
         icon: "💜", name: "Convergence Heart",
-        desc: "+80 max HP · +40% damage · ward shard included.",
+        desc: "+80 max HP · +40% damage · ward shard. Fades after 18 waves.",
         pct: 0.85, minCost: 300,
         lore: "The heart of a self that completed the convergence. It still beats.",
         onBuy: () => {
@@ -8651,6 +9238,8 @@ updateDaggerContainerAt(effectX, effectY);
           player._archivistMaxHP = (player._archivistMaxHP || 0) + 80;
           player._strikeDmgBoost = (player._strikeDmgBoost || 1) * 1.4;
           player._ward = true; player._wardReady = true;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["convergence_heart"] = ARCHIVIST_DURABILITY["convergence_heart"];
           showUpgradeAlert("💜 Convergence Heart — +80 HP · +40% damage · ward"); return true;
         },
         canBuy: () => true,
@@ -8659,10 +9248,15 @@ updateDaggerContainerAt(effectX, effectY);
       {
         id: "void_engine",
         icon: "🌀", name: "Void Engine",
-        desc: "Syncing a wanderer restores 10 HP and grants +2 gems.",
+        desc: "Syncing a wanderer restores 10 HP and grants +2 gems. Lasts 15 waves.",
         pct: 1.0, minCost: 400,
         lore: "Converts synchronisation into sustain. The rift feeds you now.",
-        onBuy: () => { player._voidEngine = true; showUpgradeAlert("🌀 Void Engine — syncs restore HP and drop gems"); return true; },
+        onBuy: () => {
+          player._voidEngine = true;
+          if (!player._archivistDurability) player._archivistDurability = {};
+          player._archivistDurability["void_engine"] = ARCHIVIST_DURABILITY["void_engine"];
+          showUpgradeAlert("🌀 Void Engine — syncs restore HP and drop gems"); return true;
+        },
         canBuy: () => !player._voidEngine,
         soldOut: () => !!player._voidEngine,
       },
@@ -9840,6 +10434,7 @@ updateDaggerContainerAt(effectX, effectY);
 
     function _showNPCDialogLine() {
       playSFX("npcTalk");
+      timeScale = 0; // freeze game during dialogue
       let box = document.getElementById("npcDialog");
       if (!box) {
         box = document.createElement("div");
@@ -9847,7 +10442,18 @@ updateDaggerContainerAt(effectX, effectY);
         box.style.cssText = "position:fixed;bottom:180px;left:50%;transform:translateX(-50%);" +
           "background:rgba(8,6,18,0.95);border:1px solid rgba(255,220,80,0.4);border-radius:10px;" +
           "padding:14px 20px;max-width:340px;min-width:240px;text-align:center;z-index:5000;" +
-          "font-family:serif;color:#fff;pointer-events:none;";
+          "font-family:serif;color:#fff;pointer-events:none;" +
+          "animation:_npcBorderPulse 1.8s ease-in-out infinite;";
+        // Inject keyframes once
+        if (!document.getElementById("_npcPulseStyle")) {
+          const s = document.createElement("style");
+          s.id = "_npcPulseStyle";
+          s.textContent = "@keyframes _npcBorderPulse{" +
+            "0%,100%{border-color:rgba(255,220,80,0.25);box-shadow:0 0 6px rgba(255,220,80,0.1);}" +
+            "50%{border-color:rgba(255,220,80,0.85);box-shadow:0 0 16px rgba(255,220,80,0.35);}" +
+            "}";
+          document.head.appendChild(s);
+        }
         document.body.appendChild(box);
       }
       const line = _npcDialogLines[_npcDialogLine];
@@ -9889,6 +10495,7 @@ updateDaggerContainerAt(effectX, effectY);
       _npcDialogIcon = null;
       const box = document.getElementById("npcDialog");
       if (box) box.remove();
+      if (!isUpgradeMenuVisible) timeScale = 1.0; // restore game speed
     }
 
     // ── Prologue — The First Encounter ───────────────────────────
@@ -10374,6 +10981,9 @@ updateDaggerContainerAt(effectX, effectY);
       // Full cleanup so this works from death screen, gate, or anywhere
       _warpComboHeld = 0;
       _warpComboFiring = false;
+      _extractionTimer = 0;
+      const _eHud = document.getElementById("extractionHud");
+      if (_eHud) _eHud.remove();
       playSFX("sanctuaryEnter");
       pickupSpawnTimer = 0; // don't auto-spawn items on re-entry to a world
       // Run ends when returning to Sanctuary — reset for next run
@@ -12920,7 +13530,23 @@ function mergeEnemiesIntoPlayer() {
   }, totalDur * 1000);
 }
 
+// Central check — true if any blocking UI is currently open
+function _anyOverlayOpen() {
+  if (isUpgradeMenuVisible) return true;
+  if (typeof _npcDialogOpen !== "undefined" && _npcDialogOpen) return true;
+  if (typeof _archivistDialogOpen !== "undefined" && _archivistDialogOpen) return true;
+  if (document.getElementById("shrineOverlay"))    return true;
+  if (document.getElementById("archivistShop"))    return true;
+  if (document.getElementById("harvesterMenu"))    return true;
+  if (document.getElementById("stargateOverlay"))  return true;
+  if (document.getElementById("bossChoiceOverlay")) return true;
+  if (document.getElementById("extractionHud") && typeof _warpComboFiring !== "undefined" && _warpComboFiring) return false; // extraction runs alongside gameplay — not blocking
+  return false;
+}
+
 function showUpgradeMenu(triggeredByDeath = false) {
+  // Block if any other overlay is already open
+  if (_anyOverlayOpen() && !triggeredByDeath) return;
   // Cancel any pending close animation timeout
   if (_menuCloseTimeout) { clearTimeout(_menuCloseTimeout); _menuCloseTimeout = null; }
   deathTriggeredMenu = triggeredByDeath;
@@ -13355,7 +13981,7 @@ const strikeThreshold = 0.7 * fullExtent; // trigger if 70% of full drag is reac
   }
     // --- Added Keyboard Controls ---
 // ---- GAMEPAD SUPPORT ----
-const TABS = ["upgradesTab", "shopTab", "inventoryTab", "shrineTab"];
+const TABS = ["upgradesTab", "shopTab", "inventoryTab", "echoesTab", "statusTab"];
 const TRAY_ITEMS = ["explosivesSlot", "towerSlot", "attackSlot", "saltSlot", "zynSlot"];
 let gpTrayIdx = 0; // which tray item is selected
 
@@ -13379,7 +14005,8 @@ const DAGGER_RANGE = 2400; // fly until off-map or hits enemy
 const DAGGER_DAMAGE_MULT = 2.5; // multiplier on wave strike damage
 // Sanctuary warp combo state
 let _warpComboHeld = 0;       // seconds all 5 buttons held
-let _warpComboFiring = false; // transition in progress
+let _warpComboFiring = false; // extraction in progress
+let _extractionTimer = 0;     // countdown seconds remaining
 const WARP_HOLD_TIME = 0.8;   // hold duration before trigger // snapped tile for sanctuary placement // raw screen-space angle from stick (radians)
 
 function gpRenderAimIndicator(ctx, camera) {
@@ -13591,12 +14218,11 @@ function gpRumble(weakMotor = 0, strongMotor = 0, duration = 80) {
     }
   }
 }
-const MENU_COLS = 3; // grid columns
 let gpTabIdx = 0;
 let gpItemIdx = 0;
 
 function gpGetItemButtons() {
-  const sections = ["upgradesSection", "shopSection", "inventorySection", "shrineSection"];
+  const sections = ["upgradesSection", "shopSection", "inventorySection", "echoesSection", "statusSection"];
   const sec = document.getElementById(sections[gpTabIdx]);
   if (!sec) return [];
   return Array.from(sec.querySelectorAll("button")).filter(b => b.offsetParent !== null);
@@ -13626,7 +14252,8 @@ function gpSwitchTab(dir) {
   gpTabIdx = (gpTabIdx + dir + TABS.length) % TABS.length;
   gpItemIdx = 0;
   document.getElementById(TABS[gpTabIdx]).click();
-  if (TABS[gpTabIdx] === "shrineTab") renderShrineHistory();
+  if (TABS[gpTabIdx] === "echoesTab") renderEchoesTab();
+  if (TABS[gpTabIdx] === "statusTab") renderStatusTab();
   setTimeout(gpApplyFocus, 30);
 }
 
@@ -13672,29 +14299,72 @@ const gp = {
             _hintNpcs.some(n => !n._fleeing && Math.abs(player.gridX - n.gridX) + Math.abs(player.gridY - n.gridY) <= 2)) return true;
         return false;
       })();
-      if (!player.isDead && currentRealm !== "sanctuary" && !_warpComboFiring && !_warpSyncBlocked) {
+
+      // Tick extraction countdown
+      if (_warpComboFiring && !player.isDead) {
+        _extractionTimer -= dt;
+        const _el = document.getElementById("extractionHud");
+        if (_el) {
+          const _secs = Math.ceil(_extractionTimer);
+          const _pct = (_extractionTimer / 15) * 100;
+          const _col = _secs > 8 ? "#40ffcc" : _secs > 4 ? "#ffe066" : "#ff5555";
+          _el.innerHTML = `<div style="font-size:0.8rem;color:${_col};font-weight:bold;text-shadow:0 0 8px ${_col};">
+            🌀 Returning to Sanctuary in <b>${_secs}s</b>
+          </div>
+          <div style="height:4px;background:rgba(0,0,0,0.4);border-radius:2px;margin-top:4px;">
+            <div style="width:${_pct}%;height:100%;background:${_col};border-radius:2px;transition:width 0.1s linear;box-shadow:0 0 6px ${_col};"></div>
+          </div>
+          <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-top:3px;">Hold LB+RB+A again to cancel</div>`;
+        }
+        if (_extractionTimer <= 0) {
+          _warpComboFiring = false;
+          _extractionTimer = 0;
+          const _el2 = document.getElementById("extractionHud");
+          if (_el2) _el2.remove();
+          if (window._enterSanctuary) window._enterSanctuary();
+        }
+      }
+      // Cancel extraction if player dies
+      if (_warpComboFiring && player.isDead) {
+        _warpComboFiring = false;
+        _extractionTimer = 0;
+        const _el = document.getElementById("extractionHud");
+        if (_el) _el.remove();
+        showUpgradeAlert("💀 Extraction cancelled");
+      }
+
+      if (!player.isDead && currentRealm !== "sanctuary" && !_warpSyncBlocked) {
         const _warpHeld = this._held[4] && this._held[5] && this._held[0];
         if (_warpHeld) {
           _warpComboHeld += dt;
           if (_warpComboHeld >= WARP_HOLD_TIME) {
-            _warpComboFiring = true;
-            playSFX("warpFire");
             _warpComboHeld = 0;
-            timeScale = 0.15;
-            screenShakeTime = 0; screenShakeMagnitude = 0; // clear any lingering shake
-            showUpgradeAlert("🌀 Opening rift...");
-            setTimeout(() => {
-              if (!_warpComboFiring) return; // was cancelled
-              if (window._enterSanctuary) window._enterSanctuary();
+            if (_warpComboFiring) {
+              // Already extracting — second press cancels
               _warpComboFiring = false;
-            }, 1800);
+              _extractionTimer = 0;
+              const _el = document.getElementById("extractionHud");
+              if (_el) _el.remove();
+              showUpgradeAlert("🌀 Extraction cancelled");
+            } else {
+              // Start extraction countdown
+              _warpComboFiring = true;
+              _extractionTimer = 15;
+              playSFX("warpFire");
+              showUpgradeAlert("🌀 Rift opening — survive 15 seconds!");
+              // Create HUD element
+              const _hud = document.createElement("div");
+              _hud.id = "extractionHud";
+              _hud.style.cssText = "position:fixed;bottom:170px;left:50%;transform:translateX(-50%);" +
+                "background:rgba(0,0,0,0.75);border:1px solid rgba(64,255,200,0.5);border-radius:8px;" +
+                "padding:8px 18px;z-index:10500;pointer-events:none;min-width:240px;text-align:center;" +
+                "box-shadow:0 0 20px rgba(64,255,200,0.2);";
+              document.body.appendChild(_hud);
+            }
           }
         } else {
           if (_warpComboHeld > 0) {
-            // Released before full charge — cancel
             _warpComboHeld = 0;
-            _warpComboFiring = false;
-            timeScale = 1.0;
           }
         }
       }
@@ -13801,6 +14471,10 @@ const gp = {
                 showUpgradeAlert("🔗 Selves dismissed");
               } else {
                 _summonClones();
+                // Show HP rings briefly on rally so player sees echo health
+                setTimeout(() => {
+                  _syncedClones.forEach(c => { if (c.alive) c._hpRingAlpha = 1.5; });
+                }, 200);
                 showUpgradeAlert("🔗 " + Math.min(_selfPool.length, CLONE_MAX) + " " + (Math.min(_selfPool.length, CLONE_MAX) === 1 ? "self" : "selves") + " rallied");
                 playSFX("syncComplete");
               }
@@ -13928,8 +14602,8 @@ const gp = {
             currentRealm !== "sanctuary") {
           zynSlomoActive = true;
           if (!player.isDead) timeScale = 0.3;
-          // ZYN activate sound — only on first frame of activation
-          if (!this._zynSoundFired) { this._zynSoundFired = true; playSFX("zynActivate"); }
+          // ZYN activate sound disabled
+          if (!this._zynSoundFired) { this._zynSoundFired = true; /* playSFX("zynActivate"); */ }
           zynMeterFraction += dt / ZYN_METER_DURATION;
           while (zynMeterFraction >= 1 && zynMeters > 0) {
             zynMeterFraction -= 1;
@@ -14016,20 +14690,10 @@ const gp = {
         if (anyDir && !this._stickMoved) {
           this._stickMoved = true;
           const items = gpGetItemButtons();
-          const isInventory = gpTabIdx === 2; // inventory tab index
-          const cols = isInventory ? 3 : MENU_COLS; // inventory: 3 rows, nav by column
-          if (isInventory) {
-            // Inventory: left/right moves a column (3 items), up/down moves 1 item
-            if (dRight) gpItemIdx = Math.min(gpItemIdx + 3, items.length - 1);
-            else if (dLeft)  gpItemIdx = Math.max(gpItemIdx - 3, 0);
-            else if (dDown)  gpItemIdx = Math.min(gpItemIdx + 1, items.length - 1);
-            else if (dUp)    gpItemIdx = Math.max(gpItemIdx - 1, 0);
-          } else {
-            if (dDown)  gpItemIdx = Math.min(gpItemIdx + cols, items.length - 1);
-            else if (dUp)    gpItemIdx = Math.max(gpItemIdx - cols, 0);
-            else if (dRight) gpItemIdx = Math.min(gpItemIdx + 1, items.length - 1);
-            else if (dLeft)  gpItemIdx = Math.max(gpItemIdx - 1, 0);
-          }
+          if (dRight)      gpItemIdx = Math.min(gpItemIdx + 1, items.length - 1);
+          else if (dLeft)  gpItemIdx = Math.max(gpItemIdx - 1, 0);
+          else if (dUp)    gpSwitchTab(-1);
+          else if (dDown)  gpSwitchTab(1);
           gpApplyFocus();
         } else if (!anyDir) {
           this._stickMoved = false;
@@ -14249,9 +14913,9 @@ const gp = {
   _onPress(idx) {
     // Death screen handled by _onPress override — skip here
     if (player.isDead && deathOverlayShown) return;
-    // Start (9) or Options: toggle menu — blocked during shrine
+    // Start (9) or Options: toggle menu — blocked during any other overlay
     if (idx === 9) {
-      if (document.getElementById("shrineOverlay")) return; // shrine takes priority
+      if (_anyOverlayOpen() && !isUpgradeMenuVisible) return; // another overlay has priority
       if (isUpgradeMenuVisible) { gpClearFocus(); resumeGame(); }
       else { gpTabIdx = 0; gpItemIdx = 0; showUpgradeMenu(false); document.getElementById("upgradeButton").style.display = "none"; setTimeout(gpApplyFocus, 50); }
       return;
@@ -14281,6 +14945,11 @@ const gp = {
       if (currentRealm === "sanctuary" && realmPhase === "hub") {
         if (_npcDialogOpen) { _advanceNPCDialog(); return; }
         if (_tryTalkEchoNpc()) return;
+      }
+      // LT + X = place safezone, no dash
+      if (this._held[6]) {
+        placeZone();
+        return;
       }
       performEchoDash();
     }
@@ -14518,6 +15187,8 @@ function applyLighting(ctx) {
         bossKillsThisWave = 0;
         // Ward resets each wave
         if (player._ward) player._wardReady = true;
+        // Tick archivist item durability
+        if (!wasRespawn && typeof _tickArchivistDurability === "function") _tickArchivistDurability();
 
         const isBossWave = waveNumber % 5 === 0;
         if (isBossWave) bossWaveIndex++;
@@ -14939,6 +15610,7 @@ function applyLighting(ctx) {
             if (Math.sqrt(dx*dx + dy*dy) < (c._w + enemy.width) * 0.38) {
               c.hp -= _cDmgRate * (1/60); // approximate per-frame damage
               c.attackFlash = Math.max(c.attackFlash, 0.4); // red-ish flash hint
+              c._strikeRingFlash = Math.max(c._strikeRingFlash || 0, 0.4); // ring flash on hit
               if (c.hp <= 0 && c.alive) {
                 c.alive = false;
                 // Permanently remove this self from the pool
@@ -15885,10 +16557,13 @@ renderWeather(ctx);
     const TUTORIAL_STEPS = [
       // ── Game start ──────────────────────────────────────────────
       { title: "Welcome to Broken Dagger ⚔️",
-        text: "Survive waves of enemies across parallel worlds. Move with WASD / arrow keys or the left stick.",
+        text: "Survive waves of enemies across parallel worlds. Move with <b>WASD / arrow keys</b> or the <b>left stick</b>.",
         trigger: "start", autoNext: 6000 },
       { title: "Melee & Throw Modes 🗡️",
-        text: "Press <b>Space / A</b> to strike in your facing direction. Hold to auto-swing. Press <b>X</b> to Echo Dash — instantly teleport in your facing direction (requires echoes). Press <b>Y</b> to toggle <b>Melee / Throw</b> mode.",
+        text: "Press <b>Space / A</b> to strike in your facing direction. Hold to auto-swing. Press <b>Y</b> to toggle between <b>Melee</b> and <b>Throw</b> mode — in Throw mode your dagger flies in a straight line for heavy damage.",
+        trigger: "start", autoNext: 7000 },
+      { title: "Echo Dash ⚡",
+        text: "Press <b>X</b> to Echo Dash — instantly teleport several tiles in your facing direction. Requires at least one synced echo. A cooldown timer appears top-right next to your combat mode when it's recharging.",
         trigger: "start", autoNext: 7000 },
       { title: "Warp to Sanctuary 🌀",
         text: "Hold <b>LB + RB + A</b> to tear open a rift and warp to Sanctuary at any time — as long as no wanderer is nearby to sync with.",
@@ -15896,35 +16571,41 @@ renderWeather(ctx);
 
       // ── First kill ──────────────────────────────────────────────
       { title: "Points & Combos 💰",
-        text: "Kills earn points and XP toward your rank. Chain kills quickly for a <b>combo multiplier</b> — every 3rd hit in a streak boosts your score. The counter shows top-right.",
+        text: "Kills earn <b>Matter</b> and XP toward your rank. Chain kills quickly for a <b>combo multiplier</b> — every 3rd hit in a streak boosts your score. The counter shows top-right.",
         highlight: "pointsSlot", trigger: "firstKill", autoNext: 7000 },
+      { title: "Market Rate 📈",
+        text: "The more Matter you earn in a run, the higher the <b>Market Rate</b> — and the more expensive upgrades become. It's shown in the Player Menu. Spend early when prices are low.",
+        highlight: "upgradeButton", trigger: "firstKill", autoNext: 7000 },
       { title: "Wave Progress 🌊",
         text: "The bar at the top tracks kills for the current wave. Clear it to complete the wave — a short intermission follows where you can craft upgrades before the next wave starts.",
         highlight: "waveBar", trigger: "firstKill", autoNext: 6000 },
       { title: "Gems & The Gate 💎",
-        text: "Enemies drop gems — Diamond 💎 > Sapphire 🔵 > Emerald 🟢. They fill the <b>🌀 Gate meter</b> top-left. Hit the threshold to spawn a gate tile on the map — walk to it and press A or E to travel.",
+        text: "Enemies drop gems — Diamond 💎 > Sapphire 🔵 > Emerald 🟢. They fill the <b>🌀 Gate meter</b> top-left. Hit the threshold to spawn a gate tile — walk to it and press <b>A or E</b> to travel to a new world or Sanctuary.",
         trigger: "firstKill", autoNext: 8000 },
       { title: "Player Menu 📋",
-        text: "Tap the button top-right (or press Enter) to open the Player Menu. Buy towers, bombs, zones, and upgrades here. The <b>✨ Blessings</b> tab shows permanent powers earned from boss kills.",
+        text: "Tap the button top-right (or press <b>Enter</b>) to open the Player Menu. Buy upgrades, craft items, and view your inventory here. The <b>✨ Blessings</b> tab shows permanent powers earned from boss kills.",
         highlight: "upgradeButton", trigger: "firstKill", autoNext: 7000 },
       { title: "Auto-Strike ⚔️",
-        text: "Pick up ⚔️ sword drops to gain Auto-Strike — you'll swing automatically at nearby enemies while it lasts.",
+        text: "Pick up ⚔️ sword drops to gain Auto-Strike — you'll swing automatically at nearby enemies while it lasts. The orange meter on the tray slot shows remaining time.",
         highlight: "autoStrikeSlot", trigger: "firstKill", autoNext: 6000 },
 
       // ── Wave 2 ──────────────────────────────────────────────────
       { title: "Bombs, Towers & Zones 💣",
-        text: "Gamepad: <b>LT+B</b> deploys a Bomb, <b>LT+A</b> places a Tower, <b>LT+X</b> drops a Safe Zone wall. Keyboard: tap the tray slots at the bottom of screen. Bombs bait enemies then detonate — Towers shoot and draw aggro.",
+        text: "Gamepad: <b>LT+B</b> deploys a Bomb, <b>LT+A</b> places a Tower, <b>LT+X</b> drops a Safe Zone wall. Keyboard: tap the tray slots at the bottom. Bombs bait enemies then detonate — Towers shoot and draw aggro.",
         highlight: "explosivesSlot", trigger: "wave2", autoNext: 7000 },
       { title: "Wave Curses ⚡",
         text: "From wave 3 onward some waves carry a curse — <b>Frenzy</b> speeds enemies up, <b>Horde</b> doubles spawns, <b>Volatile</b> makes them explode on death, <b>Darkness</b> shrinks your vision. Check the wave label for the active curse.",
         highlight: "waveBar", trigger: "wave2", autoNext: 7000 },
+      { title: "Harvester Menu ⚙️",
+        text: "Press <b>H</b> (keyboard) or <b>Select</b> (gamepad) at any time outside Sanctuary to open the <b>Harvester Menu</b>. See all your harvesters, their durability, and which world they're linked to. Select one from your pack to enter placement mode.",
+        trigger: "wave2", autoNext: 8000 },
 
       // ── Rank 1 (Novice) ─────────────────────────────────────────
       { title: "Safe Zone Walls 🧱",
-        text: "Reach Novice rank to unlock Safe Zone walls from the Craft menu. Craft charges, then tap the 🧱 tray slot (or LT+X) to place walls around you. Enemies take damage on contact.",
+        text: "Reach Novice rank to unlock Safe Zone walls from the Craft menu. Craft charges, then tap the 🧱 tray slot (or <b>LT+X</b>) to place walls around you. Enemies take damage on contact.",
         trigger: "rank1", autoNext: 7000 },
       { title: "Blessings ✨",
-        text: "After every boss wave, choose one of three permanent blessings — powers like Magnet, Lifesteal, and Phase Strike. They stack across the run. View active blessings in the ✨ Blessings tab.",
+        text: "After every Boss Siege, choose one of three permanent blessings — powers like Magnet, Lifesteal, and Phase Strike. They stack across the run. View active blessings in the <b>✨ Blessings</b> tab of the Player Menu.",
         highlight: "upgradeButton", trigger: "rank1", autoNext: 8000 },
       { title: "The Gate & New Worlds 🌀",
         text: "Opening a gate lets you travel to <b>Sanctuary</b> or a <b>new parallel world</b>. Each world has its own wave counter and enemy types. The gate gem cost rises as you discover more worlds.",
@@ -15937,18 +16618,33 @@ renderWeather(ctx);
 
       // ── Sanctuary (first visit) ─────────────────────────────────
       { title: "Sanctuary 🏛️",
-        text: "This is your permanent base between runs. Press <b>B / Select</b> to open the build menu and place artifacts you've found in worlds — they give passive bonuses like more HP, faster gems, and reduced gate costs.",
+        text: "This is your permanent base. Press <b>B / Select</b> to open the <b>Build Menu</b> and place artifacts found in worlds — they give passive bonuses like more HP, faster gems, and reduced gate costs.",
         trigger: "firstSanctuary", autoNext: 9000 },
+      { title: "Terrain Placement 🗺️",
+        text: "Press <b>T</b> (keyboard) or <b>Select</b> (gamepad) in Sanctuary to open the <b>Terrain Menu</b> — reshape your base with floor tiles and structures. Aim with the right stick and press <b>E / A</b> to place. Press <b>B</b> to cancel.",
+        trigger: "firstSanctuary", autoNext: 9000 },
+      { title: "Moving Artifacts 🔄",
+        text: "To pick up a placed artifact in Sanctuary, walk next to it and press <b>E / A</b> — it returns to your inventory so you can reposition it or take it with you.",
+        trigger: "firstSanctuary", autoNext: 8000 },
       { title: "Harvesters ⛏️",
-        text: "Rare drops in combat worlds include <b>Harvesters</b> — place them from your inventory in the build menu. They generate <b>Aether ✨</b> passively, which boosts your artifact bonuses. Keep them repaired!",
+        text: "Rare drops in combat worlds include <b>Harvesters</b>. Place them via the Harvester Menu (<b>H / Select</b>) — aim with the right stick, press <b>E / A</b> to plant. They generate <b>Aether ✨</b> passively each wave.",
+        trigger: "firstSanctuary", autoNext: 9000 },
+      { title: "Repairing Harvesters 🔧",
+        text: "Harvesters decay over time and go offline at 0% durability. Walk up to a damaged one and <b>hold your position</b> to begin a repair — it costs <b>Aether ✨</b> and takes time. A low-durability harvester generates less Aether, so repair early.",
+        trigger: "firstSanctuary", autoNext: 10000 },
+      { title: "Echo HUD 🔗",
+        text: "When echoes are fighting with you, the <b>Echo HUD</b> appears bottom-left — showing each active echo's tier (✦✦✦) and damage output. Your total synced echo pool is shown below. Echoes pulled from a larger pool hit harder.",
         trigger: "firstSanctuary", autoNext: 9000 },
       { title: "Parallel Selves 🔗",
-        text: "Wanderers appear between waves in peaceful worlds — parallel versions of you from other timelines. Hold <b>LB + RB</b> near one for 1 second to sync them. Sync 100 in a world to unlock <b>World Sync</b> — permanently stabilising that timeline.",
+        text: "Wanderers appear in peaceful overworld zones — parallel versions of you from other timelines. Hold <b>LB + RB</b> near one for 1 second to sync them. Sync 100 in a world to unlock <b>World Sync</b> — permanently stabilising that timeline.",
         trigger: "firstSanctuary", autoNext: 10000 },
+      { title: "Overworld Zones 🌍",
+        text: "Some worlds have an <b>Overworld</b> phase — a quieter zone with wanderers to sync and items to find before the next combat wave begins. Enemies here are fewer but still dangerous. Explore freely and sync as many selves as you can.",
+        trigger: "firstSanctuary", autoNext: 9000 },
 
       // ── Contextual ──────────────────────────────────────────────
       { title: "Sigil 🧂",
-        text: "Craft Salt from the Craft menu. Hold <b>RT + A</b> (gamepad) or tap the 🧂 tray slot (keyboard/mouse) then walk to trace a polygon across the ground. Return within 2 tiles of your start point to seal it — every enemy inside gets struck and a slow-field burns into the ground.",
+        text: "Craft Salt from the Craft menu. Hold <b>RT + A</b> (gamepad) or tap the 🧂 tray slot then walk to trace a polygon across the ground. Return within 2 tiles of your start to seal it — every enemy inside gets struck and a slow-field burns into the ground.",
         highlight: "saltSlot", trigger: "firstSalt", autoNext: 10000 },
       { title: "6mg ZYN 🟡",
         text: "ZYN loads 20 meters of fuel giving slow-mo, invincibility, and auto-strike. Select the 🟡 tray slot then hold <b>LT</b> to burn fuel — release to stop. Sustain 8 meters in a single hold and you'll <b>OVERLOAD</b>: screen flash, 30s cooldown. Use in short controlled bursts.",
@@ -16220,6 +16916,15 @@ renderWeather(ctx);
         // R3 no longer toggles combat mode — moved to Y
         return;
       }
+      // B cancels extraction if active
+      if (idx === 1 && _warpComboFiring) {
+        _warpComboFiring = false;
+        _extractionTimer = 0;
+        const _eEl = document.getElementById("extractionHud");
+        if (_eEl) _eEl.remove();
+        showUpgradeAlert("🌀 Extraction cancelled");
+        return;
+      }
       // B cancels terrain or harvester placement mode
       if (idx === 1 && _terrainSelected) {
         _terrainSelected = null;
@@ -16341,7 +17046,7 @@ renderWeather(ctx);
     // Open upgrade menu on mouse click.
     const upgradeButton = document.getElementById("upgradeButton");
     upgradeButton.addEventListener("click", function() {
-      if (document.getElementById("shrineOverlay")) return;
+      if (_anyOverlayOpen()) return;
       const menu = document.getElementById("upgradeMenu");
       if (!isUpgradeMenuVisible && !menu.classList.contains("menu-closing")) {
         showUpgradeMenu(false);
@@ -16351,11 +17056,12 @@ renderWeather(ctx);
 
     document.addEventListener("keydown", function(e) {
       if ((e.key === "Enter" || e.keyCode === 13) && !isUpgradeMenuVisible) {
-        if (document.getElementById("shrineOverlay")) return;
+        if (_anyOverlayOpen()) return;
         showUpgradeMenu(false);
         upgradeButton.style.display = "none";
       }
       if (e.key === "e" || e.key === "E") {
+        if (isUpgradeMenuVisible) return; // menu is open — swallow E key
         if (realmPhase === "prologue" && _prologueNPC && _prologuePhase === 0) {
           const _pd = Math.abs(player.gridX - _prologueNPC.gridX) + Math.abs(player.gridY - _prologueNPC.gridY);
           if (_pd <= 3) { _triggerPrologueEnd(); return; }
@@ -16376,20 +17082,20 @@ renderWeather(ctx);
         } else if (currentRealm === "sanctuary" && _terrainSelected) {
           tryPlaceTerrain();
         } else if (currentRealm === "sanctuary" && !buildSelectedItem) {
-          tryPickupPlacedItem(); // pick up adjacent placed artifact if any
+          tryPickupPlacedItem();
         } else if (currentRealm === "sanctuary" && buildSelectedItem) {
           tryPlaceItem();
         }
       }
       // Build mode toggle in sanctuary
       if ((e.key === "b" || e.key === "B") && currentRealm === "sanctuary" && realmPhase === "hub") {
-        showBuildMenu();
+        if (!_anyOverlayOpen()) showBuildMenu();
       }
       if ((e.key === "t" || e.key === "T") && currentRealm === "sanctuary" && realmPhase === "hub") {
-        showTerrainMenu();
+        if (!_anyOverlayOpen()) showTerrainMenu();
       }
       if ((e.key === "h" || e.key === "H") && currentRealm !== "sanctuary") {
-        showHarvesterMenu();
+        if (!_anyOverlayOpen()) showHarvesterMenu();
       }
     });
 
