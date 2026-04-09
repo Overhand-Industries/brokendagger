@@ -161,9 +161,12 @@ width: 100%;
 
 #headbuttEffect {
   position: absolute;
-  font-size: 20px;
-  line-height: 20px;
-  text-align: center;
+  width: 28px;
+  height: 28px;
+  background-image: url("dagger_sprite.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   transform-origin: 100% -60%;
   transform: rotate(12deg);
   opacity: 0;
@@ -366,7 +369,7 @@ width: 100%;
       width: 100%;
       height: 100%;
       min-height: 100vh;
-      padding: 11.5rem 1rem;
+      padding: 3.8rem 1rem 0.6rem;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -390,7 +393,7 @@ width: 100%;
     .tabs {
       display: flex;
       justify-content: center;
-      margin: 0.4rem 0;
+      margin: 0.2rem 0 0.55rem;
       width: 100%;
     }
     .tabs button {
@@ -411,6 +414,99 @@ width: 100%;
       border-color: rgba(255,224,102,0.6);
       color: #07302f;
       box-shadow: 0 0 8px rgba(255,224,102,0.2);
+    }
+    .menu-meta-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 0.55rem;
+      width: 100%;
+      margin-bottom: 0.7rem;
+    }
+    .menu-meta-card {
+      position: relative;
+      background: rgba(0,0,0,0.34);
+      border: 2px solid rgba(255,255,255,0.92);
+      border-radius: 10px;
+      min-height: 72px;
+      padding: 0.5rem 0.7rem;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .menu-meta-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,240,210,0.56);
+      margin-bottom: 0.28rem;
+    }
+    .menu-meta-value {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff4d6;
+      line-height: 1.1;
+    }
+    .menu-meta-sub {
+      font-size: 0.67rem;
+      color: rgba(255,255,255,0.56);
+      margin-top: 0.2rem;
+      line-height: 1.2;
+    }
+    .menu-meta-card.matter {
+      background: linear-gradient(180deg, rgba(30,40,35,0.9), rgba(18,24,23,0.92));
+    }
+    .menu-meta-card.rank {
+      background: linear-gradient(180deg, rgba(50,42,20,0.88), rgba(22,19,14,0.92));
+    }
+    .menu-meta-card.market {
+      background: linear-gradient(180deg, rgba(28,36,42,0.88), rgba(17,20,24,0.92));
+    }
+    .menu-meta-bar {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .menu-meta-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(110,210,140,0.75), rgba(255,224,102,0.92));
+      transition: width 0.2s ease;
+    }
+    .menu-meta-card.market .menu-meta-value {
+      color: #ffe066;
+    }
+    .menu-meta-card.rank .menu-meta-value {
+      color: #fff0b0;
+    }
+    .menu-econ-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.9rem;
+    }
+    .menu-econ-block {
+      min-width: 0;
+      flex: 1 1 0;
+    }
+    .menu-econ-block.rate {
+      text-align: right;
+    }
+    @media (max-width: 700px) {
+      .menu-meta-row {
+        grid-template-columns: 1fr;
+      }
+      .menu-econ-row {
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+      .menu-econ-block.rate {
+        text-align: left;
+      }
     }
     /* --- Section Containers --- */
     .section { display: none; }
@@ -473,9 +569,29 @@ width: 100%;
       background: #ffdd44;
       box-shadow: 0 0 10px 4px rgba(255,220,0,0.8) !important;
     }
+    .menu-footer {
+      position: sticky;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      margin-top: auto;
+      padding: 12px 0 max(12px, env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(24,45,49,0), rgba(24,45,49,0.92) 26%, rgba(24,45,49,0.98));
+      backdrop-filter: blur(6px);
+      z-index: 3;
+    }
+    .menu-footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
     /* Resume Game Button */
     #resumeGame {
-      margin-top: 0.5rem;
       padding: 0.5rem 1.5rem;
       font-size: 1rem;
       border: 1px solid rgba(255,224,102,0.4);
@@ -483,8 +599,24 @@ width: 100%;
       cursor: pointer;
       background: rgba(255,224,102,0.12);
       color: #ffe066;
-      width: 90%;
+      width: auto;
+      min-width: 220px;
       max-width: 400px;
+      flex: 0 0 auto;
+    }
+    @media (max-width: 700px) {
+      .menu-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .menu-footer-actions {
+        justify-content: stretch;
+      }
+      .menu-footer-actions > button,
+      #resumeGame {
+        width: 100%;
+        max-width: none;
+      }
     }
     /* --- Item Tray --- */
     #itemTray {
@@ -664,28 +796,28 @@ width: 100%;
   justify-items: center;
 }
 #toggleBGM {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2000;
-  background: rgba(0, 0, 0, 0.02);
-  border: 2px solid white;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 1rem;
-  display: flex;
+  padding: 8px 16px;
+  background: rgba(70,100,180,0.16);
+  border: 1px solid rgba(120,160,255,0.28);
+  border-radius: 6px;
+  min-width: 42px;
+  height: 34px;
+  font-size: 0.82rem;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: rgba(210,225,255,0.82);
   cursor: pointer;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-  transition: background 0.2s, transform 0.1s;
+  box-shadow: none;
+  opacity: 0.8;
+  transition: background 0.2s, transform 0.1s, opacity 0.2s, border-color 0.2s;
 }
 
 #toggleBGM:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
+  background: rgba(90,120,210,0.2);
+  border-color: rgba(160,190,255,0.34);
+  opacity: 1;
+  transform: translateY(-1px);
 }
   /* ── Clone HUD ── */
   #cloneHud {
@@ -758,6 +890,226 @@ width: 100%;
   }
   #tutorialCard .tut-title { font-size:1.1rem; font-weight:bold; color:#ffe066; margin-bottom:6px; }
   #tutorialCard .tut-hint  { font-size:0.78rem; opacity:0.6; margin-top:8px; }
+  #startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 25000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(180deg, rgba(3,4,8,0.22), rgba(2,3,6,0.58)),
+      url("broken_dagger_titlescreen.png") center center / cover no-repeat,
+      #050507;
+    color: #f5ead3;
+    opacity: 0;
+    transition: opacity 0.9s ease, background 0.9s ease;
+  }
+  #startScreen.start-visible { display: flex; opacity: 1; }
+  #startScreen.start-fading {
+    display: flex;
+    opacity: 1;
+    background: #000;
+  }
+  .start-ambience {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .start-mote {
+    position: absolute;
+    bottom: -8%;
+    width: var(--size, 6px);
+    height: var(--size, 6px);
+    left: var(--left, 50%);
+    border-radius: 999px;
+    background:
+      radial-gradient(circle, rgba(255,244,210,0.95) 0%, rgba(255,214,140,0.42) 42%, rgba(255,214,140,0) 72%);
+    opacity: 0;
+    filter: blur(0.4px);
+    animation: startMoteRise var(--dur, 12s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  .start-mote.cool {
+    background:
+      radial-gradient(circle, rgba(220,236,255,0.92) 0%, rgba(140,190,255,0.34) 42%, rgba(140,190,255,0) 72%);
+  }
+  .start-screen-inner {
+    position: relative;
+    width: min(1080px, 94vw);
+    padding: 2rem 1.2rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    transition: opacity 0.7s ease, transform 0.8s ease;
+  }
+  #startScreen.start-fading .start-screen-inner {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  .start-title {
+    text-align: center;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .start-kicker {
+    font-size: 0.72rem;
+    color: rgba(255,230,180,0.62);
+    margin-bottom: 0.4rem;
+  }
+  .start-logo {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 900;
+    color: #f7e5b8;
+    letter-spacing: 0.04em;
+    text-shadow:
+      0 1px 0 rgba(255,245,220,0.08),
+      0 0 18px rgba(255,215,120,0.16),
+      0 10px 24px rgba(0,0,0,0.32);
+    line-height: 0.95;
+    animation: startLogoGlow 5.8s ease-in-out infinite;
+  }
+  .slot-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .slot-card {
+    background: linear-gradient(180deg, rgba(18,26,34,0.94), rgba(9,12,18,0.96));
+    border: 2px solid rgba(255,255,255,0.18);
+    border-radius: 14px;
+    padding: 1rem;
+    min-height: 255px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    box-shadow: 0 18px 36px rgba(0,0,0,0.22);
+  }
+  .slot-card.empty { border-color: rgba(190,210,240,0.16); }
+  .slot-card.start-gp-focus {
+    border-color: rgba(255,224,102,0.68);
+    box-shadow: 0 0 0 2px rgba(255,224,102,0.22), 0 20px 40px rgba(0,0,0,0.28);
+  }
+  .slot-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .slot-name {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff1c8;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .slot-state {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.46);
+    text-transform: uppercase;
+  }
+  .slot-hero {
+    flex: 1 1 auto;
+    border-radius: 10px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+      radial-gradient(circle at 50% 20%, rgba(255,210,120,0.08), transparent 40%),
+      rgba(0,0,0,0.22);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.4rem;
+    text-align: center;
+  }
+  .slot-hero-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #f6eddc;
+  }
+  .slot-hero-meta {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.62);
+    line-height: 1.35;
+  }
+  .slot-actions {
+    display: flex;
+    gap: 0.55rem;
+  }
+  .slot-actions button {
+    flex: 1 1 0;
+    min-height: 40px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.05);
+    color: #f7f0df;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .slot-actions button:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255,224,102,0.38);
+  }
+  .slot-actions button.start-gp-focus {
+    transform: translateY(-1px);
+    border-color: rgba(255,224,102,0.72);
+    box-shadow: 0 0 0 2px rgba(255,224,102,0.18);
+  }
+  .slot-actions .slot-primary {
+    background: rgba(98,140,220,0.2);
+    border-color: rgba(120,160,255,0.32);
+  }
+  .slot-actions .slot-danger {
+    background: rgba(150,42,42,0.18);
+    border-color: rgba(210,90,90,0.28);
+    color: rgba(255,190,190,0.92);
+  }
+  @media (max-width: 860px) {
+    .slot-grid { grid-template-columns: 1fr; }
+  }
+  @keyframes startMoteRise {
+    0% {
+      transform: translate3d(0, 0, 0) scale(0.7);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.45;
+    }
+    50% {
+      transform: translate3d(var(--drift, 18px), -42vh, 0) scale(1);
+      opacity: 0.72;
+    }
+    88% {
+      opacity: 0.18;
+    }
+    100% {
+      transform: translate3d(calc(var(--drift, 18px) * -0.45), -84vh, 0) scale(0.82);
+      opacity: 0;
+    }
+  }
+  @keyframes startLogoGlow {
+    0%, 100% {
+      text-shadow:
+        0 1px 0 rgba(255,245,220,0.08),
+        0 0 18px rgba(255,215,120,0.16),
+        0 10px 24px rgba(0,0,0,0.32);
+    }
+    50% {
+      text-shadow:
+        0 1px 0 rgba(255,245,220,0.12),
+        0 0 22px rgba(255,220,140,0.22),
+        0 12px 28px rgba(0,0,0,0.36);
+    }
+  }
   .tut-highlight {
     outline: 3px solid #ffe066 !important;
     box-shadow: 0 0 16px 4px rgba(255,224,0,0.7) !important;
@@ -797,6 +1149,29 @@ width: 100%;
 <body>
   <canvas id="gameCanvas"></canvas>
   <div id="tutorialCard" style="display:none;"></div>
+  <div id="startScreen">
+    <div class="start-ambience">
+      <span class="start-mote" style="--left:8%;--size:7px;--dur:14s;--delay:-1.4s;--drift:20px;"></span>
+      <span class="start-mote cool" style="--left:16%;--size:5px;--dur:11s;--delay:-6.2s;--drift:-16px;"></span>
+      <span class="start-mote" style="--left:24%;--size:6px;--dur:13.5s;--delay:-4.1s;--drift:24px;"></span>
+      <span class="start-mote" style="--left:31%;--size:4px;--dur:10.8s;--delay:-8.4s;--drift:-12px;"></span>
+      <span class="start-mote cool" style="--left:39%;--size:6px;--dur:12.4s;--delay:-2.6s;--drift:14px;"></span>
+      <span class="start-mote" style="--left:46%;--size:8px;--dur:15.5s;--delay:-9.1s;--drift:-18px;"></span>
+      <span class="start-mote cool" style="--left:53%;--size:5px;--dur:12.8s;--delay:-5.7s;--drift:16px;"></span>
+      <span class="start-mote" style="--left:61%;--size:7px;--dur:14.8s;--delay:-7.9s;--drift:-22px;"></span>
+      <span class="start-mote" style="--left:69%;--size:4px;--dur:10.2s;--delay:-3.3s;--drift:10px;"></span>
+      <span class="start-mote cool" style="--left:76%;--size:6px;--dur:13.2s;--delay:-10.4s;--drift:-15px;"></span>
+      <span class="start-mote" style="--left:84%;--size:7px;--dur:15s;--delay:-11.8s;--drift:22px;"></span>
+      <span class="start-mote cool" style="--left:91%;--size:5px;--dur:11.6s;--delay:-1.9s;--drift:-11px;"></span>
+    </div>
+    <div class="start-screen-inner">
+      <div class="start-title">
+        <div class="start-kicker">Selfish Realms:</div>
+        <div class="start-logo">Broken Dagger</div>
+      </div>
+      <div id="slotGrid" class="slot-grid"></div>
+    </div>
+  </div>
 
 
   <!-- Mobile directional controls overlay (only displayed on touch devices) -->
@@ -808,17 +1183,36 @@ width: 100%;
 </div>  <!-- Headbutt Effect Overlay -->
 <div id="daggerContainer">
 </div>
-<div id="headbuttEffect">🗡️</div>
+<div id="headbuttEffect"></div>
   
   <!-- Upgrade Menu with Tabs -->
 <div id="upgradeMenu">
   <div class="menu-content">
-    <h1>Player Menu</h1>
- <button id="toggleBGM">🎵</button>
-
-    <p>You have <span id="pointsDisplay">0</span> Matter.</p>
-    <p>Your Rank: <span id="menuRankDisplay">🔰 Beginner</span></p>
-    <p style="font-size:0.85rem;opacity:0.7;margin:0;">Market rate: <span id="wealthDisplay">1.0×</span> <span style="font-size:0.75rem;opacity:0.6;">(based on earnings this run)</span></p>
+    <div class="menu-meta-row">
+      <div class="menu-meta-card matter">
+        <div class="menu-econ-row">
+          <div class="menu-econ-block matter">
+            <div class="menu-meta-label">Matter</div>
+            <div class="menu-meta-value"><span id="pointsDisplay">0</span></div>
+            <div class="menu-meta-sub" id="matterTargetDisplay">Next spend target pending</div>
+          </div>
+          <div class="menu-econ-block rate">
+            <div class="menu-meta-label">Market Rate</div>
+            <div class="menu-meta-value"><span id="wealthDisplay">1.0×</span></div>
+            <div class="menu-meta-sub">Prices rise with run earnings</div>
+          </div>
+        </div>
+        <div class="menu-meta-bar"><div id="matterMeterFill" class="menu-meta-fill"></div></div>
+      </div>
+      <div class="menu-meta-card rank">
+        <div class="menu-meta-label">Rank</div>
+        <div class="menu-meta-sub" style="margin-top:0;margin-bottom:0.18rem;color:rgba(255,255,255,0.62);">
+          Level <span id="menuLevelDisplay">1</span>
+        </div>
+        <div class="menu-meta-value"><span id="menuRankDisplay">🔰 Beginner</span></div>
+        <div class="menu-meta-sub"><span id="menuXPDisplay">0 XP</span></div>
+      </div>
+    </div>
     <div class="tabs">
       <button id="upgradesTab" class="active">Upgrades</button>
       <button id="shopTab">Craft</button>
@@ -942,11 +1336,17 @@ width: 100%;
       <div id="statusContent" style="width:100%;padding:0.5rem;box-sizing:border-box;"></div>
     </div>
   
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:10px;">
+    <div class="menu-footer">
       <button id="resumeGame">▶️ Resume Game</button>
-      <button id="resetGameBtn" style="padding:8px 16px;background:rgba(180,40,40,0.15);
-        border:1px solid rgba(200,60,60,0.3);border-radius:6px;color:rgba(255,120,120,0.7);
-        font-size:0.8rem;cursor:pointer;" onclick="window._confirmResetGame()">🗑 Reset Save</button>
+      <div class="menu-footer-actions">
+        <button id="toggleBGM" title="Toggle BGM">🎵</button>
+        <button id="renderCapBtn" style="padding:8px 16px;background:rgba(70,100,180,0.16);
+          border:1px solid rgba(120,160,255,0.28);border-radius:6px;color:rgba(210,225,255,0.82);
+          font-size:0.8rem;cursor:pointer;">🖥️ Render Cap: On</button>
+        <button id="resetGameBtn" style="padding:8px 16px;background:rgba(180,40,40,0.15);
+          border:1px solid rgba(200,60,60,0.3);border-radius:6px;color:rgba(255,120,120,0.7);
+          font-size:0.8rem;cursor:pointer;" onclick="window._confirmResetGame()">🗑 Reset Save</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1231,6 +1631,10 @@ function _onGameBlur() {
     let hitStopTimer = 0;          // brief time freeze on hit
     let damageNumbers = [];        // floating damage text { x, y, val, timer, vy }
     let impactFlashes = [];        // bright burst at hit point { x, y, r, timer }
+    const daggerSpriteImg = new Image();
+    daggerSpriteImg.src = "dagger_sprite.png";
+    const rockClusterImg = new Image();
+    rockClusterImg.src = "rock_cluster.png";
     function spawnMeleeEffect(x, y, angle) { meleeEffects.push({ x, y, angle, timer: 0.22, duration: 0.22 }); }
     function renderMeleeEffects(ctx, camera) {
       for (let effect of meleeEffects) {
@@ -1764,10 +2168,15 @@ function updateDeathOverlayButtons() {
         ctx.save();
         ctx.translate(screenPos.x, screenPos.y);
         ctx.rotate(angle);
-        ctx.font = "32px sans-serif"; // Adjust size as needed
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("🗡 ", 0, 0);
+        const spriteSize = 34;
+        if (daggerSpriteImg.complete && daggerSpriteImg.naturalWidth > 0) {
+          ctx.drawImage(daggerSpriteImg, -spriteSize / 2, -spriteSize / 2, spriteSize, spriteSize);
+        } else {
+          ctx.font = "32px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("🗡", 0, 0);
+        }
         ctx.restore();
       }
     }
@@ -1871,35 +2280,35 @@ function _drawWeatherOverlay(ctx, state, alpha) {
   ctx.save();
 
   if (state === "sunshine") {
-    const cx = (canvas.width/(window.devicePixelRatio||1)/2), cy = (canvas.height/(window.devicePixelRatio||1)/2);
-    const r = Math.min(canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1)) * 0.4;
+    const cx = (canvas.width/(_renderDPR)/2), cy = (canvas.height/(_renderDPR)/2);
+    const r = Math.min(canvas.width/(_renderDPR), canvas.height/(_renderDPR)) * 0.4;
     const angle = globalTime * 0.0175;
     const sunX = cx + r * Math.cos(angle);
     const sunY = cy + r * Math.sin(angle);
     const intensity = ((Math.sin(globalTime * 0.0175) + 1) / 2) * alpha;
-    const grad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, canvas.width/(window.devicePixelRatio||1));
+    const grad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, canvas.width/(_renderDPR));
     grad.addColorStop(0, `rgba(255,255,200,${0.3 * intensity})`);
     grad.addColorStop(1, "rgba(255,255,200,0)");
     ctx.globalCompositeOperation = "lighter";
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+    ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
 
   } else if (state === "fog") {
     ctx.fillStyle = `rgba(200,200,200,${0.35 * alpha})`;
-    ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+    ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
 
   } else if (state === "rain") {
     ctx.fillStyle = `rgba(0,0,80,${0.12 * alpha})`;
-    ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+    ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
 
   } else if (state === "thunderstorm") {
     // Base dark tint
     ctx.fillStyle = `rgba(0,0,50,${0.35 * alpha})`;
-    ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+    ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
     // Animated thunder tint on top
     if (thunderTintAlpha > 0) {
       ctx.fillStyle = `rgba(0,0,80,${thunderTintAlpha * alpha})`;
-      ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+      ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
     }
   }
 
@@ -2089,6 +2498,22 @@ function updateHeavyArmourCostDisplay() {
       }
       return rank;
     }
+
+    function getPlayerLevelInfo(totalXP) {
+      let level = 1;
+      let spent = 0;
+      let nextCost = 120;
+      while (totalXP >= spent + nextCost) {
+        spent += nextCost;
+        level++;
+        nextCost = 120 + (level - 1) * 55;
+      }
+      return {
+        level,
+        currentXP: totalXP - spent,
+        nextXP: nextCost
+      };
+    }
     // Tab switching for upgrade menu
 document.getElementById("upgradesTab").addEventListener("click", function() {
   document.getElementById("upgradesSection").style.display = "block";
@@ -2250,7 +2675,7 @@ function renderEchoesTab(page) {
       <b style="color:#ffb6a0">${fallen.length}</b> fallen &nbsp;·&nbsp;
       <b style="color:${C.gold}">Veteran System</b>
     </div>
-    <div style="font-size:0.65rem;color:${C.muted};">Top ${CLONE_MAX} = sortie · LB+RB: rally/recall · ←/→ row · ↑ ring · ↓ hold</div>
+    <div style="font-size:0.65rem;color:${C.muted};">Top ${CLONE_MAX} = sortie · LB+RB: rally/recall · D-pad: formations</div>
   </div>`;
 
   // ── Echo row — same flex layout as menu-buttons ──
@@ -2498,6 +2923,9 @@ window._renameEchoVeteran = function(idx) {
   const next = window.prompt("Rename this Veteran echo:", current);
   if (next === null) return;
   profile.nickname = String(next).trim().slice(0, 24);
+  _syncedClones.forEach(c => {
+    if (c && c._profile === profile) c._name = _echoName(profile);
+  });
   saveGame();
   renderEchoesTab();
   showUpgradeAlert(profile.nickname ? "🔗 Veteran echo renamed" : "🔗 Veteran echo name cleared");
@@ -2523,6 +2951,19 @@ window._setEchoAttackMode = function(idx, modeId) {
     
     document.getElementById("resumeGame").addEventListener("click", () => { 
   resumeGame(); 
+});
+window._toggleRenderCap = function() {
+  _renderCapEnabled = !_renderCapEnabled;
+  const { cssW, cssH } = _resizeCanvas();
+  camera.screenWidth = cssW;
+  camera.screenHeight = cssH;
+  _updateRenderCapButton();
+  showUpgradeAlert(_renderCapEnabled
+    ? "🖥️ Render cap enabled"
+    : "🖥️ Render cap disabled");
+};
+document.getElementById("renderCapBtn").addEventListener("click", () => {
+  window._toggleRenderCap();
 });
 function updateUpgradeButton(upgradeId) {
   const btn = document.getElementById(upgradeId);
@@ -2816,9 +3257,14 @@ function updateRankDisplay() {
   const emoji = rankEmojis[Math.min(currentRank, rankEmojis.length - 1)];
   const name  = rankNames[Math.min(currentRank, rankNames.length - 1)];
   const totalXP = killCount + Math.floor(lifetimeXP);
+  const levelInfo = getPlayerLevelInfo(totalXP);
 
   const menuRankDisplay = document.getElementById("menuRankDisplay");
   if (menuRankDisplay) menuRankDisplay.textContent = `${emoji} ${name}`;
+  const menuLevelDisplay = document.getElementById("menuLevelDisplay");
+  if (menuLevelDisplay) menuLevelDisplay.textContent = levelInfo.level;
+  const menuXPDisplay = document.getElementById("menuXPDisplay");
+  if (menuXPDisplay) menuXPDisplay.textContent = `${totalXP.toLocaleString()} XP · ${levelInfo.currentXP}/${levelInfo.nextXP}`;
 
   const buttonRankDisplay = document.getElementById("buttonRankDisplay");
   if (buttonRankDisplay) buttonRankDisplay.textContent = emoji + " " + name;
@@ -3640,6 +4086,345 @@ function isTilePassableForEnemy(tile, gx, gy, map) {
   return tile.tileType === 0 || tile.tileType === 1 || tile.tileType === 2 || tile.tileType === 3;
 }
 
+function _getTestRockDecor(map) {
+  if (!map || currentRealm === "sanctuary") return [];
+  const cx = Math.floor(map.width / 2);
+  const cy = Math.floor(map.height / 2);
+  const realmSeed = (currentRealm || "default").split("").reduce((a, ch) => a + ch.charCodeAt(0), 0);
+  const xJitter = (realmSeed % 5) - 2;
+  const yJitter = (Math.floor(realmSeed / 5) % 5) - 2;
+  const raw = [
+    { gx: cx - 13 + xJitter, gy: cy - 7 + yJitter, scale: 1.0 },
+    { gx: cx + 12 - xJitter, gy: cy - 5 + yJitter, scale: 0.92 },
+    { gx: cx - 11 + xJitter, gy: cy + 8 - yJitter, scale: 0.96 },
+    { gx: cx + 13 - xJitter, gy: cy + 10 - yJitter, scale: 1.04 },
+  ];
+  return raw
+    .map(r => ({
+      ...r,
+      gx: Math.max(2, Math.min(map.width - 3, r.gx)),
+      gy: Math.max(2, Math.min(map.height - 3, r.gy)),
+      footprint: [{ dx: 0, dy: 0 }],
+    }))
+    .filter(r => {
+      const tile = map.tiles[r.gy] && map.tiles[r.gy][r.gx];
+      return tile &&
+        isTilePassable(tile, r.gx, r.gy, map) &&
+        tile.tileType !== 1;
+    });
+}
+
+function _isTestRockDecorBlocked(gx, gy, map) {
+  if (gx === undefined || gy === undefined) return false;
+  return _getTestRockDecor(map).some(r =>
+    (r.footprint || []).some(fp => gx === r.gx + fp.dx && gy === r.gy + fp.dy)
+  );
+}
+
+function _getTestRockDecorMetrics(map, rock) {
+  const wp = map.gridToWorld(rock.gx, rock.gy);
+  const drawW = Math.round(68 * rock.scale);
+  const drawH = Math.round(68 * rock.scale);
+  const baseX = wp.x + map.tileWidth / 2;
+  const baseY = wp.y + map.tileHeight * 0.98;
+  return {
+    baseX,
+    baseY,
+    drawW,
+    drawH,
+    shadowRx: drawW * 0.24,
+    shadowRy: drawH * 0.06,
+  };
+}
+
+function _pointHitsTestRockBase(worldX, worldY, map) {
+  if (!map) return false;
+  return _getTestRockDecor(map).some(rock => {
+    const m = _getTestRockBlockMetrics(map, rock);
+    const dx = worldX - m.blockBaseX;
+    const dy = worldY - m.blockBaseY;
+    return ((dx * dx) / (m.blockRx * m.blockRx)) + ((dy * dy) / (m.blockRy * m.blockRy)) <= 1;
+  });
+}
+
+function _getTestRockBlockMetrics(map, rock) {
+  const m = _getTestRockDecorMetrics(map, rock);
+  return {
+    ...m,
+    blockBaseX: m.baseX - m.drawW * 0.035,
+    blockBaseY: m.baseY + m.drawH * 0.1,
+    blockRx: m.drawW * 0.58,
+    blockRy: m.shadowRy * 1.75,
+  };
+}
+
+function _getRockFrontBoundaryY(rockMetrics, worldX) {
+  const dx = worldX - rockMetrics.blockBaseX;
+  const nx = Math.max(-1, Math.min(1, dx / Math.max(1, rockMetrics.blockRx)));
+  const curve = Math.pow(Math.max(0, 1 - nx * nx), 0.01);
+  return rockMetrics.blockBaseY + rockMetrics.blockRy * curve + rockMetrics.drawH * 0.08;
+}
+
+function _renderWorldRockDecor(ctx, camera, stage) {
+  if (currentRealm === "sanctuary" || !rockClusterImg.complete || rockClusterImg.naturalWidth <= 0) return;
+  const map = _activeMap || tileMap;
+  if (!map) return;
+  const rocks = _getTestRockDecor(map);
+  if (!rocks.length) return;
+  const rockBottomTrim = 22;
+  const playerFootX = player.position.x + player.width * 0.5;
+  const playerFootY = player.position.y + player.height * 1.16;
+  rocks.forEach(r => {
+    const m = _getTestRockBlockMetrics(map, r);
+    const boundaryY = _getRockFrontBoundaryY(m, playerFootX);
+    const inFront = playerFootY < boundaryY;
+    if ((stage === "behind" && inFront) || (stage === "front" && !inFront)) return;
+    const baseScreen = camera.worldToScreen(new Vector2(m.baseX, m.baseY));
+    const dx = baseScreen.x - m.drawW * 0.5;
+    const dy = baseScreen.y - m.drawH + (rockBottomTrim * r.scale);
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.beginPath();
+    ctx.ellipse(baseScreen.x, baseScreen.y, m.shadowRx, m.shadowRy, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.96;
+    ctx.drawImage(rockClusterImg, dx, dy, m.drawW, m.drawH);
+    ctx.restore();
+  });
+}
+
+function _isActorInFrontOfRock(rockMetrics, footX, footY) {
+  const dx = Math.abs(footX - rockMetrics.blockBaseX);
+  if (dx > rockMetrics.blockRx * 1.05) return true;
+  const boundaryY = _getRockFrontBoundaryY(rockMetrics, footX);
+  return footY >= boundaryY;
+}
+
+function _compareActorRockRenderOrder(rockMetrics, footX, footY) {
+  const dx = Math.abs(footX - rockMetrics.blockBaseX);
+  const dy = Math.abs(footY - rockMetrics.blockBaseY);
+  if (dx > rockMetrics.blockRx * 1.35) return null;
+  if (dy > rockMetrics.drawH * 0.95) return null;
+  return _isActorInFrontOfRock(rockMetrics, footX, footY) ? -1 : 1;
+}
+
+function _getPlayerRockFootPoint() {
+  return {
+    x: player.position.x + player.width * 0.5,
+    y: player.position.y + player.height * 1.16,
+  };
+}
+
+function _getEnemyRockFootPoint(enemy) {
+  return {
+    x: enemy.position.x + enemy.width * 0.5,
+    y: enemy.position.y + enemy.height * 1.16,
+  };
+}
+
+function _getCloneRockFootPoint(clone) {
+  return {
+    x: clone.position.x + clone._w * 0.5,
+    y: clone.position.y + clone._h * 1.16,
+  };
+}
+
+function _renderActiveCloneVisual(ctx, camera, clone) {
+  if (!clone || !clone.alive || clone._spawning || clone._dismissing || !player.spriteLoaded) return;
+  if (!_renderClones._oc) {
+    _renderClones._oc = document.createElement("canvas");
+    _renderClones._oc.width  = 128;
+    _renderClones._oc.height = 128;
+  }
+  const oc   = _renderClones._oc;
+  const octx = oc.getContext("2d");
+  octx.imageSmoothingEnabled = false;
+  const dirRows = { down: 0, right: 1, up: 2, left: 3 };
+
+  function _drawCloneGhost(worldPos, frame, alpha, flashAmt, direction, tintAlpha, damageFlash) {
+    const sp   = camera.worldToScreen(worldPos);
+    const row  = dirRows[direction || player.direction] || 0;
+    const srcX = (frame || 0) * SPRITE_FRAME_SIZE;
+    const srcY = row * SPRITE_FRAME_SIZE;
+    const w = player.width, h = player.height;
+    const strength = (tintAlpha || 0.30);
+    const flash    = (flashAmt  || 0);
+    const hitFlash = Math.min(1, damageFlash || 0);
+    const glowBlur = LOW_FX_MODE
+      ? (4 + strength * 10 + flash * 6)
+      : (8 + strength * 28 + flash * 18);
+    const glowAlpha = LOW_FX_MODE
+      ? (0.28 + strength * 0.22 + flash * 0.18)
+      : (0.45 + strength * 0.45 + flash * 0.35);
+
+    ctx.save();
+    ctx.globalAlpha = Math.min(0.9, alpha);
+    ctx.shadowBlur  = glowBlur;
+    ctx.shadowColor = `rgba(40,255,190,${glowAlpha.toFixed(2)})`;
+    ctx.drawImage(player.spriteSheet, srcX, srcY, SPRITE_FRAME_SIZE, SPRITE_FRAME_SIZE, sp.x, sp.y, w, h);
+    ctx.shadowBlur  = 0;
+    ctx.drawImage(player.spriteSheet, srcX, srcY, SPRITE_FRAME_SIZE, SPRITE_FRAME_SIZE, sp.x, sp.y, w, h);
+    if (hitFlash > 0.02) {
+      octx.clearRect(0, 0, oc.width, oc.height);
+      octx.globalCompositeOperation = "source-over";
+      octx.drawImage(player.spriteSheet, srcX, srcY, SPRITE_FRAME_SIZE, SPRITE_FRAME_SIZE, 0, 0, w, h);
+      octx.globalCompositeOperation = "source-atop";
+      octx.fillStyle = `rgba(255,110,110,${Math.min(0.65, hitFlash * 0.65).toFixed(2)})`;
+      octx.fillRect(0, 0, w, h);
+      octx.globalCompositeOperation = "source-over";
+      ctx.drawImage(oc, 0, 0, w, h, sp.x, sp.y, w, h);
+    }
+    ctx.restore();
+  }
+
+  const flash = clone.attackFlash;
+  const tintA = clone._tintAlpha || 0.30;
+  const hitFlash = clone._damageFlash || 0;
+
+  if ((clone._strikeRingFlash || 0) > 0) {
+    const sp = camera.worldToScreen(clone.position);
+    ctx.save();
+    ctx.globalAlpha = clone._strikeRingFlash * 0.7;
+    ctx.strokeStyle = "#40ffcc";
+    ctx.lineWidth   = 1.5;
+    ctx.shadowBlur  = LOW_FX_MODE ? 4 : 10;
+    ctx.shadowColor = "#40ffcc";
+    ctx.beginPath();
+    ctx.ellipse(sp.x + clone._w/2, sp.y + clone._h*0.88, clone._w*0.52, clone._h*0.26, 0, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  if ((clone._hpRingAlpha || 0) > 0) {
+    const _ringA = Math.min(1, clone._hpRingAlpha);
+    const sp    = camera.worldToScreen(clone.position);
+    const ex    = sp.x + clone._w / 2;
+    const ey    = sp.y + clone._h * 0.88;
+    const rx    = clone._w * 0.52;
+    const ry    = clone._h * 0.26;
+    const hpPct = Math.max(0, clone.hp / clone.maxHP);
+    const arcColor = hpPct > 0.55 ? "#40ffcc" : hpPct > 0.25 ? "#ffe066" : "#ff5555";
+    const startA = -Math.PI;
+    const endA   = startA + Math.PI * 2 * hpPct;
+    ctx.save();
+    ctx.globalAlpha = 0.9 * _ringA;
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, rx * 0.78, ry * 0.78, 0, -Math.PI, Math.PI);
+    ctx.strokeStyle = "rgba(0,0,0,0.45)";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    if (hpPct > 0) {
+      ctx.beginPath();
+      ctx.ellipse(ex, ey, rx * 0.78, ry * 0.78, 0, startA, endA);
+      ctx.strokeStyle = arcColor;
+      ctx.lineWidth = 2;
+      if (!LOW_FX_MODE) {
+        ctx.shadowBlur = 6 * _ringA;
+        ctx.shadowColor = arcColor;
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  _drawCloneGhost(clone.position, clone.currentFrame, 0.65 + flash * 0.25, flash, clone.direction, tintA, hitFlash);
+}
+
+function _renderWorldActorRockDepthQueue(ctx, camera) {
+  if (currentRealm === "sanctuary") return;
+  const map = _activeMap || tileMap;
+  if (!map) return;
+  const entries = [];
+  const rocks = (rockClusterImg.complete && rockClusterImg.naturalWidth > 0) ? _getTestRockDecor(map) : [];
+  const rockBottomTrim = 22;
+
+  rocks.forEach((r, idx) => {
+    const m = _getTestRockBlockMetrics(map, r);
+    entries.push({
+      type: "decor",
+      depth: m.blockBaseY + idx * 0.001,
+      gx: r.gx,
+      gy: r.gy,
+      _rockMetrics: m,
+      render() {
+        const baseScreen = camera.worldToScreen(new Vector2(m.baseX, m.baseY));
+        const dx = baseScreen.x - m.drawW * 0.5;
+        const dy = baseScreen.y - m.drawH + (rockBottomTrim * r.scale);
+        ctx.save();
+        ctx.globalAlpha = 0.16;
+        ctx.fillStyle = "rgba(0,0,0,0.55)";
+        ctx.beginPath();
+        ctx.ellipse(baseScreen.x, baseScreen.y, m.shadowRx, m.shadowRy, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 0.96;
+        ctx.drawImage(rockClusterImg, dx, dy, m.drawW, m.drawH);
+        ctx.restore();
+      }
+    });
+  });
+
+  enemies.forEach((enemy, idx) => {
+    if (!enemy.alive) return;
+    const foot = _getEnemyRockFootPoint(enemy);
+    entries.push({
+      type: "enemy",
+      depth: foot.y + idx * 0.0001,
+      gx: enemy.gridX,
+      gy: enemy.gridY,
+      _footX: foot.x,
+      _footY: foot.y,
+      render() { enemy.render(ctx, camera); }
+    });
+  });
+
+  _syncedClones.forEach((clone, idx) => {
+    if (!clone.alive || clone._spawning || clone._dismissing) return;
+    const foot = _getCloneRockFootPoint(clone);
+    entries.push({
+      type: "clone",
+      depth: foot.y + idx * 0.0001,
+      gx: clone.gridX,
+      gy: clone.gridY,
+      _footX: foot.x,
+      _footY: foot.y,
+      render() { _renderActiveCloneVisual(ctx, camera, clone); }
+    });
+  });
+
+  const playerFoot = _getPlayerRockFootPoint();
+  entries.push({
+    type: "player",
+    depth: playerFoot.y,
+    gx: player.gridX,
+    gy: player.gridY,
+    _footX: playerFoot.x,
+    _footY: playerFoot.y,
+    render() { player.render(ctx, camera); }
+  });
+
+  entries.sort((a, b) => {
+    if (a.type === "decor" && b._footX !== undefined && a._rockMetrics) {
+      const rockOrder = _compareActorRockRenderOrder(a._rockMetrics, b._footX, b._footY);
+      if (rockOrder !== null) return rockOrder;
+    }
+    if (b.type === "decor" && a._footX !== undefined && b._rockMetrics) {
+      const rockOrder = _compareActorRockRenderOrder(b._rockMetrics, a._footX, a._footY);
+      if (rockOrder !== null) return -rockOrder;
+    }
+    if (a.depth !== b.depth) return a.depth - b.depth;
+    if (a.gy !== b.gy) return a.gy - b.gy;
+    if (a.gx !== b.gx) return a.gx - b.gx;
+    return 0;
+  });
+
+  entries.forEach(e => e.render());
+}
+
+function _getPlayerDepthSortValue() {
+  return player.gridX + player.gridY + 0.88;
+}
+
     class Particle {
       constructor(position, velocity, life, color, size, acceleration) {
         this.position = position;
@@ -3997,7 +4782,11 @@ playSFX("explosion");
         const gy = Math.round(g.gy);
         if (gx < 0 || gy < 0 || gx >= this.tileMap.width || gy >= this.tileMap.height) return false;
         const tile = this.tileMap.tiles[gy] && this.tileMap.tiles[gy][gx];
-        return !!(tile && isTilePassable(tile));
+        if (!(tile && isTilePassable(tile))) return false;
+        const footX = posX + this.width / 2;
+        const footY = posY + this.height * 0.88;
+        if (_pointHitsTestRockBase(footX, footY, this.tileMap)) return false;
+        return true;
       }
 
       _updateGridFromWorldPosition() {
@@ -4213,6 +5002,10 @@ playSFX("explosion");
             if (Math.abs(this._slideOffset.x) < 0.1 && Math.abs(this._slideOffset.y) < 0.1)
               this._slideOffset = new Vector2(0, 0);
           }
+        }
+
+        if (_isPointerAimActive() && !this.isDead && !this.isDashing) {
+          this.direction = _getPointerAimDirection();
         }
 
         // --- Damage flash/vibrate (always ticks, regardless of movement state) ---
@@ -4503,8 +5296,8 @@ render(ctx, camera) {
       // When NPC detected: draw pointer line + dot toward it
       if (_nearestNPC && !_sanctuaryRallyVisual) {
         const _nsp = camera.worldToScreen(new Vector2(_nearestNPC.position.x + _nearestNPC.width/2, _nearestNPC.position.y + _nearestNPC.height/2));
-        const _nsx = (canvas.width/(window.devicePixelRatio||1)/2)  + (_nsp.x - (canvas.width/(window.devicePixelRatio||1)/2))  * camera.zoom;
-        const _nsy = (canvas.height/(window.devicePixelRatio||1)/2) + (_nsp.y - (canvas.height/(window.devicePixelRatio||1)/2)) * camera.zoom;
+        const _nsx = (canvas.width/(_renderDPR)/2)  + (_nsp.x - (canvas.width/(_renderDPR)/2))  * camera.zoom;
+        const _nsy = (canvas.height/(_renderDPR)/2) + (_nsp.y - (canvas.height/(_renderDPR)/2)) * camera.zoom;
         const _dx = _nsx - _mx, _dy = _nsy - _my;
         const _dl = Math.sqrt(_dx*_dx + _dy*_dy) || 1;
         const _ex = _mx + (_dx/_dl) * _r;
@@ -5431,11 +6224,16 @@ updateDaggerContainerAt(effectX, effectY);
   let targetTile = this.tileMap.tiles[newGridY][newGridX];
   if (!isTilePassableForEnemy(targetTile)) return;
   
+  const _targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
+  const _footX = _targetPos.x + this.width * 0.5;
+  const _footY = _targetPos.y + this.height * 0.88;
+  if (_pointHitsTestRockBase(_footX, _footY, this.tileMap || _activeMap || tileMap)) return;
+
   // Set up movement properties
   this.moving = true;
   this.moveTime = 0;
   this.startPos = this.position;
-  this.targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
+  this.targetPos = _targetPos;
   this.targetGridX = newGridX;
   this.targetGridY = newGridY;
   this.direction = direction;
@@ -5474,10 +6272,14 @@ updateDaggerContainerAt(effectX, effectY);
           if (newGridX < 0 || newGridX >= this.tileMap.width || newGridY < 0 || newGridY >= this.tileMap.height) continue;
           const targetTile = this.tileMap.tiles[newGridY] && this.tileMap.tiles[newGridY][newGridX];
           if (!targetTile || !isTilePassableForEnemy(targetTile)) continue;
+          const _targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
+          const _footX = _targetPos.x + this.width * 0.5;
+          const _footY = _targetPos.y + this.height * 0.88;
+          if (_pointHitsTestRockBase(_footX, _footY, this.tileMap || _activeMap || tileMap)) continue;
           this.moving = true;
           this.moveTime = 0;
           this.startPos = this.position;
-          this.targetPos = this.tileMap.gridToWorld(newGridX, newGridY);
+          this.targetPos = _targetPos;
           this.targetGridX = newGridX;
           this.targetGridY = newGridY;
           this.direction = _vectorToStickyDirection(cand.dx, cand.dy, this.direction);
@@ -6851,7 +7653,7 @@ updateDaggerContainerAt(effectX, effectY);
       const progress = 1 - (t / d); // 0 at start, 1 at end
       const alpha = Math.pow(1 - progress, 0.4); // fast fade in, slow fade out
 
-      const cx = (canvas.width/(window.devicePixelRatio||1)/2), cy = (canvas.height/(window.devicePixelRatio||1)/2);
+      const cx = (canvas.width/(_renderDPR)/2), cy = (canvas.height/(_renderDPR)/2);
       const maxR = Math.sqrt(cx*cx + cy*cy) * 1.4;
 
       ctx.save();
@@ -6860,7 +7662,7 @@ updateDaggerContainerAt(effectX, effectY);
       const hue = 160 + progress * 80; // 160=cyan-green, 240=blue
       const washAlpha = alpha * 0.55;
       ctx.fillStyle = `hsla(${hue}, 100%, 70%, ${washAlpha})`;
-      ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+      ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
 
       // Three expanding rings at different phases
       [0, 0.15, 0.3].forEach((offset, i) => {
@@ -6906,8 +7708,8 @@ updateDaggerContainerAt(effectX, effectY);
       ctx.fillStyle = `hsl(${t * 30}, 100%, 60%)`;
       ctx.strokeStyle = "rgba(0,0,0,0.8)";
       ctx.lineWidth = 5;
-      ctx.strokeText(`💥 ${t.toFixed(1)}`, (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2) - 40);
-      ctx.fillText(`💥 ${t.toFixed(1)}`, (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2) - 40);
+      ctx.strokeText(`💥 ${t.toFixed(1)}`, (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2) - 40);
+      ctx.fillText(`💥 ${t.toFixed(1)}`, (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2) - 40);
       ctx.restore();
     }
 
@@ -6942,7 +7744,7 @@ updateDaggerContainerAt(effectX, effectY);
         ctx.strokeStyle = "rgba(0,0,0,0.6)"; ctx.lineWidth = 2;
         const _dur = player._archivistDurability || {};
         const _leftX = 18;
-        let _ay = Math.round((canvas.height/(window.devicePixelRatio||1)) * 0.5 + 54);
+        let _ay = Math.round((canvas.height/(_renderDPR)) * 0.5 + 54);
 
         function _durLabel(id) {
           const d = _dur[id];
@@ -7023,8 +7825,8 @@ updateDaggerContainerAt(effectX, effectY);
         ctx.fillStyle = `rgba(255,${Math.floor(180 + 75*msPct)},0,0.9)`;
         ctx.strokeStyle = "rgba(0,0,0,0.6)"; ctx.lineWidth = 2;
         const msText = `⚡×${player._momentumStacks} (+${player._momentumStacks*5}% dmg)`;
-        ctx.strokeText(msText, 12, canvas.height/(window.devicePixelRatio||1) - 80);
-        ctx.fillText(msText, 12, canvas.height/(window.devicePixelRatio||1) - 80);
+        ctx.strokeText(msText, 12, canvas.height/(_renderDPR) - 80);
+        ctx.fillText(msText, 12, canvas.height/(_renderDPR) - 80);
         ctx.restore();
       }
       // Berserker active glow warning (flashing red text when low HP)
@@ -7035,8 +7837,8 @@ updateDaggerContainerAt(effectX, effectY);
         ctx.textAlign = "left";
         ctx.fillStyle = `rgba(255,60,60,${pulse})`;
         ctx.strokeStyle = "rgba(0,0,0,0.7)"; ctx.lineWidth = 2;
-        ctx.strokeText("🩸 BERSERKER — 2× DMG", 12, canvas.height/(window.devicePixelRatio||1) - 120);
-        ctx.fillText("🩸 BERSERKER — 2× DMG", 12, canvas.height/(window.devicePixelRatio||1) - 120);
+        ctx.strokeText("🩸 BERSERKER — 2× DMG", 12, canvas.height/(_renderDPR) - 120);
+        ctx.fillText("🩸 BERSERKER — 2× DMG", 12, canvas.height/(_renderDPR) - 120);
         ctx.restore();
       }
       if (comboCount < 3) return;
@@ -7048,8 +7850,8 @@ updateDaggerContainerAt(effectX, effectY);
       );
       const sp = camera.worldToScreen(playerCenter);
       // Apply zoom offset
-      const sx = (canvas.width/(window.devicePixelRatio||1)/2) + (sp.x - (canvas.width/(window.devicePixelRatio||1)/2)) * camera.zoom;
-      const sy = (canvas.height/(window.devicePixelRatio||1)/2) + (sp.y - (canvas.height/(window.devicePixelRatio||1)/2)) * camera.zoom - 30;
+      const sx = (canvas.width/(_renderDPR)/2) + (sp.x - (canvas.width/(_renderDPR)/2)) * camera.zoom;
+      const sy = (canvas.height/(_renderDPR)/2) + (sp.y - (canvas.height/(_renderDPR)/2)) * camera.zoom - 30;
       ctx.save();
       ctx.globalAlpha = alpha;
       const size = 14 + Math.min(comboCount, 20);
@@ -7212,12 +8014,36 @@ updateDaggerContainerAt(effectX, effectY);
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false;
+    const RENDER_DPR_CAP = 1.25;
+    let _renderCapEnabled = true;
+    let _renderDPR = 1;
+
+    function _computeRenderDPR() {
+      const nativeDpr = window.devicePixelRatio || 1;
+      return _renderCapEnabled ? Math.min(nativeDpr, RENDER_DPR_CAP) : nativeDpr;
+    }
+
+    function _updateRenderCapButton() {
+      const btn = document.getElementById("renderCapBtn");
+      if (!btn) return;
+      btn.textContent = "🖥️ Render Cap: " + (_renderCapEnabled ? "On" : "Off");
+      btn.style.background = _renderCapEnabled
+        ? "rgba(70,100,180,0.16)"
+        : "rgba(90,90,90,0.14)";
+      btn.style.borderColor = _renderCapEnabled
+        ? "rgba(120,160,255,0.28)"
+        : "rgba(180,180,180,0.24)";
+      btn.style.color = _renderCapEnabled
+        ? "rgba(210,225,255,0.82)"
+        : "rgba(225,225,225,0.78)";
+    }
 
     // ── Retina / high-DPI canvas scaling ──────────────────────────
     // Buffer is dpr× larger than CSS size; ctx is pre-scaled so all
     // drawing coordinates stay in CSS pixels — zero gameplay impact.
     function _resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
+      _renderDPR = _computeRenderDPR();
+      const dpr = _renderDPR;
       const cssW = window.innerWidth;
       const cssH = window.innerHeight;
       canvas.width  = Math.round(cssW * dpr);
@@ -7230,6 +8056,7 @@ updateDaggerContainerAt(effectX, effectY);
     }
     const { cssW: _initW, cssH: _initH } = _resizeCanvas();
     const camera = new Camera(_initW, _initH);
+    _updateRenderCapButton();
 
     window.addEventListener("resize", () => {
       const { cssW, cssH } = _resizeCanvas();
@@ -7510,6 +8337,15 @@ updateDaggerContainerAt(effectX, effectY);
     let _warlordEliteMemory = { defeats: 0 }; // persists across spawns for dialogue
 
     // ── Persistent storage ────────────────────────────────────────
+    let _activeSaveSlot = null;
+    let _startScreenVisible = true;
+    let _sessionStarted = false;
+    let _startGpSlotIdx = 0;
+    let _startGpActionIdx = 0;
+    const SAVE_SLOT_COUNT = 3;
+    function _slotSaveKey(slot) { return "brokenDagger_save_slot" + slot; }
+    function _legacySaveKey() { return "brokenDagger_save"; }
+    function _currentSaveKey() { return _activeSaveSlot ? _slotSaveKey(_activeSaveSlot) : null; }
     // Storage helpers — use localStorage (browser) with window.storage (claude.ai) as fallback
     function _storageSave(key, value) {
       try { localStorage.setItem(key, value); return; } catch(e) {}
@@ -7520,10 +8356,314 @@ updateDaggerContainerAt(effectX, effectY);
       try { if (window.storage) { const r = await window.storage.get(key); return r ? r.value : null; } } catch(e) {}
       return null;
     }
+    async function _storageRemove(key) {
+      try { localStorage.removeItem(key); } catch(e) {}
+      try { if (window.storage) await window.storage.delete(key); } catch(e) {}
+    }
+
+    async function _loadSlotRaw(slot) {
+      let raw = await _storageLoad(_slotSaveKey(slot));
+      if (!raw && slot === 1) {
+        raw = await _storageLoad(_legacySaveKey());
+        if (raw) _storageSave(_slotSaveKey(1), raw);
+      }
+      return raw;
+    }
+
+    function _slotPreviewFromData(slot, data) {
+      const worlds = Array.isArray(data.discoveredWorlds) ? data.discoveredWorlds : [];
+      const echoes = Array.isArray(data.selfPool) ? data.selfPool.length : (typeof data.syncedSelves === "number" ? data.syncedSelves : 0);
+      const fallen = Array.isArray(data.fallenSelfPool) ? data.fallenSelfPool.length : 0;
+      const worldsSeen = Math.max(1, worlds.length || 1);
+      const savedAt = data.savedAt ? new Date(data.savedAt) : null;
+      const dateLabel = savedAt && !isNaN(savedAt.getTime())
+        ? savedAt.toLocaleDateString([], { month: "short", day: "numeric" }) + " · " +
+          savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+        : "Unknown checkpoint";
+      return {
+        slot,
+        hasSave: true,
+        title: data.slotTitle || ("Campaign " + slot),
+        realmLabel: "Sanctuary Resume",
+        meta: `${worldsSeen} world${worldsSeen === 1 ? "" : "s"} · ${echoes} echoes${fallen ? " · " + fallen + " fallen" : ""}`,
+        dateLabel
+      };
+    }
+
+    async function _getSlotPreview(slot) {
+      const raw = await _loadSlotRaw(slot);
+      if (!raw) {
+        return {
+          slot,
+          hasSave: false,
+          title: "Empty Slot",
+          realmLabel: "Fresh Timeline",
+          meta: "Begin from the mirror Prologue",
+          dateLabel: "No save data"
+        };
+      }
+      try {
+        return _slotPreviewFromData(slot, JSON.parse(raw));
+      } catch (e) {
+        return {
+          slot,
+          hasSave: true,
+          title: "Corrupted Slot",
+          realmLabel: "Recovery Needed",
+          meta: "Save data could not be read cleanly",
+          dateLabel: "Use New Game to overwrite"
+        };
+      }
+    }
+
+    function _startScreenActionButtons() {
+      const cards = Array.from(document.querySelectorAll("#slotGrid .slot-card"));
+      const card = cards[_startGpSlotIdx];
+      if (!card) return [];
+      return Array.from(card.querySelectorAll(".slot-actions button:not([disabled])"));
+    }
+
+    function _applyStartScreenFocus() {
+      const cards = Array.from(document.querySelectorAll("#slotGrid .slot-card"));
+      cards.forEach((card, idx) => {
+        card.classList.toggle("start-gp-focus", idx === _startGpSlotIdx);
+        const buttons = Array.from(card.querySelectorAll(".slot-actions button"));
+        buttons.forEach((btn) => {
+          const enabledButtons = Array.from(card.querySelectorAll(".slot-actions button:not([disabled])"));
+          const enabledIdx = enabledButtons.indexOf(btn);
+          btn.classList.toggle("start-gp-focus", idx === _startGpSlotIdx && enabledIdx === _startGpActionIdx && enabledIdx >= 0);
+        });
+      });
+    }
+
+    function _normalizeStartScreenFocus() {
+      const cards = Array.from(document.querySelectorAll("#slotGrid .slot-card"));
+      if (!cards.length) return;
+      _startGpSlotIdx = Math.max(0, Math.min(_startGpSlotIdx, cards.length - 1));
+      const actions = _startScreenActionButtons();
+      _startGpActionIdx = Math.max(0, Math.min(_startGpActionIdx, Math.max(0, actions.length - 1)));
+      _applyStartScreenFocus();
+    }
+
+    function _moveStartScreenSlot(dir) {
+      const cards = Array.from(document.querySelectorAll("#slotGrid .slot-card"));
+      if (!cards.length) return;
+      _startGpSlotIdx = (_startGpSlotIdx + dir + cards.length) % cards.length;
+      _normalizeStartScreenFocus();
+    }
+
+    function _moveStartScreenAction(dir) {
+      const actions = _startScreenActionButtons();
+      if (!actions.length) return;
+      _startGpActionIdx = (_startGpActionIdx + dir + actions.length) % actions.length;
+      _applyStartScreenFocus();
+    }
+
+    function _activateStartScreenSelection() {
+      const actions = _startScreenActionButtons();
+      if (actions[_startGpActionIdx]) actions[_startGpActionIdx].click();
+    }
+
+    async function _renderStartScreen() {
+      const wrap = document.getElementById("startScreen");
+      const grid = document.getElementById("slotGrid");
+      if (!wrap || !grid) return;
+      const previews = await Promise.all(Array.from({ length: SAVE_SLOT_COUNT }, (_, i) => _getSlotPreview(i + 1)));
+      grid.innerHTML = previews.map(preview => `
+        <div class="slot-card ${preview.hasSave ? "" : "empty"}">
+          <div class="slot-head">
+            <div class="slot-name">Slot ${preview.slot}</div>
+            <div class="slot-state">${preview.hasSave ? "Occupied" : "Empty"}</div>
+          </div>
+          <div class="slot-hero">
+            <div class="slot-hero-title">${preview.title}</div>
+            <div class="slot-hero-meta">${preview.realmLabel}</div>
+            <div class="slot-hero-meta">${preview.meta}</div>
+            <div class="slot-hero-meta">${preview.dateLabel}</div>
+          </div>
+          <div class="slot-actions">
+            ${preview.hasSave
+              ? `<button class="slot-primary" onclick="window._startScreenChooseSlot(${preview.slot}, 'resume')">Resume</button>
+                 <button onclick="window._startScreenChooseSlot(${preview.slot}, 'new')">New Game</button>`
+              : `<button class="slot-primary" onclick="window._startScreenChooseSlot(${preview.slot}, 'new')">New Game</button>
+                 <button class="slot-danger" disabled>Empty</button>`}
+          </div>
+        </div>
+      `).join("");
+      const firstOccupiedIdx = previews.findIndex(preview => preview.hasSave);
+      _startGpSlotIdx = _activeSaveSlot ? Math.max(0, Math.min(SAVE_SLOT_COUNT - 1, _activeSaveSlot - 1)) : (firstOccupiedIdx >= 0 ? firstOccupiedIdx : 0);
+      _startGpActionIdx = 0;
+      _normalizeStartScreenFocus();
+      wrap.classList.add("start-visible");
+      _startScreenVisible = true;
+      timeScale = 0;
+    }
+
+    function _hideStartScreen() {
+      const wrap = document.getElementById("startScreen");
+      if (wrap) {
+        wrap.classList.remove("start-visible");
+        wrap.classList.remove("start-fading");
+      }
+      _startScreenVisible = false;
+      timeScale = 1.0;
+    }
+
+    function _queueStartTutorial() {
+      if (_sessionStarted) return;
+      _sessionStarted = true;
+      setTimeout(() => tutTrigger("start"), 1500);
+    }
+
+    async function _transitionFromStartScreen(runDuringBlack, revealDelay = 700) {
+      const wrap = document.getElementById("startScreen");
+      _startScreenVisible = true;
+      timeScale = 0;
+      if (wrap) {
+        wrap.classList.add("start-visible");
+        void wrap.offsetWidth;
+        wrap.classList.add("start-fading");
+      }
+      await new Promise(resolve => {
+        if (!wrap) { setTimeout(resolve, 680); return; }
+        let settled = false;
+        const done = () => {
+          if (settled) return;
+          settled = true;
+          wrap.removeEventListener("transitionend", onEnd);
+          resolve();
+        };
+        const onEnd = (evt) => {
+          if (evt.target === wrap && evt.propertyName === "opacity") done();
+        };
+        wrap.addEventListener("transitionend", onEnd);
+        setTimeout(done, 700);
+      });
+      await runDuringBlack();
+      await new Promise(resolve => setTimeout(resolve, revealDelay));
+      _hideStartScreen();
+    }
+
+    function _applyFreshStartState(showAlert) {
+      sanctuaryPlaced.length = 0;
+      placedHarvesters.length = 0;
+      carriedItems.length = 0;
+      aetherStored = 0;
+      discoveredWorlds.length = 0;
+      discoveredWorlds.push({ id:"khem", name:"Khem", icon:"⚱️", sub:"The Black Land",
+        waveOnArrival:1, paletteKey:"khem", highestWave:0, gateOpened:false,
+        weatherBias:{ sunshine:0.6, rain:0.05, fog:0.15, thunderstorm:0.2 } });
+      gemXP = 0;
+      gateOnMap = false;
+      sanctuaryUnlocked = false;
+      _selfPool.length = 0;
+      _fallenSelfPool.length = 0;
+      _syncHintTarget = null;
+      _archivistSeenIds.clear();
+      _parallelAdversary = null;
+      _parallelAdversaryCooldown = 0;
+      _parallelAdversaryMemory = { encounters: 0, defeats: 0, reactivations: 0, lastRealm: null, lastWave: 0, id: null, name: null };
+      _ownedBlessingNames.clear();
+      shrineHistory.length = 0;
+      hasMegaBomb = false;
+      synergyReflect = false;
+      strikeRangeTiles = 1;
+      player._strikeBoost  = false;
+      player._berserker    = false;
+      player._lucky        = false;
+      player._hoarder      = false;
+      player._glassCannon  = false;
+      player._swiftApplied = false;
+      player._ward = false; player._wardReady = false;
+      player._echoBlade = false; player._echoCount = 0;
+      player._riftLens = false;
+      player._voidStep = false;
+      player._voidEngine = false;
+      player._lifesteal = false;
+      player._phase = false; player._phaseCount = 0;
+      player._momentum = false; player._momentumStacks = 0;
+      player._ricochet = false;
+      player._magnet = false;
+      player._gemBoost = 1;
+      player._strikeDmgBoost = 1;
+      player._gemGateDiscount = 0;
+      player._archivistMaxHP = 0;
+      player._archivistDurability = {};
+      player.maxHP = 100;
+      player.hp = 100;
+      points = 0;
+      killCount = 0;
+      waveNumber = 1;
+      bossWaveIndex = 0;
+      waveBetween = false;
+      waveBetweenTimer = 0;
+      respawnWave = false;
+      currentRealm = "khem";
+      currentZoneId = "khem";
+      realmPhase = "combat";
+      _prologueDone = false;
+      _prologueNPC = null;
+      _prologuePhase = 0;
+      _activeMap = tileMap;
+      _recomputeWorldBounds();
+      player.tileMap = tileMap;
+      player.gridX = Math.floor(CONFIG.MAP_WIDTH / 2);
+      player.gridY = Math.floor(CONFIG.MAP_HEIGHT / 2);
+      player.position = tileMap.gridToWorld(player.gridX, player.gridY);
+      player.targetGridX = player.gridX;
+      player.targetGridY = player.gridY;
+      player.moving = false;
+      player._freeMoving = false;
+      player.isDead = false;
+      clearWorldVisuals();
+      enemies.length = 0;
+      bullets.length = 0;
+      pickups.length = 0;
+      baitBombs.length = 0;
+      _despawnClones();
+      _cloneAnims.length = 0;
+      _playerMoveHistory.length = 0;
+      runStats = { totalPoints: 0, bestCombo: 0, startTime: Date.now() };
+      deathOverlayShown = false;
+      deathAlertShown = false;
+      isUpgradeMenuVisible = false;
+      timeScale = 1.0;
+      if (showAlert) showUpgradeAlert("Fresh start!");
+    }
+
+    async function _startScreenChooseSlot(slot, mode) {
+      if (mode === "new") {
+        const existing = await _loadSlotRaw(slot);
+        const promptText = existing
+          ? "Start a new game in Slot " + slot + "? This will overwrite the current run in that slot."
+          : "Start a new game in Slot " + slot + "?";
+        if (!confirm(promptText)) return;
+      }
+      _activeSaveSlot = slot;
+      if (mode === "resume") {
+        await _transitionFromStartScreen(async () => {
+          _queueStartTutorial();
+          await loadGame(slot);
+        }, 1200);
+        return;
+      }
+      await _transitionFromStartScreen(async () => {
+        _queueStartTutorial();
+        await _storageRemove(_slotSaveKey(slot));
+        if (slot === 1) await _storageRemove(_legacySaveKey());
+        _applyFreshStartState(false);
+        _startPrologue();
+      }, 650);
+    }
+    window._startScreenChooseSlot = _startScreenChooseSlot;
 
     function saveGame() {
+      const saveKey = _currentSaveKey();
+      if (!saveKey) return;
       try {
         const data = {
+          savedAt: Date.now(),
+          slotTitle: "Campaign " + _activeSaveSlot,
           sanctuaryPlaced: sanctuaryPlaced.map(p => ({ id: p.id, tileX: p.tileX, tileY: p.tileY })),
           terrainEdits: _terrainEdits,
           placedHarvesters: placedHarvesters.map(h => ({ id: h.id, tileX: h.tileX, tileY: h.tileY, durability: h.durability, linkedWorldId: h.linkedWorldId })),
@@ -7545,74 +8685,28 @@ updateDaggerContainerAt(effectX, effectY);
           archivistSeenIds: [..._archivistSeenIds],
           parallelAdversaryMemory: { ..._parallelAdversaryMemory },
         };
-        _storageSave("brokenDagger_save", JSON.stringify(data));
+        _storageSave(saveKey, JSON.stringify(data));
       } catch(e) { console.warn("Save failed:", e); }
     }
 
     window._confirmResetGame = function() {
       if (!confirm("Reset all save data? This clears sanctuary, harvesters, worlds and gems. Cannot be undone.")) return;
-      try { localStorage.removeItem("brokenDagger_save"); } catch(e) {}
-      try { localStorage.removeItem("brokenDagger_tutSeen"); } catch(e) {}
-      try { if (window.storage) window.storage.delete("brokenDagger_save"); } catch(e) {}
+      if (!confirm("Are you absolutely sure? This permanently deletes your save right now.")) return;
+      if (_activeSaveSlot) _storageRemove(_slotSaveKey(_activeSaveSlot));
+      if (_activeSaveSlot === 1) _storageRemove(_legacySaveKey());
       _tutShownSteps.clear();
-      // Reset runtime state
-      sanctuaryPlaced.length = 0;
-      placedHarvesters.length = 0;
-      carriedItems.length = 0;
-      aetherStored = 0;
-      discoveredWorlds.length = 0;
-      discoveredWorlds.push({ id:"khem", name:"Khem", icon:"⚱️", sub:"The Black Land",
-        waveOnArrival:1, paletteKey:"khem", highestWave:0, gateOpened:false,
-        weatherBias:{ sunshine:0.6, rain:0.05, fog:0.15, thunderstorm:0.2 } });
-      gemXP = 0;
-      gateOnMap = false;
-      sanctuaryUnlocked = false;
-      _selfPool.length = 0;  // reset pool — derived count resets with it
-      _fallenSelfPool.length = 0;
-      _syncHintTarget = null;
-      _archivistSeenIds.clear();
-      _parallelAdversary = null;
-      _parallelAdversaryCooldown = 0;
-      _parallelAdversaryMemory = { encounters: 0, defeats: 0, reactivations: 0, lastRealm: null, lastWave: 0, id: null, name: null };
-      // Clear boss blessings
-      _ownedBlessingNames.clear();
-      shrineHistory.length = 0;
-      player._strikeBoost  = false;
-      player._berserker    = false;
-      player._lucky        = false;
-      player._hoarder      = false;
-      player._glassCannon  = false;
-      player._swiftApplied = false;
-      hasMegaBomb          = false;
-      synergyReflect       = false;
-      strikeRangeTiles     = 1;
-      player._ward = false; player._wardReady = false;
-      player._echoBlade = false; player._echoCount = 0;
-      player._riftLens = false;
-      player._voidStep = false;
-      player._voidEngine = false;
-      player._lifesteal = false;
-      player._phase = false; player._phaseCount = 0;
-      player._momentum = false; player._momentumStacks = 0;
-      player._ricochet = false;
-      player._magnet = false;
-      player._gemBoost = 1;
-      player._strikeDmgBoost = 1;
-      player._gemGateDiscount = 0;
-      player._archivistMaxHP = 0;
-      player._archivistDurability = {};
-      player.maxHP = 100; player.hp = 100; // restore base HP
-      // Reset per-world sync data
-      discoveredWorlds.forEach(w => { w.syncedSelves = 0; w.synced = false; });
-      showUpgradeAlert("Save reset. Fresh start!");
+      try { localStorage.removeItem("brokenDagger_tutSeen"); } catch (e) {}
+      _applyFreshStartState(false);
+      _sessionStarted = false;
+      _activeSaveSlot = null;
+      _renderStartScreen();
     };
 
-    async function loadGame() {
+    async function loadGame(slot = _activeSaveSlot) {
       try {
-        const raw = await _storageLoad("brokenDagger_save");
+        if (slot) _activeSaveSlot = slot;
+        const raw = await _loadSlotRaw(_activeSaveSlot || 1);
         if (!raw) {
-          // Fresh game — start prologue instead of jumping straight into waves
-          setTimeout(_startPrologue, 800);
           return;
         }
         const data = JSON.parse(raw);
@@ -7709,7 +8803,13 @@ updateDaggerContainerAt(effectX, effectY);
         // Returning players always start in sanctuary
         _prologueDone = true;
         setTimeout(() => { if (window._enterSanctuary) window._enterSanctuary(); }, 400);
-      } catch(e) { console.warn("Load failed:", e); }
+      } catch(e) {
+        console.warn("Load failed:", e);
+        alert("That save slot could not be loaded. Start a new game in that slot to recover it.");
+        _activeSaveSlot = null;
+        _sessionStarted = false;
+        _renderStartScreen();
+      }
     }
 
     // Apply stored terrain edits to a map after it is generated
@@ -8427,9 +9527,11 @@ updateDaggerContainerAt(effectX, effectY);
       }
       entries.push({
         type: "player",
-        depth: player.gridX + player.gridY + 0.7,
+        depth: _getPlayerDepthSortValue(),
         gx: player.gridX,
         gy: player.gridY,
+        _footX: player.position.x + player.width * 0.5,
+        _footY: player.position.y + player.height * 1.16,
         render() { player.render(ctx, camera); }
       });
 
@@ -8437,7 +9539,9 @@ updateDaggerContainerAt(effectX, effectY);
         if (a.depth !== b.depth) return a.depth - b.depth;
         if (a.gy !== b.gy) return a.gy - b.gy;
         if (a.gx !== b.gx) return a.gx - b.gx;
-        return a.type === "structure" ? -1 : 1;
+        if (a.type === "structure" && b.type !== "structure") return -1;
+        if (b.type === "structure" && a.type !== "structure") return 1;
+        return 0;
       });
       entries.forEach(e => e.render());
     }
@@ -8544,7 +9648,7 @@ updateDaggerContainerAt(effectX, effectY);
       const panelGap = 6;
       const panelX = mapOuterRight + panelGap;
       // Fixed at bottom-left — not affected by artifact list
-      let panelY = canvas.height/(window.devicePixelRatio||1) - (placedHarvesters.length * (panelH + 6)) - 8;
+      let panelY = canvas.height/(_renderDPR) - (placedHarvesters.length * (panelH + 6)) - 8;
       const hiddenX = -panelW - 10;
       const shownX = panelX;
       const drawX = Math.round(hiddenX + (shownX - hiddenX) * renderHarvesterReceivers._reveal);
@@ -8994,7 +10098,7 @@ updateDaggerContainerAt(effectX, effectY);
       if (dist > 12) return false;
       const _canvas = document.getElementById("gameCanvas");
       if (!_canvas || !camera) return false;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = _renderDPR;
       const sp = camera.worldToScreen(new Vector2(rival.position.x + rival.width / 2, rival.position.y + rival.height * 0.55));
       const sw = _canvas.width / dpr;
       const sh = _canvas.height / dpr;
@@ -9016,7 +10120,7 @@ updateDaggerContainerAt(effectX, effectY);
       if (dist > 16) return false;
       const _canvas = document.getElementById("gameCanvas");
       if (!_canvas || !camera) return false;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = _renderDPR;
       const sp = camera.worldToScreen(new Vector2(boss.position.x + boss.width / 2, boss.position.y + boss.height * 0.55));
       const sw = _canvas.width / dpr, sh = _canvas.height / dpr;
       return sp.x >= 32 && sp.x <= sw - 32 && sp.y >= 32 && sp.y <= sh - 32;
@@ -9076,7 +10180,7 @@ updateDaggerContainerAt(effectX, effectY);
       if (dist > 14) return false;
       const _canvas = document.getElementById("gameCanvas");
       if (!_canvas || !camera) return false;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = _renderDPR;
       const sp = camera.worldToScreen(new Vector2(w.position.x + w.width / 2, w.position.y + w.height * 0.55));
       const sw = _canvas.width / dpr, sh = _canvas.height / dpr;
       return sp.x >= 32 && sp.x <= sw - 32 && sp.y >= 32 && sp.y <= sh - 32;
@@ -9997,12 +11101,18 @@ updateDaggerContainerAt(effectX, effectY);
     // Expose clone state for the DOM HUD (read-only snapshot getter)
     window._getCloneHudData = function() {
       const deployed = _getDeployedClones()
-        .sort((a, b) => (a._poolIndex || 0) - (b._poolIndex || 0));
+        .sort((a, b) => {
+          const aSort = Number.isFinite(a?._profile?.sortieIndex) ? a._profile.sortieIndex : (a._poolIndex || 0);
+          const bSort = Number.isFinite(b?._profile?.sortieIndex) ? b._profile.sortieIndex : (b._poolIndex || 0);
+          if (aSort !== bSort) return aSort - bSort;
+          return (a._poolIndex || 0) - (b._poolIndex || 0);
+        });
       return {
         inSanctuary: currentRealm === "sanctuary",
         totalPool: _selfPool.length,
         deployedCount: deployed.length,
         clones: deployed.map((c) => ({
+          sortieSlot: (Number.isFinite(c?._profile?.sortieIndex) ? c._profile.sortieIndex : (c._poolIndex || 0)) + 1,
           name:       c._name || _echoName(c._profile),
           quality:    c._quality,
           level:      c._level || 1,
@@ -10745,15 +11855,6 @@ updateDaggerContainerAt(effectX, effectY);
             }
             _syncCloneGridFromWorld(c, _map);
           }
-          // Always face the raw aim direction when aiming — even when not moving
-          if (gpAimActive && gpAimAngle !== undefined && !c.moving) {
-            // Convert raw screen-space angle to iso cardinal direction
-            const _ax = Math.cos(gpAimAngle), _ay = Math.sin(gpAimAngle);
-            const _isoX = _ax + _ay, _isoY = _ay - _ax;
-            if (Math.abs(_isoX) >= Math.abs(_isoY)) c.direction = _isoX > 0 ? "right" : "left";
-            else                                      c.direction = _isoY > 0 ? "down"  : "up";
-          }
-
         // ── Formation: hold — freeze at saved position, still strike ──
         } else if (_isDetachedHold || _cloneFormation === "hold") {
           // Guard against undefined hold coords (e.g. clone existed before field was added)
@@ -10858,6 +11959,9 @@ updateDaggerContainerAt(effectX, effectY);
           c.animTime = 0;
           c.currentFrame = 0;
         }
+        if (_isPointerAimActive() && !_isDetachedHold) {
+          c.direction = _getPointerAimDirection();
+        }
         if (c.attackFlash > 0) c.attackFlash = Math.max(0, c.attackFlash - dt * 5);
         if ((c._strikeRingFlash || 0) > 0) c._strikeRingFlash = Math.max(0, c._strikeRingFlash - dt * 5);
       });
@@ -10943,65 +12047,9 @@ updateDaggerContainerAt(effectX, effectY);
       }
 
       // ── Render active clones ──────────────────────────────────────
-      _syncedClones.forEach((c) => {
-        if (!c.alive || c._spawning || c._dismissing) return;
-        const flash = c.attackFlash;
-        const tintA = c._tintAlpha || 0.30;
-        const hitFlash = c._damageFlash || 0;
-
-        // Strike ring — behind sprite; only on formation, sigil burst, or enemy contact (not rapid attack)
-        if ((c._strikeRingFlash || 0) > 0) {
-          const sp = camera.worldToScreen(c.position);
-          ctx.save();
-          ctx.globalAlpha = c._strikeRingFlash * 0.7;
-          ctx.strokeStyle = "#40ffcc";
-          ctx.lineWidth   = 1.5;
-          ctx.shadowBlur  = LOW_FX_MODE ? 4 : 10;
-          ctx.shadowColor = "#40ffcc";
-          ctx.beginPath();
-          ctx.ellipse(sp.x + c._w/2, sp.y + c._h*0.88, c._w*0.52, c._h*0.26, 0, 0, Math.PI*2);
-          ctx.stroke();
-          ctx.restore();
-        }
-
-        // HP arc — drawn inside the teal ground ellipse, behind sprite
-        if ((c._hpRingAlpha || 0) > 0) {
-          const _ringA = Math.min(1, c._hpRingAlpha); // clamp to 1 for fade-in overshoot
-          const sp    = camera.worldToScreen(c.position);
-          const ex    = sp.x + c._w / 2;
-          const ey    = sp.y + c._h * 0.88;
-          const rx    = c._w * 0.52;
-          const ry    = c._h * 0.26;
-          const hpPct = Math.max(0, c.hp / c.maxHP);
-          const arcColor = hpPct > 0.55 ? "#40ffcc" : hpPct > 0.25 ? "#ffe066" : "#ff5555";
-          const startA = -Math.PI;
-          const endA   = startA + Math.PI * 2 * hpPct;
-          ctx.save();
-          ctx.globalAlpha = 0.9 * _ringA;
-          // Dark track ring
-          ctx.beginPath();
-          ctx.ellipse(ex, ey, rx * 0.78, ry * 0.78, 0, -Math.PI, Math.PI);
-          ctx.strokeStyle = "rgba(0,0,0,0.45)";
-          ctx.lineWidth = 2.5;
-          ctx.stroke();
-          // HP fill arc
-          if (hpPct > 0) {
-            ctx.beginPath();
-            ctx.ellipse(ex, ey, rx * 0.78, ry * 0.78, 0, startA, endA);
-            ctx.strokeStyle = arcColor;
-            ctx.lineWidth = 2;
-            if (!LOW_FX_MODE) {
-              ctx.shadowBlur = 6 * _ringA;
-              ctx.shadowColor = arcColor;
-            }
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-
-        // Sprite drawn last — on top of ring and arc
-        _drawCloneGhost(c.position, c.currentFrame, 0.65 + flash * 0.25, flash, c.direction, tintA, hitFlash);
-      });
+      if (currentRealm === "sanctuary") {
+        _syncedClones.forEach((c) => _renderActiveCloneVisual(ctx, camera, c));
+      }
 
       // ── Render spawn/dismiss anim ghosts ─────────────────────────
       _cloneAnims.forEach(a => {
@@ -13592,7 +14640,7 @@ updateDaggerContainerAt(effectX, effectY);
       if (realmFadeAlpha <= 0) return;
       ctx.save();
       const a = realmFadeAlpha;
-      const _screenH = canvas.height / (window.devicePixelRatio || 1);
+      const _screenH = canvas.height / (_renderDPR);
 
       function _clipWarpBeamShape(_ctx, cx, cy, halfWidth, screenH, flare) {
         const inner = Math.max(6, halfWidth * 0.22);
@@ -13613,16 +14661,16 @@ updateDaggerContainerAt(effectX, effectY);
         if (realmFadeAlpha <= 0.01 && _warpT > 0) {
           const _beamA = _warpT;
           const _bw2 = 40 + 20 * _warpT;
-          let _box = (canvas.width/(window.devicePixelRatio||1)/2), _boy = (canvas.height/(window.devicePixelRatio||1)/2);
+          let _box = (canvas.width/(_renderDPR)/2), _boy = (canvas.height/(_renderDPR)/2);
           if (player && player.position && camera) {
             const _bpc = new Vector2(player.position.x + player.width/2, player.position.y + player.height);
             const _bsp = camera.worldToScreen(_bpc);
-            _box = (canvas.width/(window.devicePixelRatio||1)/2)  + (_bsp.x - (canvas.width/(window.devicePixelRatio||1)/2))  * camera.zoom;
-            _boy = (canvas.height/(window.devicePixelRatio||1)/2) + (_bsp.y - (canvas.height/(window.devicePixelRatio||1)/2)) * camera.zoom;
+            _box = (canvas.width/(_renderDPR)/2)  + (_bsp.x - (canvas.width/(_renderDPR)/2))  * camera.zoom;
+            _boy = (canvas.height/(_renderDPR)/2) + (_bsp.y - (canvas.height/(_renderDPR)/2)) * camera.zoom;
           }
           ctx.save();
           ctx.globalCompositeOperation = "lighter";
-          const _cg = ctx.createLinearGradient(_box, 0, _box, canvas.height/(window.devicePixelRatio||1));
+          const _cg = ctx.createLinearGradient(_box, 0, _box, canvas.height/(_renderDPR));
           _cg.addColorStop(0,   "rgba(255,255,255,0)");
           _cg.addColorStop(0.5, "rgba(200,230,255," + (_beamA * 0.7).toFixed(2) + ")");
           _cg.addColorStop(1,   "rgba(255,255,255,0)");
@@ -13667,7 +14715,7 @@ updateDaggerContainerAt(effectX, effectY);
         const isoY = 0.55;
 
         // Origin: player tile center in screen space — same as AoE rings and blood splats
-        let ox = (canvas.width/(window.devicePixelRatio||1)/2), oy = (canvas.height/(window.devicePixelRatio||1)/2);
+        let ox = (canvas.width/(_renderDPR)/2), oy = (canvas.height/(_renderDPR)/2);
         if (player && camera) {
           const _map = _activeMap || tileMap;
           const _tileWorld = _map.gridToWorld(player.gridX, player.gridY);
@@ -13677,11 +14725,11 @@ updateDaggerContainerAt(effectX, effectY);
           ));
           // Apply zoom the same way the render loop does
           ox = canvas.width  / 2 + (_sp.x - canvas.width  / 2) * camera.zoom;
-          oy = (canvas.height/(window.devicePixelRatio||1)/2) + (_sp.y - (canvas.height/(window.devicePixelRatio||1)/2)) * camera.zoom;
+          oy = (canvas.height/(_renderDPR)/2) + (_sp.y - (canvas.height/(_renderDPR)/2)) * camera.zoom;
         }
 
         // Max radius to cover all screen corners
-        const corners = [[0,0],[canvas.width/(window.devicePixelRatio||1),0],[0,canvas.height/(window.devicePixelRatio||1)],[canvas.width/(window.devicePixelRatio||1),canvas.height/(window.devicePixelRatio||1)]];
+        const corners = [[0,0],[canvas.width/(_renderDPR),0],[0,canvas.height/(_renderDPR)],[canvas.width/(_renderDPR),canvas.height/(_renderDPR)]];
         let maxR = 0;
         corners.forEach(([cx2, cy2]) => {
           const dx = cx2 - ox, dy = (cy2 - oy) / isoY;
@@ -13720,7 +14768,7 @@ updateDaggerContainerAt(effectX, effectY);
           const bw = 60 + 30 * beamPeak; // beam width pulses
 
           // Core vertical beam — ultra-thin bright column
-          const beamGrad = ctx.createLinearGradient(ox, 0, ox, canvas.height/(window.devicePixelRatio||1));
+          const beamGrad = ctx.createLinearGradient(ox, 0, ox, canvas.height/(_renderDPR));
           beamGrad.addColorStop(0,   "rgba(255,255,255,0)");
           beamGrad.addColorStop(0.3, "rgba(200,230,255," + (beamPeak * 0.6).toFixed(2) + ")");
           beamGrad.addColorStop(0.5, "rgba(255,255,255," + (beamPeak * 0.9).toFixed(2) + ")");
@@ -13774,7 +14822,7 @@ updateDaggerContainerAt(effectX, effectY);
             const pAngle = pT + pPhase;
             const pRadius = (15 + 20 * Math.abs(Math.sin(pPhase))) * beamPeak;
             const px2 = ox + Math.cos(pAngle) * pRadius * 0.4; // squish X for vortex feel
-            const py2 = oy + Math.sin(pT * 0.5 + pPhase) * (canvas.height/(window.devicePixelRatio||1) * 0.4) * beamPeak;
+            const py2 = oy + Math.sin(pT * 0.5 + pPhase) * (canvas.height/(_renderDPR) * 0.4) * beamPeak;
             const pAlpha = beamPeak * (0.4 + 0.3 * Math.sin(pT * 2));
             const pSize = (2 + 2 * Math.abs(Math.sin(pPhase + pT))) * beamPeak;
             ctx.beginPath();
@@ -13831,7 +14879,7 @@ updateDaggerContainerAt(effectX, effectY);
       } else {
         ctx.fillStyle = _realmFadeColor;
         ctx.globalAlpha = a;
-        ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+        ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
         ctx.globalAlpha = 1;
       }
       ctx.restore();
@@ -14234,7 +15282,7 @@ updateDaggerContainerAt(effectX, effectY);
           ctx.fillStyle = "rgba(255,100,80," + pulse.toFixed(2) + ")";
         }
         const label = "✨ " + aetherVal + " aether";
-        const _by = canvas.height/(window.devicePixelRatio||1) - 14;
+        const _by = canvas.height/(_renderDPR) - 14;
         ctx.strokeText(label, 12, _by);
         ctx.fillText(label, 12, _by);
         // Small durability pip row above — one dot per harvester
@@ -14256,7 +15304,7 @@ updateDaggerContainerAt(effectX, effectY);
       const _map = (currentRealm === "sanctuary" ? sanctuaryMap : (_activeMap || tileMap)) || tileMap;
       if (!_map) return;
 
-      const dpr = (window.devicePixelRatio || 1);
+      const dpr = (_renderDPR);
       const cw = canvas.width / dpr;
       const ch = canvas.height / dpr;
       const size = _minimapLarge ? 324 : 162;
@@ -14636,10 +15684,10 @@ updateDaggerContainerAt(effectX, effectY);
       ctx.stroke();
       ctx.restore();
 
-      const label = currentRealm === "sanctuary" ? "Sanctuary Map" : ((discoveredWorlds.find(w => w.id === currentRealm)?.name) || "Field Map");
+      const label = Math.round(_fpsDisplayValue) + " FPS";
       ctx.font = "bold 10px sans-serif";
       ctx.textAlign = "left";
-      ctx.fillStyle = "rgba(236,240,255,0.9)";
+      ctx.fillStyle = "rgba(236,240,255,0.88)";
       ctx.fillText(label, x - 2, y + size + 22);
 
       // Position the DOM lt-hint element (same style as tray hints — fades in on LT)
@@ -14668,14 +15716,14 @@ updateDaggerContainerAt(effectX, effectY);
       if (_terrainHintEl) _terrainHintEl.style.display = "block";
       // Soft light vignette — fades to slightly warm white at edges
       const grad = ctx.createRadialGradient(
-        (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) * 0.3,
-        (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) * 0.9
+        (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2), canvas.height/(_renderDPR) * 0.3,
+        (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2), canvas.height/(_renderDPR) * 0.9
       );
       grad.addColorStop(0, "rgba(255,255,255,0)");
       grad.addColorStop(1, "rgba(220,215,200,0.35)");
       ctx.save();
       ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+      ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
       ctx.restore();
 
       // "SANCTUARY" label top-centre — dark text on white bg
@@ -14684,7 +15732,7 @@ updateDaggerContainerAt(effectX, effectY);
       ctx.textAlign = "center";
       ctx.letterSpacing = "0.15em";
       ctx.fillStyle = "rgba(80,70,60,0.6)";
-      ctx.fillText("✦  SANCTUARY  ✦", (canvas.width/(window.devicePixelRatio||1)/2), 28);
+      ctx.fillText("✦  SANCTUARY  ✦", (canvas.width/(_renderDPR)/2), 28);
       ctx.restore();
 
       // Build mode hint
@@ -14693,7 +15741,7 @@ updateDaggerContainerAt(effectX, effectY);
         ctx.font = "11px sans-serif";
         ctx.textAlign = "right";
         ctx.fillStyle = "rgba(100,80,50,0.55)";
-        ctx.fillText("🏛️ [B / Select] Place  (" + carriedItems.length + " in pack)", canvas.width/(window.devicePixelRatio||1) - 12, canvas.height/(window.devicePixelRatio||1) - 16);
+        ctx.fillText("🏛️ [B / Select] Place  (" + carriedItems.length + " in pack)", canvas.width/(_renderDPR) - 12, canvas.height/(_renderDPR) - 16);
         ctx.restore();
       }
 
@@ -14708,8 +15756,8 @@ updateDaggerContainerAt(effectX, effectY);
         ctx.textAlign = "center";
         ctx.fillStyle = "rgba(60,100,180," + (0.6 + 0.3 * pulse).toFixed(2) + ")";
         ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 3;
-        ctx.strokeText("[ E ] Enter the Rift", (canvas.width/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) - 60);
-        ctx.fillText("[ E ] Enter the Rift", (canvas.width/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) - 60);
+        ctx.strokeText("[ E ] Enter the Rift", (canvas.width/(_renderDPR)/2), canvas.height/(_renderDPR) - 60);
+        ctx.fillText("[ E ] Enter the Rift", (canvas.width/(_renderDPR)/2), canvas.height/(_renderDPR) - 60);
         ctx.restore();
       }
     }
@@ -15057,7 +16105,8 @@ updateDaggerContainerAt(effectX, effectY);
     }
     // True whenever any fullscreen overlay is up — blocks player movement
     function anyOverlayActive() {
-      return blessingChoiceActive ||
+      return _startScreenVisible ||
+             blessingChoiceActive ||
              !!document.getElementById("narrativeCard") ||
              !!document.getElementById("stargateOverlay") ||
              !!document.getElementById("bossChoiceOverlay") ||
@@ -15936,9 +16985,9 @@ function handleTap(evt) {
       const playerScreenPos = camera.worldToScreen(player.position);
       const z = camera.zoom;
 
-      const emojiPx = Math.round(22 * z);
-      headbuttDiv.style.fontSize   = emojiPx + "px";
-      headbuttDiv.style.lineHeight = emojiPx + "px";
+      const spritePx = Math.round(30 * z);
+      headbuttDiv.style.width  = spritePx + "px";
+      headbuttDiv.style.height = spritePx + "px";
 
       // Player centre in screen space — same origin as reticle
       const pcx = playerScreenPos.x + player.width  * z / 2;
@@ -15973,7 +17022,7 @@ function handleTap(evt) {
       const endRot   = apex + SWING;
 
       // Pivot (handle = top-right corner, transform-origin 100% 0%) at player centre
-      headbuttDiv.style.left = (pcx - emojiPx) + "px";
+      headbuttDiv.style.left = (pcx - spritePx) + "px";
       headbuttDiv.style.top  = (pcy) + "px";
 
       headbuttDiv.style.setProperty("--startRot", startRot + "deg");
@@ -16742,6 +17791,52 @@ function showUpgradeAlert(message) {
         upgradeArrow.style.opacity = (state.hasAvailableUpgrade && !isUpgradeMenuVisible) ? "1" : "0";
       }
     }
+
+    function updateMenuMetaSummary() {
+      const fillEl = document.getElementById("matterMeterFill");
+      const targetEl = document.getElementById("matterTargetDisplay");
+      if (!fillEl || !targetEl) return;
+
+      const currentRank = calculateRank(killCount);
+      const costs = {
+        increaseHP: getUpgradeCost("increaseHP"),
+        increaseAutoRun: getUpgradeCost("increaseAutoRun"),
+        increaseDash: getUpgradeCost("increaseDash"),
+        increaseStrikeMeter: getUpgradeCost("increaseStrikeMeter"),
+        increaseHealingCharmTime: getUpgradeCost("increaseHealingCharmTime"),
+        increaseShieldingTime: getUpgradeCost("increaseShieldingTime"),
+        buyBomb: getBombCost(),
+        buyHeavyArmour: getHeavyArmourCost(),
+        buyTower: getTowerCost(),
+        buyZoneTile: getZoneTileCost(),
+        buySalt: getSaltCost(),
+        buyZyn: getZynCost()
+      };
+      const rankGate = { buyTower: 2, buyZoneTile: 1 };
+      const atCap = {
+        buyBomb: bombCount >= maxBombs(),
+        buyTower: towerCharges >= maxTowers(),
+        buyZoneTile: zoneCharges >= maxZones(),
+        buySalt: saltCharges >= MAX_SALT,
+        buyZyn: zynCount >= MAX_ZYN,
+        buyHeavyArmour: !!player.heavyArmour,
+      };
+      const nextTarget = Object.entries(costs)
+        .filter(([id]) => (rankGate[id] === undefined || currentRank >= rankGate[id]) && !(atCap[id] || false))
+        .map(([, cost]) => cost)
+        .filter(cost => cost > points)
+        .sort((a, b) => a - b)[0];
+
+      if (nextTarget) {
+        const pct = Math.max(0, Math.min(100, (points / nextTarget) * 100));
+        fillEl.style.width = pct.toFixed(1) + "%";
+        targetEl.textContent = `${Math.max(0, Math.ceil(nextTarget - points)).toLocaleString()} to next spend`;
+      } else {
+        fillEl.style.width = "100%";
+        targetEl.textContent = "Ready to spend";
+      }
+    }
+
     function updateAffordability() {
       const currentRank = calculateRank(killCount);
       const costs = {
@@ -16779,6 +17874,7 @@ function showUpgradeAlert(message) {
         btn.style.opacity = (!rankOk || capped) ? "0.38" : canAfford ? "1" : "0.5";
         btn.style.filter  = capped ? "grayscale(0.6)" : "";
       });
+      updateMenuMetaSummary();
       updateUpgradeButtonContext();
     }
 
@@ -16982,6 +18078,7 @@ function mergeEnemiesIntoPlayer() {
 
 // Central check — true if any blocking UI is currently open
 function _anyOverlayOpen() {
+  if (_startScreenVisible) return true;
   if (isUpgradeMenuVisible) return true;
   if (typeof _npcDialogOpen !== "undefined" && _npcDialogOpen) return true;
   if (typeof _archivistDialogOpen !== "undefined" && _archivistDialogOpen) return true;
@@ -17476,6 +18573,11 @@ function _isPointerAimActive() {
 
 function _getPointerAimAngle() {
   return gpAimActive ? gpAimAngle : _mouseAimAngle;
+}
+
+function _getPointerAimDirection() {
+  if (gpAimActive && gpAimDir) return gpAimDir;
+  return _aimAngleToDirection(_getPointerAimAngle());
 }
 
 function _aimAngleToDirection(angle) {
@@ -18096,8 +19198,8 @@ const gp = {
             gp._cloneRallyFired = false;
           }
 
-          // ── LB+RB + dpad: switch formation while clones are out ──────
-          if (_syncBothHeld && _getActiveSquadClones().length > 0
+          // ── D-pad: switch formation while active sortie is out ──────
+          if (_getActiveSquadClones().length > 0
               && _cloneFormationDebounce <= 0 && realmPhase === "combat") {
             const _fPad = navigator.getGamepads ? navigator.getGamepads()[0] : null;
             if (_fPad) {
@@ -18169,7 +19271,7 @@ const gp = {
                 gp._formationBtnHeld = false;
               }
             }
-          } else if (!_syncBothHeld) {
+          } else {
             gp._formationBtnHeld = false;
           }
         }
@@ -18308,7 +19410,24 @@ const gp = {
         }
       }
 
-      if (isUpgradeMenuVisible) {
+      if (_startScreenVisible) {
+        const axisX = pad.axes[0] || 0;
+        const axisY = pad.axes[1] || 0;
+        const dLeft  = (pad.buttons[14] && pad.buttons[14].pressed) || axisX < -this.deadzone;
+        const dRight = (pad.buttons[15] && pad.buttons[15].pressed) || axisX >  this.deadzone;
+        const dUp    = (pad.buttons[12] && pad.buttons[12].pressed) || axisY < -this.deadzone;
+        const dDown  = (pad.buttons[13] && pad.buttons[13].pressed) || axisY >  this.deadzone;
+        const anyDir = dLeft || dRight || dUp || dDown;
+        if (anyDir && !this._stickMoved) {
+          this._stickMoved = true;
+          if (dLeft) _moveStartScreenSlot(-1);
+          else if (dRight) _moveStartScreenSlot(1);
+          else if (dUp) _moveStartScreenAction(-1);
+          else if (dDown) _moveStartScreenAction(1);
+        } else if (!anyDir) {
+          this._stickMoved = false;
+        }
+      } else if (isUpgradeMenuVisible) {
         // D-pad / left stick: navigate between tab row and current section buttons
         const axisX = pad.axes[0] || 0;
         const axisY = pad.axes[1] || 0;
@@ -18525,8 +19644,8 @@ const gp = {
             if (!this._stickMoved) { this._stickMoved = true; gpToggleMegaBomb(); }
           } else {
             this._stickMoved = !(dpadUp || dpadDown || dpadLeft || dpadRight) ? false : this._stickMoved;
-            const moveX = dpadRight ? 1 : dpadLeft ? -1 : Math.abs(ax) > dz ? ax : 0;
-            const moveY = dpadDown ? 1 : dpadUp ? -1 : Math.abs(ay) > dz ? ay : 0;
+            const moveX = Math.abs(ax) > dz ? ax : 0;
+            const moveY = Math.abs(ay) > dz ? ay : 0;
             this._hasMoveInput = Math.abs(moveX) > 0.001 || Math.abs(moveY) > 0.001;
             player.setMoveIntent(moveX, moveY);
           }
@@ -18641,21 +19760,22 @@ document.addEventListener("keydown", function(e) {
 });
     
     let lastTime = performance.now();
+    let _fpsDisplayValue = 60;
 // Weather particle class for rain drops
 class RainDrop {
   constructor() {
     this.reset(true);
   }
   reset(initial = false) {
-    this.x = Math.random() * canvas.width/(window.devicePixelRatio||1);
-    this.y = initial ? Math.random() * canvas.height/(window.devicePixelRatio||1) : 0;
+    this.x = Math.random() * canvas.width/(_renderDPR);
+    this.y = initial ? Math.random() * canvas.height/(_renderDPR) : 0;
     this.speedY = 300 + Math.random() * 200;
     this.length = 10 + Math.random() * 10;
     this.opacity = 0.2 + Math.random() * 0.3;
   }
   update(deltaTime) {
     this.y += this.speedY * deltaTime;
-    if (this.y > canvas.height/(window.devicePixelRatio||1)) this.reset();
+    if (this.y > canvas.height/(_renderDPR)) this.reset();
   }
   render(ctx) {
     ctx.strokeStyle = `rgba(174,194,224,${this.opacity})`;
@@ -18740,8 +19860,8 @@ function applyLighting(ctx) {
   // ── Radial light system ───────────────────────────────────────
   // Draw darkness as an offscreen mask with a transparent "hole"
   // punched at the player position — cheap but convincing local lighting.
-  const W = Math.round(canvas.width / (window.devicePixelRatio || 1));
-  const H = Math.round(canvas.height / (window.devicePixelRatio || 1));
+  const W = Math.round(canvas.width / (_renderDPR));
+  const H = Math.round(canvas.height / (_renderDPR));
 
   if (!applyLighting._oc || applyLighting._oc.width !== W || applyLighting._oc.height !== H) {
     applyLighting._oc = document.createElement("canvas");
@@ -19471,7 +20591,7 @@ function applyLighting(ctx) {
       if (!wb || wb.style.visibility === "hidden") return;
       if (currentRealm === "sanctuary") return; // sanctuary is timeless
       const wbRect = wb.getBoundingClientRect();
-      const _dpr = window.devicePixelRatio || 1;
+      const _dpr = _renderDPR;
       const barW = Math.round((canvas.width / _dpr) * 0.5); // 50% of screen width
       const barX = Math.round(((canvas.width / _dpr) - barW) / 2); // centred
       const barY = 0; // top of screen
@@ -19590,11 +20710,6 @@ function applyLighting(ctx) {
         updateAffordability();
         updateInventoryDisplay();
         updateRankDisplay();
-        const rank = calculateRank(killCount);
-        const zoneBtn = document.getElementById("buyZoneTile");
-        const towerBtn = document.getElementById("buyTower");
-        if (zoneBtn) { zoneBtn.style.opacity = rank < 1 ? "0.4" : "1"; }
-        if (towerBtn) { towerBtn.style.opacity = rank < 2 ? "0.4" : "1"; }
         const wdEl = document.getElementById("wealthDisplay");
         if (wdEl) wdEl.textContent = getWealthMult().toFixed(1) + "×";
       } else {
@@ -19622,6 +20737,8 @@ function applyLighting(ctx) {
       let deltaTime = (currentTime - lastTime) / 1000;
       deltaTime = Math.min(deltaTime, 0.1); // cap to prevent spiral
       lastTime = currentTime;
+      const _instantFps = deltaTime > 0 ? (1 / deltaTime) : 60;
+      _fpsDisplayValue += (_instantFps - _fpsDisplayValue) * 0.08;
       globalTime += deltaTime;
       updateUpgradeTimers(deltaTime);
 
@@ -19721,7 +20838,7 @@ function applyLighting(ctx) {
         const _curW2 = discoveredWorlds.find(w => w.id === currentRealm);
         const _mbgCol = (REALM_PALETTES[_curW2 && _curW2.paletteKey ? _curW2.paletteKey : currentRealm] || REALM_PALETTES.default).bg;
         ctx.fillStyle = _mbgCol;
-        ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+        ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
         // Still tick decaying VFX so they don't pile up while menu is open
         bloodSplats = bloodSplats.filter(s => { s.alpha -= deltaTime * 0.04; return s.alpha > 0.01; });
         sigilMarks = sigilMarks.filter(m => { m.alpha -= deltaTime * m.decayRate; return m.alpha > 0.005; });
@@ -19732,7 +20849,7 @@ function applyLighting(ctx) {
       const _curW = discoveredWorlds.find(w => w.id === currentRealm);
       const _bgCol = (REALM_PALETTES[_curW && _curW.paletteKey ? _curW.paletteKey : currentRealm] || REALM_PALETTES.default).bg;
       ctx.fillStyle = _bgCol;
-      ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+      ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
 
       // Apply zoom + screen shake centered on screen
       ctx.save();
@@ -19757,9 +20874,9 @@ function applyLighting(ctx) {
       } else {
         gameLoop._bossRumbleTimer = 0;
       }
-      ctx.translate((canvas.width/(window.devicePixelRatio||1)/2) + shakeX, (canvas.height/(window.devicePixelRatio||1)/2) + shakeY);
+      ctx.translate((canvas.width/(_renderDPR)/2) + shakeX, (canvas.height/(_renderDPR)/2) + shakeY);
       ctx.scale(camera.zoom, camera.zoom);
-      ctx.translate(-(canvas.width/(window.devicePixelRatio||1)/2), -(canvas.height/(window.devicePixelRatio||1)/2));
+      ctx.translate(-(canvas.width/(_renderDPR)/2), -(canvas.height/(_renderDPR)/2));
 
       (_activeMap || tileMap).render(ctx, camera);
       _renderBattlefieldObjectives(ctx, camera);
@@ -19884,7 +21001,6 @@ function applyLighting(ctx) {
       });
 renderSwordEffects(ctx, camera);
       renderBriarPatches(ctx, camera);
-      enemies.forEach(enemy=> enemy.render(ctx, camera));
       pickups.forEach(pickup=> pickup.render(ctx, camera, globalTime));
       baitBombs.forEach(bomb=> bomb.render(ctx, camera, globalTime));
       bullets.forEach(bullet=> bullet.render(ctx, camera));
@@ -19894,10 +21010,7 @@ renderSwordEffects(ctx, camera);
       // Clone dagger pivot animations
       if (_cloneDaggerAnims.length && player.spriteLoaded) {
         const z = camera.zoom;
-        const emojiPx = Math.round(18 * z); // slightly smaller than player's 22px
-        ctx.font = emojiPx + "px serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        const spritePx = Math.round(24 * z);
         for (const a of _cloneDaggerAnims) {
           const t  = a.timer / a.duration; // 0→1
           const sp = camera.worldToScreen(new Vector2(a.wx, a.wy));
@@ -19937,7 +21050,14 @@ renderSwordEffects(ctx, camera);
           ctx.rotate(rad + Math.PI * 0.25); // blade tilt matching CSS -45deg
           ctx.shadowBlur  = 6;
           ctx.shadowColor = "rgba(100,200,255,0.7)";
-          ctx.fillText("🗡️", 0, 0);
+          if (daggerSpriteImg.complete && daggerSpriteImg.naturalWidth > 0) {
+            ctx.drawImage(daggerSpriteImg, -spritePx / 2, -spritePx / 2, spritePx, spritePx);
+          } else {
+            ctx.font = spritePx + "px serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("🗡️", 0, 0);
+          }
           ctx.restore();
         }
       }
@@ -19949,7 +21069,7 @@ renderSwordEffects(ctx, camera);
       if (currentRealm === "sanctuary" && realmPhase === "hub") {
         renderSanctuaryDepthQueue(ctx, camera);
       } else {
-        player.render(ctx, camera);
+        _renderWorldActorRockDepthQueue(ctx, camera);
       }
       
       for(let i = spriteFlashes.length - 1; i>=0; i--){
@@ -20004,13 +21124,13 @@ if (flash.timer <= 0) spriteFlashes.splice(i, 1);
       if (playerHitVignette > 0) {
         playerHitVignette -= deltaTime * 2.5;
         const grad = ctx.createRadialGradient(
-          (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) * 0.3,
-          (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) * 0.85
+          (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2), canvas.height/(_renderDPR) * 0.3,
+          (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2), canvas.height/(_renderDPR) * 0.85
         );
         grad.addColorStop(0, "rgba(180,0,0,0)");
         grad.addColorStop(1, `rgba(180,0,0,${Math.max(0, playerHitVignette).toFixed(2)})`);
         ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+        ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
       }
 
       // Hub/sanctuary ambient overlay
@@ -20025,7 +21145,7 @@ if (flash.timer <= 0) spriteFlashes.splice(i, 1);
       if (screenFlashAlpha > 0) {
         const safeAlpha = Math.min(screenFlashAlpha, 0); // cap to 0% opacity max
         ctx.fillStyle = `rgba(255,200,80,${safeAlpha.toFixed(2)})`;
-        ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+        ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
         screenFlashAlpha = Math.max(0, screenFlashAlpha - deltaTime * 8); // fade twice as fast
       }
 
@@ -20034,7 +21154,7 @@ if (flash.timer <= 0) spriteFlashes.splice(i, 1);
         const intensity = Math.min(1, zynOveruseActive / 2) * 0.85;
         const pulse = 0.5 + 0.5 * Math.sin(globalTime * 8);
         ctx.fillStyle = `rgba(0,0,0,${(intensity * (0.7 + pulse * 0.15)).toFixed(2)})`;
-        ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+        ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
         // "OVERLOAD" text
         if (zynOveruseActive > 3.5) {
           ctx.save();
@@ -20044,7 +21164,7 @@ if (flash.timer <= 0) spriteFlashes.splice(i, 1);
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.shadowBlur = 20; ctx.shadowColor = "#ff2200";
-          ctx.fillText("⚠ ZYN OVERLOAD", (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2));
+          ctx.fillText("⚠ ZYN OVERLOAD", (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2));
           ctx.restore();
         }
       }
@@ -20052,13 +21172,13 @@ if (flash.timer <= 0) spriteFlashes.splice(i, 1);
       // Darkness curse: vignette — only renders for darkness curse, fades in/out smoothly
       if (_darknessAlpha > 0) {
         const darkGrad = ctx.createRadialGradient(
-          (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) * 0.18,
-          (canvas.width/(window.devicePixelRatio||1)/2), (canvas.height/(window.devicePixelRatio||1)/2), canvas.height/(window.devicePixelRatio||1) * 0.7
+          (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2), canvas.height/(_renderDPR) * 0.18,
+          (canvas.width/(_renderDPR)/2), (canvas.height/(_renderDPR)/2), canvas.height/(_renderDPR) * 0.7
         );
         darkGrad.addColorStop(0, "rgba(0,0,0,0)");
         darkGrad.addColorStop(1, `rgba(0,0,0,${0.88 * _darknessAlpha})`);
         ctx.fillStyle = darkGrad;
-        ctx.fillRect(0, 0, canvas.width/(window.devicePixelRatio||1), canvas.height/(window.devicePixelRatio||1));
+        ctx.fillRect(0, 0, canvas.width/(_renderDPR), canvas.height/(_renderDPR));
       }
 
       renderCombo(ctx);
@@ -20415,7 +21535,7 @@ renderWeather(ctx);
         text: "Enemies drop gems — Diamond 💎 > Sapphire 🔵 > Emerald 🟢. They fill the <b>🌀 Gate meter</b> top-left. Hit the threshold to spawn a gate tile — walk to it and press <b>A or E</b> to travel to a new world or Sanctuary.",
         trigger: "firstKill", autoNext: 8000 },
       { title: "Player Menu 📋",
-        text: "Tap the button top-right (or press <b>Enter</b>) to open the Player Menu. Buy upgrades, craft items, and view your inventory here. The <b>✨ Blessings</b> tab shows permanent powers earned from boss kills.",
+        text: "Tap the button top-right (or press <b>Enter</b>) to open the Player Menu. Buy upgrades, craft items, and view your inventory here. The <b>⚙️ Status</b> tab shows your active blessings, combat stats, and other run info.",
         highlight: "upgradeButton", trigger: "firstKill", autoNext: 7000 },
       { title: "Auto-Strike ⚔️",
         text: "Pick up ⚔️ sword drops to gain Auto-Strike — you'll swing automatically at nearby enemies while it lasts. The orange meter on the tray slot shows remaining time.",
@@ -20437,7 +21557,7 @@ renderWeather(ctx);
         text: "Reach Novice rank to unlock Safe Zone walls from the Craft menu. Craft charges, then tap the 🧱 tray slot (or <b>LT+X</b>) to place walls around you. Enemies take damage on contact.",
         trigger: "rank1", autoNext: 7000 },
       { title: "Blessings ✨",
-        text: "After every Boss Siege, choose one of three permanent blessings — powers like Magnet, Lifesteal, and Phase Strike. They stack across the run. View active blessings in the <b>✨ Blessings</b> tab of the Player Menu.",
+        text: "After every Boss Siege, choose one of three permanent blessings — powers like Magnet, Lifesteal, and Phase Strike. They stack across the run. View active blessings in the <b>⚙️ Status</b> tab of the Player Menu.",
         highlight: "upgradeButton", trigger: "rank1", autoNext: 8000 },
       { title: "The Gate & New Worlds 🌀",
         text: "Opening a gate lets you travel to <b>Sanctuary</b> or a <b>new parallel world</b>. Each world has its own wave counter and enemy types. The gate gem cost rises as you discover more worlds.",
@@ -20453,7 +21573,7 @@ renderWeather(ctx);
         text: "This is your permanent base. Press <b>B / Select</b> to open the <b>Build Menu</b> and place artifacts found in worlds — they give passive bonuses like more HP, faster gems, and reduced gate costs.",
         trigger: "firstSanctuary", autoNext: 9000 },
       { title: "Terrain Placement 🗺️",
-        text: "Press <b>T</b> (keyboard) or <b>Select</b> (gamepad) in Sanctuary to open the <b>Terrain Menu</b> — reshape your base with floor tiles and structures. Aim with the right stick and press <b>E / A</b> to place. Press <b>B</b> to cancel.",
+        text: "Press <b>T</b> (keyboard) or <b>LT + Select</b> (gamepad) in Sanctuary to open the <b>Terrain Menu</b> — reshape your base with floor tiles and structures. Aim with the right stick and press <b>E / A</b> to place. Press <b>B</b> to cancel.",
         trigger: "firstSanctuary", autoNext: 9000 },
       { title: "Moving Artifacts 🔄",
         text: "To pick up a placed artifact in Sanctuary, walk next to it and press <b>E / A</b> — it returns to your inventory so you can reposition it or take it with you.",
@@ -20465,7 +21585,7 @@ renderWeather(ctx);
         text: "Harvesters decay over time and go offline at 0% durability. Walk up to a damaged one and <b>hold your position</b> to begin a repair — it costs <b>Aether ✨</b> and takes time. A low-durability harvester generates less Aether, so repair early.",
         trigger: "firstSanctuary", autoNext: 10000 },
       { title: "Echo HUD 🔗",
-        text: "When echoes are fighting with you, the <b>Echo HUD</b> appears bottom-left — showing each active echo's tier (✦✦✦) and damage output. Your total synced echo pool is shown below. Echoes pulled from a larger pool hit harder.",
+        text: "When echoes are fighting with you, the <b>Echo HUD</b> appears bottom-left — showing each deployed echo's tier (✦✦✦), name, level, damage, and HP. The total line below shows how many echoes are currently deployed out of your full pool.",
         trigger: "firstSanctuary", autoNext: 9000 },
       { title: "Parallel Selves 🔗",
         text: "Wanderers appear in peaceful overworld zones — parallel versions of you from other timelines. Hold <b>LB + RB</b> near one for 1 second to sync them. Sync 100 in a world to unlock <b>World Sync</b> — permanently stabilising that timeline.",
@@ -20495,6 +21615,13 @@ renderWeather(ctx);
           "pointer-events:none;z-index:102;";
         document.body.appendChild(el);
       }
+      if (isUpgradeMenuVisible || _startScreenVisible || !!document.getElementById("narrativeCard") ||
+          !!document.getElementById("stargateOverlay") || !!document.getElementById("bossChoiceOverlay") ||
+          player.isDead) {
+        el.style.display = "none";
+        return;
+      }
+      el.style.display = "flex";
       const mode = COMBAT_MODES[_combatMode];
       el.textContent = mode.icon;
       el.style.color = _combatMode === 1 ? "rgba(180,220,255,0.9)" : "rgba(255,255,255,0.82)";
@@ -20549,6 +21676,12 @@ renderWeather(ctx);
     // Gamepad A also advances tutorial
     const _origOnPress = gp._onPress.bind(gp);
     gp._onPress = function(idx) {
+      if (_startScreenVisible) {
+        if (idx === 0 || idx === 9) {
+          _activateStartScreenSelection();
+        }
+        return;
+      }
       // ── Blessing choice overlay ──────────────────────────────
       // Navigation (d-pad + stick) handled in poll branch with debounce.
       // _onPress only handles confirm and skip.
@@ -20799,8 +21932,8 @@ renderWeather(ctx);
       _origOnPress(idx);
     };
 
-    // Load persistent save data
-    loadGame();
+    // Boot to slot-select start screen.
+    _renderStartScreen();
 
     // ── Clone HUD update loop ─────────────────────────────────────────
     (function _initCloneHud() {
@@ -20874,9 +22007,8 @@ renderWeather(ctx);
 
       }, 200);
     })();
-    // Summon any clones the player has earned (loaded from save)
-    // Clones must be manually rallied with LB+RB — no auto-summon on load
-    setTimeout(() => tutTrigger("start"), 1500);
+    // Clones must be manually rallied with LB+RB — no auto-summon on load.
+    // Start tutorial is queued only after a slot is chosen.
 
     // Open upgrade menu on mouse click.
     const upgradeButton = document.getElementById("upgradeButton");
@@ -20939,6 +22071,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const bgmButton = document.getElementById("toggleBGM");
     const backgroundAudio = new Audio();
     let isBGMPlaying = true; // Change this to false if you want it to start OFF
+    function updateBGMButtonVisual() {
+        bgmButton.innerHTML = isBGMPlaying ? "🎵" : "🔇";
+        bgmButton.title = isBGMPlaying ? "Mute BGM" : "Play BGM";
+        bgmButton.style.opacity = isBGMPlaying ? "0.78" : "0.52";
+    }
 
     // Playlist Setup
     const playlist = [
@@ -20964,7 +22101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ✅ Set the initial state of the button (don't attempt autoplay — blocked by browsers)
     function initializeBGM() {
         isBGMPlaying = false;
-        bgmButton.innerHTML = "🔇 Play BGM";
+        updateBGMButtonVisual();
     }
 
     // Call initialization function
@@ -20975,12 +22112,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isBGMPlaying) {
             backgroundAudio.play().then(() => {
                 isBGMPlaying = true;
-                bgmButton.innerHTML = "🔊";
+                updateBGMButtonVisual();
             }).catch(err => console.log("Error playing music:", err));
         } else {
             backgroundAudio.pause();
             isBGMPlaying = false;
-            bgmButton.innerHTML = "🔇";
+            updateBGMButtonVisual();
         }
     });
 
@@ -20989,7 +22126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isBGMPlaying) {
             backgroundAudio.play().then(() => {
                 isBGMPlaying = true;
-                bgmButton.innerHTML = "🔊";
+                updateBGMButtonVisual();
             }).catch(err => console.log("Error playing music:", err));
         }
         document.removeEventListener("touchstart", startMusic);
